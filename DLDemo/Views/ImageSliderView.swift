@@ -18,10 +18,15 @@ enum SlideDirection {
  * when in container view controller like UINavigationController if
  * you want to use vertical slider.
  */
+protocol ImageSliderViewDelegate: class {
+    func didSelectAtPage(index: Int);
+}
 
 
 class ImageSliderView: UIView {
 
+    weak var delegate: ImageSliderViewDelegate?
+    
     var images: Array<UIImage>? {
         didSet {
             if let images = self.images {
@@ -56,7 +61,6 @@ class ImageSliderView: UIView {
         }
     }
 
-    
     var currentIndex = 0 {
         didSet {
             if let images = self.images {
@@ -87,20 +91,44 @@ class ImageSliderView: UIView {
     
     private let scrollView = UIScrollView()
     private let pageController = UIPageControl()
-    let leftImageContainerView = ImageContainerView()
-    let centerImageContainerView = ImageContainerView()
-    let rightImageContainerView = ImageContainerView()
-
+    private let leftImageContainerView = ImageContainerView()
+    private let centerImageContainerView = ImageContainerView()
+    private let rightImageContainerView = ImageContainerView()
+    private var timer: Timer?
     
-    func setAppearance() {
+    func startToSlide() {
+        stopSliding()
+        
+        self.timer = Timer.init(timeInterval: 3, repeats: true) { [weak self] (Timer) in
+            if let strongSelf = self {
+                if (strongSelf.images != nil) && (strongSelf.images?.count)! > 1 {
+                    strongSelf.scrollView.setContentOffset(strongSelf.rightImageContainerView.frame.origin, animated: true)
+                }
+            }
+        }
+        RunLoop.current.add(timer!, forMode: .commonModes)
+    }
+    
+    func stopSliding() {
+        self.timer?.invalidate()
+        self.timer = nil
+    }
+    
+    private func setAppearance() {
         currentIndex = 0
         setPageControl()
         setContainerViewFrame()
         setContentSize()
         setInitContentOffset()
+        let tapGest = UITapGestureRecognizer.init(target: self, action: #selector(tapAction))
+        centerImageContainerView.addGestureRecognizer(tapGest)
     }
     
-    func setPageControl() {
+    @objc private func tapAction() {
+        delegate?.didSelectAtPage(index: currentIndex)
+    }
+    
+    private func setPageControl() {
         if let images = self.images {
             pageController.numberOfPages = images.count
             pageController.currentPage = 0
@@ -121,7 +149,7 @@ class ImageSliderView: UIView {
         }
     }
     
-    func setContainerViewFrame() {
+    private func setContainerViewFrame() {
         if slideDirection == .Horizontal {
             leftImageContainerView.frame    = CGRect(x: 0,                  y: 0, width: frame.width, height: frame.height)
             centerImageContainerView.frame  = CGRect(x: frame.width,        y: 0, width: frame.width, height: frame.height)
@@ -133,7 +161,7 @@ class ImageSliderView: UIView {
         }
     }
     
-    func setContentSize() {
+    private func setContentSize() {
         switch slideDirection {
         case .Horizontal:
             scrollView.contentSize = CGSize(width:frame.width * 3, height:frame.height)
@@ -151,7 +179,7 @@ class ImageSliderView: UIView {
         }
     }
     
-    func setInitContentOffset() {
+    private func setInitContentOffset() {
         switch slideDirection {
         case .Horizontal:
             scrollView.setContentOffset(CGPoint(x: frame.width, y:0), animated: false)
@@ -168,6 +196,21 @@ class ImageSliderView: UIView {
         } else {
             scrollView.contentSize = CGSize(width:0, height:0)
         }
+    }
+    
+    fileprivate func didScrollToNextPage() {
+        let contentOffSet = scrollView.contentOffset
+        let pageWidth = scrollView.frame.width
+        let pageHeight = scrollView.frame.height
+        
+        if (contentOffSet.x == 0 && slideDirection == .Horizontal)
+            || (contentOffSet.y == 0 && slideDirection == .Vertical)  {
+            currentIndex -= 1
+        } else if (abs(contentOffSet.x - pageWidth * 2) < 1 && slideDirection == .Horizontal)
+            || (abs(contentOffSet.y - pageHeight * 2) < 1 && slideDirection == .Vertical)  {
+            currentIndex += 1
+        }
+        setInitContentOffset()
     }
     
     init() {
@@ -238,17 +281,10 @@ extension ImageSliderView: UIScrollViewDelegate {
     
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         scrollView.isUserInteractionEnabled = true
-        let contentOffSet = scrollView.contentOffset
-        let pageWidth = scrollView.frame.width
-        let pageHeight = scrollView.frame.height
-        
-        if (contentOffSet.x == 0 && slideDirection == .Horizontal)
-            || (contentOffSet.y == 0 && slideDirection == .Vertical)  {
-            currentIndex -= 1
-        } else if (abs(contentOffSet.x - pageWidth * 2) < 1 && slideDirection == .Horizontal)
-            || (abs(contentOffSet.y - pageHeight * 2) < 1 && slideDirection == .Vertical)  {
-            currentIndex += 1
-        }
-        setInitContentOffset()
+        self.didScrollToNextPage()
+    }
+    
+    func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
+        self.didScrollToNextPage()
     }
 }

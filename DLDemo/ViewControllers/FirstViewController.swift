@@ -8,10 +8,10 @@
 
 import UIKit
 
-class FirstViewController: UIViewController {
+class FirstViewController: UIViewController  {
 
     private let imageSliderView = ImageSliderView()
-    private var indexOfNum = 4;
+    private var indexOfNum = 0;
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -20,6 +20,7 @@ class FirstViewController: UIViewController {
         changeNumber(sender: nil)
         imageSliderView.frame =  CGRect(x:5, y:100, width:self.view.frame.width - 10, height:self.view.frame.height * 0.6)
         imageSliderView.backgroundColor = UIColor.brown
+        imageSliderView.delegate = self
         
         /*
          * Attention: need to set automaticallyAdjustsScrollViewInsets false 
@@ -43,6 +44,7 @@ class FirstViewController: UIViewController {
         numberButton.setTitleColor(UIColor.blue, for: .normal)
         numberButton.addTarget(self, action: #selector(changeNumber), for: .touchUpInside)
         self.view.addSubview(numberButton)
+        imageSliderView.startToSlide()
     }
 
     func changeDirection(sender: UIButton?) {
@@ -56,20 +58,28 @@ class FirstViewController: UIViewController {
             sender?.setTitle("改成水平滚动", for: .normal)
             break
         }
+        imageSliderView.startToSlide()
     }
     
     func changeNumber(sender: UIButton?) {
-        let nums = [1,2,3,4,5]
+        let nums = [1,2,3,4,5,6]
         
         var images = Array<UIImage>()
         
-        for i: Int in 1...nums[indexOfNum] {
+        for i: Int in 1 ..< nums[indexOfNum] {
             let image = UIImage.init(named: "\(i)")
             images.append(image!)
         }
         indexOfNum += 1
-        indexOfNum %= 5
-        sender?.setTitle("改成\(nums[indexOfNum])张图片", for: .normal)
+        indexOfNum %= 6
+        sender?.setTitle("改成\(nums[indexOfNum] - 1)张图片", for: .normal)
         imageSliderView.images = images
+        imageSliderView.startToSlide()
+    }
+}
+
+extension FirstViewController:ImageSliderViewDelegate {
+    func didSelectAtPage(index: Int) {
+        print("press at page: \(index)")
     }
 }
