@@ -28,9 +28,9 @@ class InfiniteScrollView: UIScrollView {
         let currentOffset = contentOffset
         let contentHeight = contentSize.height
         let centerOffsetY = (contentHeight - bounds.height) / 2
-        let distanceFromCenter = fabs(currentOffset.y - centerOffsetY)
+        let distanceFromCenterY = fabs(currentOffset.y - centerOffsetY)
         
-        if distanceFromCenter > (contentHeight / 4) {
+        if distanceFromCenterY > (contentHeight / 4) {
             contentOffset = CGPoint(x: currentOffset.x, y: centerOffsetY)
             for cell in visibileCellsInVertical {
                 var center = containerView.convert(cell.center, to: self)
@@ -44,9 +44,9 @@ class InfiniteScrollView: UIScrollView {
         let currentOffset = contentOffset
         let contentWidth = contentSize.width
         let centerOffsetX = (contentWidth - bounds.width) / 2
-        let distanceFromCenter = fabs(currentOffset.x - centerOffsetX)
+        let distanceFromCenterX = fabs(currentOffset.x - centerOffsetX)
         
-        if distanceFromCenter > (contentWidth / 4) {
+        if distanceFromCenterX > (contentWidth / 4) {
             contentOffset = CGPoint(x: centerOffsetX, y: currentOffset.y)
             for cell in visibileCellsInHorizontal {
                 var center = containerView.convert(cell.center, to: self)
