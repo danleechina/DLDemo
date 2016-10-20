@@ -80,8 +80,8 @@ class ImageSliderView: UIView {
                         centerImageContainerView.image = images[currentIndex]
                         rightImageContainerView.image = images[currentIndex == 0 ? 1 : 0]
                     } else if images.count == 1 {
-                        leftImageContainerView.image = images[0]
-                        centerImageContainerView.image = nil
+                        leftImageContainerView.image = nil
+                        centerImageContainerView.image = images[0]
                         rightImageContainerView.image = nil
                     }
                 }
@@ -95,6 +95,7 @@ class ImageSliderView: UIView {
     private let centerImageContainerView = ImageContainerView()
     private let rightImageContainerView = ImageContainerView()
     private var timer: Timer?
+    fileprivate var userDragging:Bool = false
     
     func startToSlide() {
         stopSliding()
@@ -102,6 +103,13 @@ class ImageSliderView: UIView {
         self.timer = Timer.init(timeInterval: 3, repeats: true) { [weak self] (Timer) in
             if let strongSelf = self {
                 if (strongSelf.images != nil) && (strongSelf.images?.count)! > 1 {
+                    if strongSelf.scrollView.isDragging
+                        || strongSelf.scrollView.isTracking
+                        || strongSelf.scrollView.isDecelerating
+                        || strongSelf.userDragging {
+                        return
+                    }
+                    strongSelf.scrollView.isUserInteractionEnabled = false
                     strongSelf.scrollView.setContentOffset(strongSelf.rightImageContainerView.frame.origin, animated: true)
                 }
             }
@@ -125,7 +133,9 @@ class ImageSliderView: UIView {
     }
     
     @objc private func tapAction() {
-        delegate?.didSelectAtPage(index: currentIndex)
+        if self.images != nil && !(self.images?.isEmpty)! {
+            delegate?.didSelectAtPage(index: currentIndex)
+        }
     }
     
     private func setPageControl() {
@@ -159,6 +169,12 @@ class ImageSliderView: UIView {
             centerImageContainerView.frame  = CGRect(x: 0, y: frame.height,     width: frame.width, height: frame.height)
             rightImageContainerView.frame   = CGRect(x: 0, y: frame.height * 2, width: frame.width, height: frame.height)
         }
+        
+        if let images = self.images {
+            if images.count <= 1 {
+                centerImageContainerView.frame  = CGRect(x: 0, y: 0, width: frame.width, height: frame.height)
+            }
+        }
     }
     
     private func setContentSize() {
@@ -191,10 +207,8 @@ class ImageSliderView: UIView {
         
         if let images = self.images {
             if images.count <= 1 {
-                scrollView.contentSize = CGSize(width:0, height:0)
+                scrollView.contentOffset = CGPoint(x:0, y:0)
             }
-        } else {
-            scrollView.contentSize = CGSize(width:0, height:0)
         }
     }
     
@@ -275,8 +289,13 @@ extension ImageSliderView: UIScrollViewDelegate {
         scrollView.contentOffset = contentOffset
     }
     
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        self.userDragging = true
+    }
+    
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         scrollView.isUserInteractionEnabled = false
+        self.userDragging = false
     }
     
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
@@ -285,6 +304,7 @@ extension ImageSliderView: UIScrollViewDelegate {
     }
     
     func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
+        scrollView.isUserInteractionEnabled = true
         self.didScrollToNextPage()
     }
 }

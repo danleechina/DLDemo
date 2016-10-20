@@ -12,6 +12,11 @@ class FirstViewController: UIViewController  {
 
     private let imageSliderView = ImageSliderView()
     private var indexOfNum = 0;
+    fileprivate let indicatorLabel :UILabel = {
+        let label = UILabel()
+        label.textColor = UIColor.blue
+        return label
+    }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -30,6 +35,7 @@ class FirstViewController: UIViewController  {
         self.automaticallyAdjustsScrollViewInsets = false
         self.view.addSubview(imageSliderView)
         self.view.backgroundColor = UIColor.white
+        self.view.addSubview(indicatorLabel)
         
         let directionButton = UIButton()
         directionButton.frame = CGRect(x: 44, y: self.view.frame.height - 100, width: 120, height: 44)
@@ -81,5 +87,11 @@ class FirstViewController: UIViewController  {
 extension FirstViewController:ImageSliderViewDelegate {
     func didSelectAtPage(index: Int) {
         print("press at page: \(index)")
+        indicatorLabel.text = "点击了第\(index+1)页"
+        indicatorLabel.sizeToFit()
+        indicatorLabel.frame = CGRect(x: self.view.frame.width/2 - indicatorLabel.frame.width/2,
+                                      y: self.view.frame.height - indicatorLabel.frame.height - 10,
+                                      width: indicatorLabel.frame.width,
+                                      height: indicatorLabel.frame.height)
     }
 }
