@@ -10,9 +10,9 @@ import UIKit
 
 class HomeTableViewController: UITableViewController {
 
-    private let titles: Array<String> = ["滚动图片"]
-    private let detailTexts: Array<String> = ["无"]
-    private let viewControllers: Array<String> = [ "FirstViewController"]
+    private let titles: Array<String> = ["滚动图片", "无限循环滚动 TableView"]
+    private let detailTexts: Array<String> = ["无", "无"]
+    private let viewControllers: Array<String> = [ "FirstViewController", "InfiniteScrollTableViewController"]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -34,7 +34,13 @@ class HomeTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        let vc = FirstViewController()
+        var vc = UIViewController()
+        if indexPath.row == 0 {
+            vc = FirstViewController()
+        } else if indexPath.row == 1 {
+            vc = InfiniteScrollTableViewController()
+        }
+        
         self.navigationController?.pushViewController(vc, animated: true)
     }
 

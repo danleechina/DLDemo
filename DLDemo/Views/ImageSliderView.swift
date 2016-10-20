@@ -100,26 +100,27 @@ class ImageSliderView: UIView {
     func startToSlide() {
         stopSliding()
         
-        self.timer = Timer.init(timeInterval: 3, repeats: true) { [weak self] (Timer) in
-            if let strongSelf = self {
-                if (strongSelf.images != nil) && (strongSelf.images?.count)! > 1 {
-                    if strongSelf.scrollView.isDragging
-                        || strongSelf.scrollView.isTracking
-                        || strongSelf.scrollView.isDecelerating
-                        || strongSelf.userDragging {
-                        return
-                    }
-                    strongSelf.scrollView.isUserInteractionEnabled = false
-                    strongSelf.scrollView.setContentOffset(strongSelf.rightImageContainerView.frame.origin, animated: true)
-                }
-            }
-        }
+        self.timer = Timer.init(timeInterval: 3, target: self, selector: #selector(timerAction), userInfo: nil, repeats: true)
+        
         RunLoop.current.add(timer!, forMode: .commonModes)
     }
     
     func stopSliding() {
         self.timer?.invalidate()
         self.timer = nil
+    }
+    
+    func timerAction() {
+        if (self.images != nil) && (self.images?.count)! > 1 {
+            if self.scrollView.isDragging
+                || self.scrollView.isTracking
+                || self.scrollView.isDecelerating
+                || self.userDragging {
+                return
+            }
+            self.scrollView.isUserInteractionEnabled = false
+            self.scrollView.setContentOffset(self.rightImageContainerView.frame.origin, animated: true)
+        }
     }
     
     private func setAppearance() {

@@ -16,6 +16,8 @@
 		371019111DB324690046B359 /* ImageSliderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 371019101DB324690046B359 /* ImageSliderView.swift */; };
 		371019141DB32F990046B359 /* Array+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 371019131DB32F990046B359 /* Array+Extension.swift */; };
 		371019181DB34EE50046B359 /* UIImage+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 371019171DB34EE50046B359 /* UIImage+Extension.swift */; };
+		3772EC281DB8A58A009C5222 /* InfiniteScrollTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3772EC271DB8A58A009C5222 /* InfiniteScrollTableViewController.swift */; };
+		3772EC2A1DB8A5C7009C5222 /* InfiniteScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3772EC291DB8A5C7009C5222 /* InfiniteScrollView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,6 +32,8 @@
 		371019101DB324690046B359 /* ImageSliderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ImageSliderView.swift; path = Views/ImageSliderView.swift; sourceTree = "<group>"; };
 		371019131DB32F990046B359 /* Array+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Array+Extension.swift"; path = "Extension/Foundation/Array+Extension.swift"; sourceTree = "<group>"; };
 		371019171DB34EE50046B359 /* UIImage+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "UIImage+Extension.swift"; path = "Extension/UIKit/UIImage+Extension.swift"; sourceTree = "<group>"; };
+		3772EC271DB8A58A009C5222 /* InfiniteScrollTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = InfiniteScrollTableViewController.swift; path = ViewControllers/InfiniteScrollTableViewController.swift; sourceTree = "<group>"; };
+		3772EC291DB8A5C7009C5222 /* InfiniteScrollView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = InfiniteScrollView.swift; path = Views/InfiniteScrollView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -79,6 +83,7 @@
 			isa = PBXGroup;
 			children = (
 				3710190D1DB31E210046B359 /* FirstViewController.swift */,
+				3772EC271DB8A58A009C5222 /* InfiniteScrollTableViewController.swift */,
 			);
 			name = ViewControllers;
 			sourceTree = "<group>";
@@ -87,6 +92,7 @@
 			isa = PBXGroup;
 			children = (
 				371019101DB324690046B359 /* ImageSliderView.swift */,
+				3772EC291DB8A5C7009C5222 /* InfiniteScrollView.swift */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -189,6 +195,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3772EC2A1DB8A5C7009C5222 /* InfiniteScrollView.swift in Sources */,
+				3772EC281DB8A58A009C5222 /* InfiniteScrollTableViewController.swift in Sources */,
 				3710190E1DB31E210046B359 /* FirstViewController.swift in Sources */,
 				371019141DB32F990046B359 /* Array+Extension.swift in Sources */,
 				371019111DB324690046B359 /* ImageSliderView.swift in Sources */,
@@ -260,7 +268,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -304,7 +312,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
@@ -358,6 +366,7 @@
 				3710190A1DB314E30046B359 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
