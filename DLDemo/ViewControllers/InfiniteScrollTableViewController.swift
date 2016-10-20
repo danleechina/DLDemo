@@ -19,6 +19,7 @@ class InfiniteScrollTableViewController: UIViewController {
         
         self.view.addSubview(infiniteScrollView)
         self.view.backgroundColor = UIColor.lightGray
+        self.automaticallyAdjustsScrollViewInsets = false
     }
 
 }

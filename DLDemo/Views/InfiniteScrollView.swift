@@ -9,15 +9,19 @@
 import UIKit
 
 class InfiniteScrollView: UIScrollView {
-    fileprivate var visibileCells = Array<UIView>()
-    fileprivate var reuseCellsSet = Set<UIView>()
+    fileprivate var visibileCellsInVertical = Array<UIView>()
+    fileprivate var visibileCellsInHorizontal = Array<UIView>()
+    fileprivate var reuseCellsInVerticalSet = Set<UIView>()
+    fileprivate var reuseCellsInHorizontalSet = Set<UIView>()
     fileprivate var containerView = UIView()
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        recenterInVerticalIfNecessary()
+//        recenterInVerticalIfNecessary()
+        recenterInHorizontalIfNecessary()
         let visibleBounds = convert(bounds, to: containerView)
-        tileCellsInVertical(fromMinY: visibleBounds.minY, toMaxY: visibleBounds.maxY)
+//        tileCellsInVertical(fromMinY: visibleBounds.minY, toMaxY: visibleBounds.maxY)
+        tileCellsInHorizontal(fromMinX: visibleBounds.minX, toMaxX: visibleBounds.maxX)
     }
     
     func recenterInVerticalIfNecessary() {
@@ -28,7 +32,7 @@ class InfiniteScrollView: UIScrollView {
         
         if distanceFromCenter > (contentHeight / 4) {
             contentOffset = CGPoint(x: currentOffset.x, y: centerOffsetY)
-            for cell in visibileCells {
+            for cell in visibileCellsInVertical {
                 var center = containerView.convert(cell.center, to: self)
                 center.y += (centerOffsetY - currentOffset.y)
                 cell.center = convert(center, to: containerView)
@@ -36,51 +40,109 @@ class InfiniteScrollView: UIScrollView {
         }
     }
     
+    func recenterInHorizontalIfNecessary() {
+        let currentOffset = contentOffset
+        let contentWidth = contentSize.width
+        let centerOffsetX = (contentWidth - bounds.width) / 2
+        let distanceFromCenter = fabs(currentOffset.x - centerOffsetX)
+        
+        if distanceFromCenter > (contentWidth / 4) {
+            contentOffset = CGPoint(x: centerOffsetX, y: currentOffset.y)
+            for cell in visibileCellsInHorizontal {
+                var center = containerView.convert(cell.center, to: self)
+                center.x += (centerOffsetX - currentOffset.x)
+                cell.center = convert(center, to: containerView)
+            }
+        }
+    }
+    
     func tileCellsInVertical(fromMinY minY: CGFloat, toMaxY maxY: CGFloat) {
-        if visibileCells.isEmpty {
-            _ = placeNewCellOnTop(topEdge: minY)
+        if visibileCellsInVertical.isEmpty {
+            _ = placeNewCellOnBottom(bottomEdge: minY)
         }
         
-        var lastCell = visibileCells.last!
+        var lastCell = visibileCellsInVertical.last!
         var bottomEdge = lastCell.frame.maxY
         while bottomEdge < maxY {
             bottomEdge = placeNewCellOnBottom(bottomEdge: bottomEdge)
         }
         
-        var headCell = visibileCells.first!
+        var headCell = visibileCellsInVertical.first!
         var topEdge = headCell.frame.minY
         while topEdge > minY {
             topEdge = placeNewCellOnTop(topEdge: topEdge)
         }
         
-        lastCell = visibileCells.last!
+        lastCell = visibileCellsInVertical.last!
         while lastCell.frame.origin.y > maxY {
             lastCell.removeFromSuperview()
-            reuseCellsSet.insert(visibileCells.removeLast())
-            if visibileCells.isEmpty {
+            reuseCellsInVerticalSet.insert(visibileCellsInVertical.removeLast())
+            if visibileCellsInVertical.isEmpty {
                 break
             }
-            lastCell = visibileCells.last!
+            lastCell = visibileCellsInVertical.last!
         }
         
-        if visibileCells.isEmpty {
+        if visibileCellsInVertical.isEmpty {
             return
         }
         
-        headCell = visibileCells.first!
+        headCell = visibileCellsInVertical.first!
         while headCell.frame.maxY < minY {
             headCell.removeFromSuperview()
-            reuseCellsSet.insert(visibileCells.removeFirst())
-            if visibileCells.isEmpty {
+            reuseCellsInVerticalSet.insert(visibileCellsInVertical.removeFirst())
+            if visibileCellsInVertical.isEmpty {
                 break
             }
-            headCell = visibileCells.first!
+            headCell = visibileCellsInVertical.first!
+        }
+    }
+    
+    func tileCellsInHorizontal(fromMinX minX: CGFloat, toMaxX maxX: CGFloat) {
+        if visibileCellsInHorizontal.isEmpty {
+            _ = placeNewCellOnRight(rightEdge: minX)
+        }
+        
+        var lastCell = visibileCellsInHorizontal.last!
+        var rightEdge = lastCell.frame.maxX
+        while rightEdge < maxX {
+            rightEdge = placeNewCellOnRight(rightEdge: rightEdge)
+        }
+        
+        var headCell = visibileCellsInHorizontal.first!
+        var leftEdge = headCell.frame.minX
+        while leftEdge > minX {
+            leftEdge = placeNewCellOnLeft(leftEdge: leftEdge)
+        }
+        
+        lastCell = visibileCellsInHorizontal.last!
+        while lastCell.frame.origin.x > maxX {
+            lastCell.removeFromSuperview()
+            reuseCellsInHorizontalSet.insert(visibileCellsInHorizontal.removeLast())
+            if visibileCellsInHorizontal.isEmpty {
+                break
+            }
+            lastCell = visibileCellsInHorizontal.last!
+        }
+        
+        if visibileCellsInHorizontal.isEmpty {
+            return
+        }
+        
+        headCell = visibileCellsInHorizontal.first!
+        while headCell.frame.maxX < minX {
+            headCell.removeFromSuperview()
+            reuseCellsInHorizontalSet.insert(visibileCellsInHorizontal.removeFirst())
+            if visibileCellsInHorizontal.isEmpty {
+                break
+            }
+            headCell = visibileCellsInHorizontal.first!
         }
     }
     
     func placeNewCellOnBottom(bottomEdge: CGFloat) -> CGFloat {
-        let view = insertInVerticalCell()
-        visibileCells.append(view)
+        let view = insertCellInVertical()
+        visibileCellsInVertical.append(view)
         
         var frame = view.frame
         frame.origin.y = bottomEdge
@@ -90,9 +152,21 @@ class InfiniteScrollView: UIScrollView {
         return frame.maxY
     }
     
+    func placeNewCellOnRight(rightEdge: CGFloat) -> CGFloat {
+        let view = insertCellInHorizontal()
+        visibileCellsInHorizontal.append(view)
+        
+        var frame = view.frame
+        frame.origin.y = 0
+        frame.origin.x = rightEdge
+        view.frame = frame
+        
+        return frame.maxX
+    }
+    
     func placeNewCellOnTop(topEdge: CGFloat) -> CGFloat {
-        let view = insertInVerticalCell()
-        visibileCells.insert(view, at: 0)
+        let view = insertCellInVertical()
+        visibileCellsInVertical.insert(view, at: 0)
         
         var frame = view.frame
         frame.origin.y = topEdge - frame.height
@@ -102,26 +176,57 @@ class InfiniteScrollView: UIScrollView {
         return frame.minY
     }
     
-    func insertInVerticalCell() -> UIView {
+    func placeNewCellOnLeft(leftEdge: CGFloat) -> CGFloat {
+        let view = insertCellInHorizontal()
+        visibileCellsInHorizontal.insert(view, at: 0)
+        
+        var frame = view.frame
+        frame.origin.y = 0
+        frame.origin.x = leftEdge - frame.width
+        view.frame = frame
+        
+        return frame.minX
+    }
+    
+    func insertCellInVertical() -> UIView {
         var view = UIView()
-        if reuseCellsSet.isEmpty {
+        if reuseCellsInVerticalSet.isEmpty {
             let label = UILabel()
             label.numberOfLines = 3
             label.text = "1024 Block Street\nShaffer, CA\n95014"
             label.textColor = UIColor.blue
             label.frame = CGRect(x: 0, y: 0, width: 50, height: 100)
             view.addSubview(label)
+            view.backgroundColor = UIColor.black
         } else {
-            view = reuseCellsSet.removeFirst()
+            view = reuseCellsInVerticalSet.removeFirst()
         }
-        view.frame = CGRect(x: 0, y: 0, width: 150, height: 200)
+        view.frame = CGRect(x: 0, y: 0, width: 60, height: 100)
+        containerView.addSubview(view)
+        return view
+    }
+    
+    func insertCellInHorizontal() -> UIView {
+        var view = UIView()
+        if reuseCellsInHorizontalSet.isEmpty {
+            let label = UILabel()
+            label.numberOfLines = 3
+            label.text = "1024 Block Street\nShaffer, CA\n95014"
+            label.textColor = UIColor.blue
+            label.frame = CGRect(x: 0, y: 0, width: 50, height: 110)
+            view.addSubview(label)
+            view.backgroundColor = UIColor.black
+        } else {
+            view = reuseCellsInHorizontalSet.removeFirst()
+        }
+        view.frame = CGRect(x: 0, y: 0, width: 60, height: 110)
         containerView.addSubview(view)
         return view
     }
     
     override var frame: CGRect {
         didSet {
-            contentSize = CGSize(width: self.frame.width, height: self.frame.height * 5000)
+            contentSize = CGSize(width: self.frame.width * 5000, height: self.frame.height)
             containerView.frame = CGRect(x: 0, y: 0, width: contentSize.width, height: contentSize.height)
         }
     }
