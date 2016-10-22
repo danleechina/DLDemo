@@ -16,7 +16,7 @@
 		371019111DB324690046B359 /* ImageSliderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 371019101DB324690046B359 /* ImageSliderView.swift */; };
 		371019141DB32F990046B359 /* Array+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 371019131DB32F990046B359 /* Array+Extension.swift */; };
 		371019181DB34EE50046B359 /* UIImage+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 371019171DB34EE50046B359 /* UIImage+Extension.swift */; };
-		3772EC281DB8A58A009C5222 /* InfiniteScrollTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3772EC271DB8A58A009C5222 /* InfiniteScrollTableViewController.swift */; };
+		3772EC281DB8A58A009C5222 /* InfiniteScrollViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3772EC271DB8A58A009C5222 /* InfiniteScrollViewController.swift */; };
 		3772EC2A1DB8A5C7009C5222 /* InfiniteScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3772EC291DB8A5C7009C5222 /* InfiniteScrollView.swift */; };
 		A045222E1DB9A6D7006FC360 /* UIView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A045222D1DB9A6D7006FC360 /* UIView+Extension.swift */; };
 /* End PBXBuildFile section */
@@ -33,7 +33,7 @@
 		371019101DB324690046B359 /* ImageSliderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ImageSliderView.swift; path = Views/ImageSliderView.swift; sourceTree = "<group>"; };
 		371019131DB32F990046B359 /* Array+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Array+Extension.swift"; path = "Extension/Foundation/Array+Extension.swift"; sourceTree = "<group>"; };
 		371019171DB34EE50046B359 /* UIImage+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "UIImage+Extension.swift"; path = "Extension/UIKit/UIImage+Extension.swift"; sourceTree = "<group>"; };
-		3772EC271DB8A58A009C5222 /* InfiniteScrollTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = InfiniteScrollTableViewController.swift; path = ViewControllers/InfiniteScrollTableViewController.swift; sourceTree = "<group>"; };
+		3772EC271DB8A58A009C5222 /* InfiniteScrollViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = InfiniteScrollViewController.swift; path = ViewControllers/InfiniteScrollViewController.swift; sourceTree = "<group>"; };
 		3772EC291DB8A5C7009C5222 /* InfiniteScrollView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = InfiniteScrollView.swift; path = Views/InfiniteScrollView.swift; sourceTree = "<group>"; };
 		A045222D1DB9A6D7006FC360 /* UIView+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "UIView+Extension.swift"; path = "Extension/UIKit/UIView+Extension.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -85,7 +85,7 @@
 			isa = PBXGroup;
 			children = (
 				3710190D1DB31E210046B359 /* FirstViewController.swift */,
-				3772EC271DB8A58A009C5222 /* InfiniteScrollTableViewController.swift */,
+				3772EC271DB8A58A009C5222 /* InfiniteScrollViewController.swift */,
 			);
 			name = ViewControllers;
 			sourceTree = "<group>";
@@ -199,7 +199,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3772EC2A1DB8A5C7009C5222 /* InfiniteScrollView.swift in Sources */,
-				3772EC281DB8A58A009C5222 /* InfiniteScrollTableViewController.swift in Sources */,
+				3772EC281DB8A58A009C5222 /* InfiniteScrollViewController.swift in Sources */,
 				3710190E1DB31E210046B359 /* FirstViewController.swift in Sources */,
 				A045222E1DB9A6D7006FC360 /* UIView+Extension.swift in Sources */,
 				371019141DB32F990046B359 /* Array+Extension.swift in Sources */,

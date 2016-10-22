@@ -8,6 +8,11 @@
 
 import UIKit
 
+enum InfiniteDirection {
+    case Vertical
+    case Horizontal
+}
+
 class InfiniteScrollView: UIScrollView {
     fileprivate var visibileCellsInVertical = Array<UIView>()
     fileprivate var visibileCellsInHorizontal = Array<UIView>()
@@ -17,14 +22,21 @@ class InfiniteScrollView: UIScrollView {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-//        recenterInVerticalIfNecessary()
-        recenterInHorizontalIfNecessary()
-        let visibleBounds = convert(bounds, to: containerView)
-//        tileCellsInVertical(fromMinY: visibleBounds.minY, toMaxY: visibleBounds.maxY)
-        tileCellsInHorizontal(fromMinX: visibleBounds.minX, toMaxX: visibleBounds.maxX)
+        switch infiniteDirection {
+        case .Horizontal:
+            recenterInHorizontalIfNecessary()
+            let visibleBounds = convert(bounds, to: containerView)
+            tileCellsInHorizontal(fromMinX: visibleBounds.minX, toMaxX: visibleBounds.maxX)
+            break
+        case .Vertical:
+            recenterInVerticalIfNecessary()
+            let visibleBounds = convert(bounds, to: containerView)
+            tileCellsInVertical(fromMinY: visibleBounds.minY, toMaxY: visibleBounds.maxY)
+            break
+        }
     }
     
-    func recenterInVerticalIfNecessary() {
+    fileprivate func recenterInVerticalIfNecessary() {
         let currentOffset = contentOffset
         let contentHeight = contentSize.height
         let centerOffsetY = (contentHeight - bounds.height) / 2
@@ -40,7 +52,7 @@ class InfiniteScrollView: UIScrollView {
         }
     }
     
-    func recenterInHorizontalIfNecessary() {
+    fileprivate func recenterInHorizontalIfNecessary() {
         let currentOffset = contentOffset
         let contentWidth = contentSize.width
         let centerOffsetX = (contentWidth - bounds.width) / 2
@@ -56,7 +68,7 @@ class InfiniteScrollView: UIScrollView {
         }
     }
     
-    func tileCellsInVertical(fromMinY minY: CGFloat, toMaxY maxY: CGFloat) {
+    fileprivate func tileCellsInVertical(fromMinY minY: CGFloat, toMaxY maxY: CGFloat) {
         if visibileCellsInVertical.isEmpty {
             _ = placeNewCellOnBottom(bottomEdge: minY)
         }
@@ -98,7 +110,7 @@ class InfiniteScrollView: UIScrollView {
         }
     }
     
-    func tileCellsInHorizontal(fromMinX minX: CGFloat, toMaxX maxX: CGFloat) {
+    fileprivate func tileCellsInHorizontal(fromMinX minX: CGFloat, toMaxX maxX: CGFloat) {
         if visibileCellsInHorizontal.isEmpty {
             _ = placeNewCellOnRight(rightEdge: minX)
         }
@@ -140,7 +152,7 @@ class InfiniteScrollView: UIScrollView {
         }
     }
     
-    func placeNewCellOnBottom(bottomEdge: CGFloat) -> CGFloat {
+    fileprivate func placeNewCellOnBottom(bottomEdge: CGFloat) -> CGFloat {
         let view = insertCellInVertical()
         visibileCellsInVertical.append(view)
         
@@ -152,7 +164,7 @@ class InfiniteScrollView: UIScrollView {
         return frame.maxY
     }
     
-    func placeNewCellOnRight(rightEdge: CGFloat) -> CGFloat {
+    fileprivate func placeNewCellOnRight(rightEdge: CGFloat) -> CGFloat {
         let view = insertCellInHorizontal()
         visibileCellsInHorizontal.append(view)
         
@@ -164,7 +176,7 @@ class InfiniteScrollView: UIScrollView {
         return frame.maxX
     }
     
-    func placeNewCellOnTop(topEdge: CGFloat) -> CGFloat {
+    fileprivate func placeNewCellOnTop(topEdge: CGFloat) -> CGFloat {
         let view = insertCellInVertical()
         visibileCellsInVertical.insert(view, at: 0)
         
@@ -176,7 +188,7 @@ class InfiniteScrollView: UIScrollView {
         return frame.minY
     }
     
-    func placeNewCellOnLeft(leftEdge: CGFloat) -> CGFloat {
+    fileprivate func placeNewCellOnLeft(leftEdge: CGFloat) -> CGFloat {
         let view = insertCellInHorizontal()
         visibileCellsInHorizontal.insert(view, at: 0)
         
@@ -188,7 +200,7 @@ class InfiniteScrollView: UIScrollView {
         return frame.minX
     }
     
-    func insertCellInVertical() -> UIView {
+    fileprivate func insertCellInVertical() -> UIView {
         var view = UIView()
         if reuseCellsInVerticalSet.isEmpty {
             let label = UILabel()
@@ -197,7 +209,6 @@ class InfiniteScrollView: UIScrollView {
             label.textColor = UIColor.blue
             label.frame = CGRect(x: 0, y: 0, width: 50, height: 100)
             view.addSubview(label)
-            view.backgroundColor = UIColor.black
         } else {
             view = reuseCellsInVerticalSet.removeFirst()
         }
@@ -206,7 +217,7 @@ class InfiniteScrollView: UIScrollView {
         return view
     }
     
-    func insertCellInHorizontal() -> UIView {
+    fileprivate func insertCellInHorizontal() -> UIView {
         var view = UIView()
         if reuseCellsInHorizontalSet.isEmpty {
             let label = UILabel()
@@ -215,7 +226,6 @@ class InfiniteScrollView: UIScrollView {
             label.textColor = UIColor.blue
             label.frame = CGRect(x: 0, y: 0, width: 50, height: 110)
             view.addSubview(label)
-            view.backgroundColor = UIColor.black
         } else {
             view = reuseCellsInHorizontalSet.removeFirst()
         }
@@ -224,10 +234,32 @@ class InfiniteScrollView: UIScrollView {
         return view
     }
     
+    fileprivate func setAppearance() {
+        switch infiniteDirection {
+        case .Horizontal:
+            contentSize = CGSize(width: self.frame.width * 5000, height: self.frame.height)
+            break
+        case .Vertical:
+            contentSize = CGSize(width: self.frame.width, height: self.frame.height * 5000)
+            break
+        }
+        contentOffset = CGPoint(x: 0, y: 0)
+        containerView.frame = CGRect(x: 0, y: 0, width: contentSize.width, height: contentSize.height)
+        reuseCellsInVerticalSet.removeAll()
+        reuseCellsInHorizontalSet.removeAll()
+        visibileCellsInVertical.removeAll()
+        visibileCellsInHorizontal.removeAll()
+    }
+    
+    var infiniteDirection = InfiniteDirection.Vertical {
+        didSet {
+            setAppearance()
+        }
+    }
+    
     override var frame: CGRect {
         didSet {
-            contentSize = CGSize(width: self.frame.width * 5000, height: self.frame.height)
-            containerView.frame = CGRect(x: 0, y: 0, width: contentSize.width, height: contentSize.height)
+            setAppearance()
         }
     }
     
