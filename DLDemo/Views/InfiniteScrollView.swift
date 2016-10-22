@@ -153,7 +153,7 @@ class InfiniteScrollView: UIScrollView {
     }
     
     fileprivate func placeNewCellOnBottom(bottomEdge: CGFloat) -> CGFloat {
-        let view = insertCellInVertical()
+        let view = insertCellInVertical()!
         visibileCellsInVertical.append(view)
         
         var frame = view.frame
@@ -165,7 +165,7 @@ class InfiniteScrollView: UIScrollView {
     }
     
     fileprivate func placeNewCellOnRight(rightEdge: CGFloat) -> CGFloat {
-        let view = insertCellInHorizontal()
+        let view = insertCellInHorizontal()!
         visibileCellsInHorizontal.append(view)
         
         var frame = view.frame
@@ -177,7 +177,7 @@ class InfiniteScrollView: UIScrollView {
     }
     
     fileprivate func placeNewCellOnTop(topEdge: CGFloat) -> CGFloat {
-        let view = insertCellInVertical()
+        let view = insertCellInVertical()!
         visibileCellsInVertical.insert(view, at: 0)
         
         var frame = view.frame
@@ -189,7 +189,7 @@ class InfiniteScrollView: UIScrollView {
     }
     
     fileprivate func placeNewCellOnLeft(leftEdge: CGFloat) -> CGFloat {
-        let view = insertCellInHorizontal()
+        let view = insertCellInHorizontal()!
         visibileCellsInHorizontal.insert(view, at: 0)
         
         var frame = view.frame
@@ -200,7 +200,7 @@ class InfiniteScrollView: UIScrollView {
         return frame.minX
     }
     
-    fileprivate func insertCellInVertical() -> UIView {
+    func insertCellInVertical() -> UIView? {
         var view = UIView()
         if reuseCellsInVerticalSet.isEmpty {
             let label = UILabel()
@@ -217,7 +217,7 @@ class InfiniteScrollView: UIScrollView {
         return view
     }
     
-    fileprivate func insertCellInHorizontal() -> UIView {
+    func insertCellInHorizontal() -> UIView? {
         var view = UIView()
         if reuseCellsInHorizontalSet.isEmpty {
             let label = UILabel()

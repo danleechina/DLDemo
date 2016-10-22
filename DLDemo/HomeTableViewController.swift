@@ -10,9 +10,9 @@ import UIKit
 
 class HomeTableViewController: UITableViewController {
 
-    private let titles: Array<String> = ["滚动图片", "无限循环滚动 ScrollView"]
-    private let detailTexts: Array<String> = ["无", "无"]
-    private let viewControllers: Array<String> = [ "FirstViewController", "InfiniteScrollViewController"]
+    private let titles: Array<String> = ["滚动图片", "无限循环滚动 ScrollView", "无限循环滚动 TableView", "无限循环滚动 PickerView"]
+    private let detailTexts: Array<String> = ["无", "无", "无", "无"]
+    private let viewControllers: Array<String> = [ "FirstViewController", "InfiniteScrollViewController", "CycleTableViewController", "CyclePickerViewController"]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -39,6 +39,10 @@ class HomeTableViewController: UITableViewController {
             vc = FirstViewController()
         } else if indexPath.row == 1 {
             vc = InfiniteScrollViewController()
+        } else if indexPath.row == 2 {
+            vc = CycleTableViewController()
+        } else if indexPath.row == 3 {
+            vc = CyclePickerViewController()
         }
         
         self.navigationController?.pushViewController(vc, animated: true)
