@@ -9,9 +9,11 @@
 import UIKit
 
 class CyclePickerViewController: UIViewController {
-    private let cyclePickerView:DLPickerView = {
+    private lazy var cyclePickerView:DLPickerView = {
         let cyclePickerView = DLPickerView()
         cyclePickerView.backgroundColor = UIColor.brown
+        cyclePickerView.delegate = self
+        cyclePickerView.dataSource = self
         return cyclePickerView
     }()
     
@@ -22,5 +24,21 @@ class CyclePickerViewController: UIViewController {
         self.view.addSubview(cyclePickerView)
         self.view.backgroundColor = UIColor.lightGray        
 //        let button = UIButton()
+    }
+}
+
+extension CyclePickerViewController: DLPickerViewDataSource, DLPickerViewDelegate {
+    // dataSource
+    func numberOfComponents(in pickerView: DLPickerView) -> Int {
+        return 2
+    }
+    
+    func pickerView(_ pickerView: DLPickerView, numberOfRowsInComponent component: Int) -> Int {
+        return 30
+    }
+    
+    // delegate
+    func enableCycleScroll(in pickerView: DLPickerView, forComponent component: Int) -> Bool {
+        return true
     }
 }

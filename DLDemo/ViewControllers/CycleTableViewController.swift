@@ -79,6 +79,9 @@ extension CycleTableViewController: DLTableViewDelegate, DLTableViewDataSource {
     }
     
     // delegate
+    // if scroll direction is vertical, heightForRowAt gets called
+    // otherwise widthForRowAt gets called.
+    // but both of these two functions are not required
     
     func tableView(_ tableView: DLTableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 64

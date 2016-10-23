@@ -14,8 +14,10 @@ enum DLTableViewScrollDirection {
 }
 
 @objc protocol DLTableViewDelegate : NSObjectProtocol, UIScrollViewDelegate{
-    @objc func tableView(_ tableView: DLTableView,  heightForRowAt indexPath: IndexPath) -> CGFloat
-    @objc func tableView(_ tableView: DLTableView,  widthForRowAt indexPath: IndexPath) -> CGFloat
+    @objc
+    optional func tableView(_ tableView: DLTableView,  heightForRowAt indexPath: IndexPath) -> CGFloat
+    @objc
+    optional func tableView(_ tableView: DLTableView,  widthForRowAt indexPath: IndexPath) -> CGFloat
 }
 
 protocol DLTableViewDataSource: class {
@@ -165,16 +167,16 @@ class DLTableView: UIScrollView {
             frame.origin.x = 0
             frame.size.width = self.frame.width
             frame.size.height = 40
-            if let delegate = self.tableViewDelegate {
-                frame.size.height = delegate.tableView(self, heightForRowAt: indexPath)
+            if let height = self.tableViewDelegate?.tableView?(self, heightForRowAt: indexPath) {
+                frame.size.height = height
             }
         } else {
             frame.origin.y = 0
             frame.origin.x = nextEdge
             frame.size.width = 40
             frame.size.height = self.frame.height
-            if let delegate = self.tableViewDelegate {
-                frame.size.width = delegate.tableView(self, widthForRowAt: indexPath)
+            if let width = self.tableViewDelegate?.tableView?(self, widthForRowAt: indexPath) {
+                frame.size.width = width
             }
         }
         view.frame = frame
@@ -208,16 +210,16 @@ class DLTableView: UIScrollView {
             frame.origin.x = 0
             frame.size.width = self.frame.width
             frame.size.height = 40
-            if let delegate = self.tableViewDelegate {
-                frame.size.height = delegate.tableView(self, heightForRowAt: indexPath)
+            if let height = self.tableViewDelegate?.tableView?(self, heightForRowAt: indexPath) {
+                frame.size.height = height
             }
             frame.origin.y = previousEdge - frame.height
         } else {
             frame.origin.y = 0
             frame.size.width = 40
             frame.size.height = self.frame.height
-            if let delegate = self.tableViewDelegate {
-                frame.size.width = delegate.tableView(self, widthForRowAt: indexPath)
+            if let width = self.tableViewDelegate?.tableView?(self, widthForRowAt: indexPath) {
+                frame.size.width = width
             }
             frame.origin.x = previousEdge - frame.width
         }
