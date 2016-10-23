@@ -57,6 +57,9 @@ class CycleTableView: UIScrollView {
     }
     
     fileprivate func recenterInVerticalIfNecessary() {
+        if !enableCycleScroll {
+            return
+        }
         let currentOffset = contentOffset
         let contentHeight = contentSize.height
         let centerOffsetY = (contentHeight - bounds.height) / 2
@@ -81,6 +84,10 @@ class CycleTableView: UIScrollView {
         var bottomEdge = lastCell.frame.maxY
         while bottomEdge < maxY {
             bottomEdge = placeNewCellOnBottom(bottomEdge: bottomEdge)
+        }
+        
+        if bottomEdge == CGFloat.greatestFiniteMagnitude {
+            contentSize = CGSize(width: contentSize.width, height: visibileCellsInVertical.last!.frame.maxY)
         }
         
         var headCell = visibileCellsInVertical.first!
@@ -123,7 +130,13 @@ class CycleTableView: UIScrollView {
             visibileCellsIndexPath.append(indexPath)
         } else {
             var row = visibileCellsIndexPath.last!.row + 1
-            row = row >= self.dataSource!.tableView(self, numberOfRowsInSection: 0) ? 0 : row
+            if row >= self.dataSource!.tableView(self, numberOfRowsInSection: 0) {
+                if enableCycleScroll {
+                    row = 0
+                } else {
+                    return CGFloat.greatestFiniteMagnitude
+                }
+            }
             indexPath = IndexPath.init(row: row, section: 0)
             visibileCellsIndexPath.append(indexPath)
         }
@@ -151,7 +164,13 @@ class CycleTableView: UIScrollView {
             visibileCellsIndexPath.append(indexPath)
         } else {
             var row = visibileCellsIndexPath.first!.row - 1
-            row = row < 0 ? self.dataSource!.tableView(self, numberOfRowsInSection: 0) - 1 : row
+            if row < 0 {
+                if enableCycleScroll {
+                    row = self.dataSource!.tableView(self, numberOfRowsInSection: 0) - 1
+                } else {
+                    return -CGFloat.greatestFiniteMagnitude
+                }
+            }
             indexPath = IndexPath.init(row: row, section: 0)
             visibileCellsIndexPath.insert(indexPath, at: 0)
         }
@@ -160,13 +179,13 @@ class CycleTableView: UIScrollView {
         visibileCellsInVertical.insert(view, at: 0)
         
         var frame = view.frame
-        frame.origin.y = topEdge - frame.height
         frame.origin.x = 0
         frame.size.width = self.frame.width
         frame.size.height = 40
         if let delegate = self.cycleTableViewDelegate {
             frame.size.height = delegate.tableView(self, heightForRowAt: indexPath)
         }
+        frame.origin.y = topEdge - frame.height
         view.frame = frame
         
         return frame.minY
@@ -181,6 +200,7 @@ class CycleTableView: UIScrollView {
             return cell
         } else {
             // ds should not be nil
+            assert(false)
             return CycleTableViewCell()
         }
     }
@@ -222,6 +242,12 @@ class CycleTableView: UIScrollView {
     fileprivate weak var cycleTableViewDelegate: CycleTableViewDelegate?
     // dataSource can not be nil or crash
     weak var dataSource: CycleTableViewDataSource?
+    var enableCycleScroll = false {
+        didSet {
+            
+        }
+    }
+    
     
     func dequeueReusableCell(withIdentifier identifier: String) -> CycleTableViewCell {
         for cell in reuseCellsInVerticalSet {
