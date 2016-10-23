@@ -9,8 +9,8 @@
 import UIKit
 
 class CyclePickerViewController: UIViewController {
-    private let cyclePickerView:CyclePickerView = {
-        let cyclePickerView = CyclePickerView()
+    private let cyclePickerView:DLPickerView = {
+        let cyclePickerView = DLPickerView()
         cyclePickerView.backgroundColor = UIColor.brown
         return cyclePickerView
     }()

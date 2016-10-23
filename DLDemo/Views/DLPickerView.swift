@@ -1,5 +1,5 @@
 //
-//  CyclePickerView.swift
+//  DLPickerView
 //  DLDemo
 //
 //  Created by Dan.Lee on 2016/10/22.
@@ -8,6 +8,6 @@
 
 import UIKit
 
-class CyclePickerView: UIView {
+class DLPickerView: UIView {
     
 }

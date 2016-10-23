@@ -19,7 +19,7 @@
 		3772EC281DB8A58A009C5222 /* InfiniteScrollViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3772EC271DB8A58A009C5222 /* InfiniteScrollViewController.swift */; };
 		3772EC2A1DB8A5C7009C5222 /* InfiniteScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3772EC291DB8A5C7009C5222 /* InfiniteScrollView.swift */; };
 		37D59C751DBB3368005033F7 /* CyclePickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37D59C741DBB3368005033F7 /* CyclePickerViewController.swift */; };
-		37D59C771DBB339D005033F7 /* CyclePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37D59C761DBB339D005033F7 /* CyclePickerView.swift */; };
+		37D59C771DBB339D005033F7 /* DLPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37D59C761DBB339D005033F7 /* DLPickerView.swift */; };
 		37D59C791DBB34EE005033F7 /* DLTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37D59C781DBB34EE005033F7 /* DLTableView.swift */; };
 		37D59C7B1DBB350F005033F7 /* CycleTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37D59C7A1DBB350F005033F7 /* CycleTableViewController.swift */; };
 		A045222E1DB9A6D7006FC360 /* UIView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A045222D1DB9A6D7006FC360 /* UIView+Extension.swift */; };
@@ -40,7 +40,7 @@
 		3772EC271DB8A58A009C5222 /* InfiniteScrollViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = InfiniteScrollViewController.swift; path = ViewControllers/InfiniteScrollViewController.swift; sourceTree = "<group>"; };
 		3772EC291DB8A5C7009C5222 /* InfiniteScrollView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = InfiniteScrollView.swift; path = Views/InfiniteScrollView.swift; sourceTree = "<group>"; };
 		37D59C741DBB3368005033F7 /* CyclePickerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CyclePickerViewController.swift; path = ViewControllers/CyclePickerViewController.swift; sourceTree = "<group>"; };
-		37D59C761DBB339D005033F7 /* CyclePickerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CyclePickerView.swift; path = Views/CyclePickerView.swift; sourceTree = "<group>"; };
+		37D59C761DBB339D005033F7 /* DLPickerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DLPickerView.swift; path = Views/DLPickerView.swift; sourceTree = "<group>"; };
 		37D59C781DBB34EE005033F7 /* DLTableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DLTableView.swift; path = Views/DLTableView.swift; sourceTree = "<group>"; };
 		37D59C7A1DBB350F005033F7 /* CycleTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CycleTableViewController.swift; path = ViewControllers/CycleTableViewController.swift; sourceTree = "<group>"; };
 		A045222D1DB9A6D7006FC360 /* UIView+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "UIView+Extension.swift"; path = "Extension/UIKit/UIView+Extension.swift"; sourceTree = "<group>"; };
@@ -106,7 +106,7 @@
 				371019101DB324690046B359 /* ImageSliderView.swift */,
 				3772EC291DB8A5C7009C5222 /* InfiniteScrollView.swift */,
 				37D59C781DBB34EE005033F7 /* DLTableView.swift */,
-				37D59C761DBB339D005033F7 /* CyclePickerView.swift */,
+				37D59C761DBB339D005033F7 /* DLPickerView.swift */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -213,7 +213,7 @@
 				3772EC2A1DB8A5C7009C5222 /* InfiniteScrollView.swift in Sources */,
 				3772EC281DB8A58A009C5222 /* InfiniteScrollViewController.swift in Sources */,
 				37D59C7B1DBB350F005033F7 /* CycleTableViewController.swift in Sources */,
-				37D59C771DBB339D005033F7 /* CyclePickerView.swift in Sources */,
+				37D59C771DBB339D005033F7 /* DLPickerView.swift in Sources */,
 				3710190E1DB31E210046B359 /* FirstViewController.swift in Sources */,
 				A045222E1DB9A6D7006FC360 /* UIView+Extension.swift in Sources */,
 				371019141DB32F990046B359 /* Array+Extension.swift in Sources */,

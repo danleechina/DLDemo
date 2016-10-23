@@ -8,6 +8,11 @@
 
 import UIKit
 
+enum DLTableViewScrollDirection {
+    case Vertical
+    case Horizontal
+}
+
 @objc protocol DLTableViewDelegate : NSObjectProtocol, UIScrollViewDelegate{
     @objc func tableView(_ tableView: DLTableView,  heightForRowAt indexPath: IndexPath) -> CGFloat
 }
@@ -206,7 +211,14 @@ class DLTableView: UIScrollView {
     }
     
     fileprivate func setAppearance() {
-        contentSize = CGSize(width: self.frame.width, height: self.frame.height * 5000)
+        switch scrollDirection {
+        case .Vertical:
+            contentSize = CGSize(width: self.frame.width, height: self.frame.height * 5000)
+            break
+        case .Horizontal:
+            contentSize = CGSize(width: self.frame.width * 5000, height: self.frame.height)
+            break
+        }
         contentOffset = CGPoint(x: 0, y: 0)
         containerView.frame = CGRect(x: 0, y: 0, width: contentSize.width, height: contentSize.height)
         reuseCellsInVerticalSet.removeAll()
@@ -245,6 +257,11 @@ class DLTableView: UIScrollView {
     // dataSource can not be nil or crash
     weak var dataSource: DLTableViewDataSource?
     var enableCycleScroll = false {
+        didSet {
+            setAppearance()
+        }
+    }
+    var scrollDirection = DLTableViewScrollDirection.Vertical {
         didSet {
             setAppearance()
         }

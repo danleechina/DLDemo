@@ -32,6 +32,9 @@ class CycleTableViewController: UIViewController {
         button.setTitleColor(UIColor.blue, for: .normal)
         button.frame = CGRect(x: self.view.frame.width/2 - 100, y: self.view.frame.height - 50, width: 200, height: 55)
         self.view.addSubview(button)
+        /*
+         Attention: I still don't know why I should set this so the DLTableView can work perfectly
+         */
         self.automaticallyAdjustsScrollViewInsets = false
     }
     
