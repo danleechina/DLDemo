@@ -15,6 +15,7 @@ enum DLTableViewScrollDirection {
 
 @objc protocol DLTableViewDelegate : NSObjectProtocol, UIScrollViewDelegate{
     @objc func tableView(_ tableView: DLTableView,  heightForRowAt indexPath: IndexPath) -> CGFloat
+    @objc func tableView(_ tableView: DLTableView,  widthForRowAt indexPath: IndexPath) -> CGFloat
 }
 
 protocol DLTableViewDataSource: class {
@@ -57,8 +58,7 @@ class DLTableView: UIScrollView {
     override func layoutSubviews() {
         super.layoutSubviews()
         recenterIfNecessary()
-        let visibleBounds = convert(bounds, to: containerView)
-        tileCells(fromMinY: visibleBounds.minY, toMaxY: visibleBounds.maxY)
+        tileCells(inVisibleBounds: convert(bounds, to: containerView))
     }
     
     fileprivate func recenterIfNecessary() {
@@ -66,43 +66,53 @@ class DLTableView: UIScrollView {
             return
         }
         let currentOffset = contentOffset
-        let contentHeight = contentSize.height
-        let centerOffsetY = (contentHeight - bounds.height) / 2
-        let distanceFromCenterY = fabs(currentOffset.y - centerOffsetY)
+        let contentLength = scrollDirection == .Vertical ? contentSize.height : contentSize.width
+        let centerOffsetXOrY = (contentLength - (scrollDirection == .Vertical ? bounds.height : bounds.width)) / 2
+        let distanceFromCenterXOrY = fabs((scrollDirection == .Vertical ? currentOffset.y : currentOffset.x) - centerOffsetXOrY)
         
-        if distanceFromCenterY > (contentHeight / 4) {
-            contentOffset = CGPoint(x: currentOffset.x, y: centerOffsetY)
+        if distanceFromCenterXOrY > (contentLength / 4) {
+            contentOffset = scrollDirection == .Vertical ? CGPoint(x: currentOffset.x, y: centerOffsetXOrY) : CGPoint(x: centerOffsetXOrY, y: currentOffset.y)
             for cell in visibileCells {
                 var center = containerView.convert(cell.center, to: self)
-                center.y += (centerOffsetY - currentOffset.y)
+                if scrollDirection == .Vertical {
+                    center.y += (centerOffsetXOrY - currentOffset.y)
+                } else {
+                    center.x += (centerOffsetXOrY - currentOffset.x)
+                }
                 cell.center = convert(center, to: containerView)
             }
         }
     }
     
-    fileprivate func tileCells(fromMinY minY: CGFloat, toMaxY maxY: CGFloat) {
+    fileprivate func tileCells(inVisibleBounds visibleBounds: CGRect) {
+        
+        let minXOrY = scrollDirection == .Vertical ? visibleBounds.minY : visibleBounds.minX
+        let maxXOrY = scrollDirection == .Vertical ? visibleBounds.maxY : visibleBounds.maxX
+        
         if visibileCells.isEmpty {
-            _ = placeNewCellOnBottom(bottomEdge: minY)
+            _ = placeNewCell(onNextEdge: minXOrY)
         }
         
         var lastCell = visibileCells.last!
-        var bottomEdge = lastCell.frame.maxY
-        while bottomEdge < maxY {
-            bottomEdge = placeNewCellOnBottom(bottomEdge: bottomEdge)
+        var nextEdge = scrollDirection == .Vertical ? lastCell.frame.maxY : lastCell.frame.maxX
+        while nextEdge < maxXOrY {
+            nextEdge = placeNewCell(onNextEdge: nextEdge)
         }
         
-        if bottomEdge == CGFloat.greatestFiniteMagnitude {
-            contentSize = CGSize(width: contentSize.width, height: visibileCells.last!.frame.maxY)
+        if nextEdge == CGFloat.greatestFiniteMagnitude {
+            contentSize = scrollDirection == .Vertical ?
+                CGSize(width: contentSize.width, height: visibileCells.last!.frame.maxY) :
+                CGSize(width: visibileCells.last!.frame.maxX, height: contentSize.height)
         }
         
         var headCell = visibileCells.first!
-        var topEdge = headCell.frame.minY
-        while topEdge > minY {
-            topEdge = placeNewCellOnTop(topEdge: topEdge)
+        var previousEdge = scrollDirection == .Vertical ? headCell.frame.minY : headCell.frame.minX
+        while previousEdge > minXOrY {
+            previousEdge = placeNewCell(onPreviousEdge: previousEdge)
         }
         
         lastCell = visibileCells.last!
-        while lastCell.frame.origin.y > maxY {
+        while (scrollDirection == .Vertical ? lastCell.frame.origin.y : lastCell.frame.origin.x) > maxXOrY {
             lastCell.removeFromSuperview()
             visibileCellsIndexPath.removeLast()
             reuseCellsSet.insert(visibileCells.removeLast())
@@ -117,7 +127,7 @@ class DLTableView: UIScrollView {
         }
         
         headCell = visibileCells.first!
-        while headCell.frame.maxY < minY {
+        while (scrollDirection == .Vertical ? headCell.frame.maxY : headCell.frame.maxX) < minXOrY {
             headCell.removeFromSuperview()
             visibileCellsIndexPath.removeFirst()
             reuseCellsSet.insert(visibileCells.removeFirst())
@@ -128,7 +138,7 @@ class DLTableView: UIScrollView {
         }
     }
     
-    fileprivate func placeNewCellOnBottom(bottomEdge: CGFloat) -> CGFloat {
+    fileprivate func placeNewCell(onNextEdge nextEdge: CGFloat) -> CGFloat {
         
         var indexPath = IndexPath.init(row: 0, section: 0)
         if visibileCellsIndexPath.isEmpty {
@@ -150,19 +160,29 @@ class DLTableView: UIScrollView {
         visibileCells.append(view)
         
         var frame = view.frame
-        frame.origin.y = bottomEdge
-        frame.origin.x = 0
-        frame.size.width = self.frame.width
-        frame.size.height = 40
-        if let delegate = self.tableViewDelegate {
-            frame.size.height = delegate.tableView(self, heightForRowAt: indexPath)
+        if scrollDirection == .Vertical {
+            frame.origin.y = nextEdge
+            frame.origin.x = 0
+            frame.size.width = self.frame.width
+            frame.size.height = 40
+            if let delegate = self.tableViewDelegate {
+                frame.size.height = delegate.tableView(self, heightForRowAt: indexPath)
+            }
+        } else {
+            frame.origin.y = 0
+            frame.origin.x = nextEdge
+            frame.size.width = 40
+            frame.size.height = self.frame.height
+            if let delegate = self.tableViewDelegate {
+                frame.size.width = delegate.tableView(self, widthForRowAt: indexPath)
+            }
         }
         view.frame = frame
         
-        return frame.maxY
+        return scrollDirection == .Vertical ? frame.maxY : frame.maxX
     }
     
-    fileprivate func placeNewCellOnTop(topEdge: CGFloat) -> CGFloat {
+    fileprivate func placeNewCell(onPreviousEdge previousEdge: CGFloat) -> CGFloat {
         
         var indexPath = IndexPath.init(row: 0, section: 0)
         if visibileCellsIndexPath.isEmpty {
@@ -184,16 +204,26 @@ class DLTableView: UIScrollView {
         visibileCells.insert(view, at: 0)
         
         var frame = view.frame
-        frame.origin.x = 0
-        frame.size.width = self.frame.width
-        frame.size.height = 40
-        if let delegate = self.tableViewDelegate {
-            frame.size.height = delegate.tableView(self, heightForRowAt: indexPath)
+        if scrollDirection == .Vertical {
+            frame.origin.x = 0
+            frame.size.width = self.frame.width
+            frame.size.height = 40
+            if let delegate = self.tableViewDelegate {
+                frame.size.height = delegate.tableView(self, heightForRowAt: indexPath)
+            }
+            frame.origin.y = previousEdge - frame.height
+        } else {
+            frame.origin.y = 0
+            frame.size.width = 40
+            frame.size.height = self.frame.height
+            if let delegate = self.tableViewDelegate {
+                frame.size.width = delegate.tableView(self, widthForRowAt: indexPath)
+            }
+            frame.origin.x = previousEdge - frame.width
         }
-        frame.origin.y = topEdge - frame.height
         view.frame = frame
         
-        return frame.minY
+        return scrollDirection == .Vertical ? frame.minY : frame.minX
     }
     
     
