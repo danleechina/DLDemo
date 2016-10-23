@@ -1,5 +1,5 @@
 //
-//  CycleTableViewController.swift
+//  DLTableViewController.swift
 //  DLDemo
 //
 //  Created by Dan.Lee on 2016/10/22.
@@ -11,33 +11,47 @@ import UIKit
 class CycleTableViewController: UIViewController {
 
     
-//    private let cycleTableView:CycleTableView = {
-//        return cycleTableView
-//    }()
+    private lazy var tableView:DLTableView = {
+        let tableView = DLTableView()
+        tableView.delegate = self
+        tableView.dataSource = self
+        tableView.backgroundColor = UIColor.brown
+        tableView.frame = CGRect(x: 10, y: 100, width: self.view.frame.width - 20, height: self.view.frame.height - 150)
+        return tableView
+    }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let cycleTableView = CycleTableView()
-        cycleTableView.delegate = self
-        cycleTableView.dataSource = self
-        cycleTableView.backgroundColor = UIColor.brown
-        cycleTableView.frame = CGRect(x: 10, y: 100, width: self.view.frame.width - 20, height: self.view.frame.height - 150)
-        
-        
-        self.view.addSubview(cycleTableView)
+        self.view.addSubview(tableView)
         self.view.backgroundColor = UIColor.lightGray
-        //        let button = UIButton()
+        
+        let button = UIButton()
+        button.addTarget(self, action: #selector(buttonTapped(sender:)), for: .touchUpInside)
+        button.setTitle("改成循环滚动", for: .normal)
+        button.setTitleColor(UIColor.blue, for: .normal)
+        button.frame = CGRect(x: self.view.frame.width/2 - 100, y: self.view.frame.height - 50, width: 200, height: 55)
+        self.view.addSubview(button)
+        self.automaticallyAdjustsScrollViewInsets = false
+    }
+    
+    func buttonTapped(sender: UIButton) {
+        tableView.enableCycleScroll = !tableView.enableCycleScroll
+        if tableView.enableCycleScroll {
+            sender.setTitle("改成非循环滚动", for: .normal)
+        } else {
+            sender.setTitle("改成循环滚动", for: .normal)
+        }
     }
 }
 
-extension CycleTableViewController: CycleTableViewDelegate, CycleTableViewDataSource {
+extension CycleTableViewController: DLTableViewDelegate, DLTableViewDataSource {
     // dataSource
-    func tableView(_ tableView: CycleTableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: DLTableView, numberOfRowsInSection section: Int) -> Int {
         return 30
     }
     
-    func tableView(_ tableView: CycleTableView, cellForRowAt indexPath: IndexPath) -> CycleTableViewCell {
+    func tableView(_ tableView: DLTableView, cellForRowAt indexPath: IndexPath) -> DLTableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "HelloCell")
         cell.titleLabel.text = "This is the \(indexPath.row)th"
         return cell
@@ -45,7 +59,7 @@ extension CycleTableViewController: CycleTableViewDelegate, CycleTableViewDataSo
     
     // delegate
     
-    func tableView(_ tableView: CycleTableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+    func tableView(_ tableView: DLTableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 64
     }
 }

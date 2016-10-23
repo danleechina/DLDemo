@@ -1,5 +1,5 @@
 //
-//  CycleTableView.swift
+//  DLTableView.swift
 //  DLDemo
 //
 //  Created by Dan.Lee on 2016/10/22.
@@ -8,16 +8,16 @@
 
 import UIKit
 
-@objc protocol CycleTableViewDelegate : NSObjectProtocol, UIScrollViewDelegate{
-    @objc func tableView(_ tableView: CycleTableView,  heightForRowAt indexPath: IndexPath) -> CGFloat
+@objc protocol DLTableViewDelegate : NSObjectProtocol, UIScrollViewDelegate{
+    @objc func tableView(_ tableView: DLTableView,  heightForRowAt indexPath: IndexPath) -> CGFloat
 }
 
-protocol CycleTableViewDataSource: class {
-    func tableView(_ tableView: CycleTableView, cellForRowAt indexPath: IndexPath) -> CycleTableViewCell
-    func tableView(_ tableView: CycleTableView, numberOfRowsInSection section: Int) -> Int
+protocol DLTableViewDataSource: class {
+    func tableView(_ tableView: DLTableView, cellForRowAt indexPath: IndexPath) -> DLTableViewCell
+    func tableView(_ tableView: DLTableView, numberOfRowsInSection section: Int) -> Int
 }
 
-class CycleTableViewCell: UIView {
+class DLTableViewCell: UIView {
     var reuseID: String?
     var titleLabel: UILabel = {
         let label = UILabel()
@@ -42,11 +42,11 @@ class CycleTableViewCell: UIView {
     
 }
 
-class CycleTableView: UIScrollView {
+class DLTableView: UIScrollView {
 
-    fileprivate var visibileCellsInVertical = Array<CycleTableViewCell>()
+    fileprivate var visibileCellsInVertical = Array<DLTableViewCell>()
     fileprivate var visibileCellsIndexPath = Array<IndexPath>()
-    fileprivate var reuseCellsInVerticalSet = Set<CycleTableViewCell>()
+    fileprivate var reuseCellsInVerticalSet = Set<DLTableViewCell>()
     fileprivate var containerView = UIView()
     
     override func layoutSubviews() {
@@ -149,7 +149,7 @@ class CycleTableView: UIScrollView {
         frame.origin.x = 0
         frame.size.width = self.frame.width
         frame.size.height = 40
-        if let delegate = self.cycleTableViewDelegate {
+        if let delegate = self.tableViewDelegate {
             frame.size.height = delegate.tableView(self, heightForRowAt: indexPath)
         }
         view.frame = frame
@@ -182,7 +182,7 @@ class CycleTableView: UIScrollView {
         frame.origin.x = 0
         frame.size.width = self.frame.width
         frame.size.height = 40
-        if let delegate = self.cycleTableViewDelegate {
+        if let delegate = self.tableViewDelegate {
             frame.size.height = delegate.tableView(self, heightForRowAt: indexPath)
         }
         frame.origin.y = topEdge - frame.height
@@ -192,7 +192,7 @@ class CycleTableView: UIScrollView {
     }
     
     
-    func insertCellInVertical(withIndexPath indexPath: IndexPath) -> CycleTableViewCell {
+    func insertCellInVertical(withIndexPath indexPath: IndexPath) -> DLTableViewCell {
         if let ds = self.dataSource {
             let cell = ds.tableView(self, cellForRowAt: indexPath)
             cell.frame = CGRect(x: 0, y: 0, width: 60, height: 100)
@@ -201,7 +201,7 @@ class CycleTableView: UIScrollView {
         } else {
             // ds should not be nil
             assert(false)
-            return CycleTableViewCell()
+            return DLTableViewCell()
         }
     }
     
@@ -212,6 +212,8 @@ class CycleTableView: UIScrollView {
         reuseCellsInVerticalSet.removeAll()
         visibileCellsIndexPath.removeAll()
         visibileCellsInVertical.removeAll()
+        containerView.removeAllSubviews()
+        setNeedsLayout()
     }
     
     override var frame: CGRect {
@@ -233,30 +235,30 @@ class CycleTableView: UIScrollView {
     
     override weak var delegate: UIScrollViewDelegate? {
         get {
-            return cycleTableViewDelegate
+            return tableViewDelegate
         }
         set {
-            self.cycleTableViewDelegate = newValue as? CycleTableViewDelegate
+            self.tableViewDelegate = newValue as? DLTableViewDelegate
         }
     }
-    fileprivate weak var cycleTableViewDelegate: CycleTableViewDelegate?
+    fileprivate weak var tableViewDelegate: DLTableViewDelegate?
     // dataSource can not be nil or crash
-    weak var dataSource: CycleTableViewDataSource?
+    weak var dataSource: DLTableViewDataSource?
     var enableCycleScroll = false {
         didSet {
-            
+            setAppearance()
         }
     }
     
     
-    func dequeueReusableCell(withIdentifier identifier: String) -> CycleTableViewCell {
+    func dequeueReusableCell(withIdentifier identifier: String) -> DLTableViewCell {
         for cell in reuseCellsInVerticalSet {
             if cell.reuseID == identifier {
                 reuseCellsInVerticalSet.remove(cell)
                 return cell
             }
         }
-        let cell = CycleTableViewCell()
+        let cell = DLTableViewCell()
         cell.reuseID = identifier
         return cell
     }
