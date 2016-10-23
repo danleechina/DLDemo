@@ -49,19 +49,19 @@ class DLTableViewCell: UIView {
 
 class DLTableView: UIScrollView {
 
-    fileprivate var visibileCellsInVertical = Array<DLTableViewCell>()
+    fileprivate var visibileCells = Array<DLTableViewCell>()
     fileprivate var visibileCellsIndexPath = Array<IndexPath>()
-    fileprivate var reuseCellsInVerticalSet = Set<DLTableViewCell>()
+    fileprivate var reuseCellsSet = Set<DLTableViewCell>()
     fileprivate var containerView = UIView()
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        recenterInVerticalIfNecessary()
+        recenterIfNecessary()
         let visibleBounds = convert(bounds, to: containerView)
-        tileCellsInVertical(fromMinY: visibleBounds.minY, toMaxY: visibleBounds.maxY)
+        tileCells(fromMinY: visibleBounds.minY, toMaxY: visibleBounds.maxY)
     }
     
-    fileprivate func recenterInVerticalIfNecessary() {
+    fileprivate func recenterIfNecessary() {
         if !enableCycleScroll {
             return
         }
@@ -72,7 +72,7 @@ class DLTableView: UIScrollView {
         
         if distanceFromCenterY > (contentHeight / 4) {
             contentOffset = CGPoint(x: currentOffset.x, y: centerOffsetY)
-            for cell in visibileCellsInVertical {
+            for cell in visibileCells {
                 var center = containerView.convert(cell.center, to: self)
                 center.y += (centerOffsetY - currentOffset.y)
                 cell.center = convert(center, to: containerView)
@@ -80,51 +80,51 @@ class DLTableView: UIScrollView {
         }
     }
     
-    fileprivate func tileCellsInVertical(fromMinY minY: CGFloat, toMaxY maxY: CGFloat) {
-        if visibileCellsInVertical.isEmpty {
+    fileprivate func tileCells(fromMinY minY: CGFloat, toMaxY maxY: CGFloat) {
+        if visibileCells.isEmpty {
             _ = placeNewCellOnBottom(bottomEdge: minY)
         }
         
-        var lastCell = visibileCellsInVertical.last!
+        var lastCell = visibileCells.last!
         var bottomEdge = lastCell.frame.maxY
         while bottomEdge < maxY {
             bottomEdge = placeNewCellOnBottom(bottomEdge: bottomEdge)
         }
         
         if bottomEdge == CGFloat.greatestFiniteMagnitude {
-            contentSize = CGSize(width: contentSize.width, height: visibileCellsInVertical.last!.frame.maxY)
+            contentSize = CGSize(width: contentSize.width, height: visibileCells.last!.frame.maxY)
         }
         
-        var headCell = visibileCellsInVertical.first!
+        var headCell = visibileCells.first!
         var topEdge = headCell.frame.minY
         while topEdge > minY {
             topEdge = placeNewCellOnTop(topEdge: topEdge)
         }
         
-        lastCell = visibileCellsInVertical.last!
+        lastCell = visibileCells.last!
         while lastCell.frame.origin.y > maxY {
             lastCell.removeFromSuperview()
             visibileCellsIndexPath.removeLast()
-            reuseCellsInVerticalSet.insert(visibileCellsInVertical.removeLast())
-            if visibileCellsInVertical.isEmpty {
+            reuseCellsSet.insert(visibileCells.removeLast())
+            if visibileCells.isEmpty {
                 break
             }
-            lastCell = visibileCellsInVertical.last!
+            lastCell = visibileCells.last!
         }
         
-        if visibileCellsInVertical.isEmpty {
+        if visibileCells.isEmpty {
             return
         }
         
-        headCell = visibileCellsInVertical.first!
+        headCell = visibileCells.first!
         while headCell.frame.maxY < minY {
             headCell.removeFromSuperview()
             visibileCellsIndexPath.removeFirst()
-            reuseCellsInVerticalSet.insert(visibileCellsInVertical.removeFirst())
-            if visibileCellsInVertical.isEmpty {
+            reuseCellsSet.insert(visibileCells.removeFirst())
+            if visibileCells.isEmpty {
                 break
             }
-            headCell = visibileCellsInVertical.first!
+            headCell = visibileCells.first!
         }
     }
     
@@ -146,8 +146,8 @@ class DLTableView: UIScrollView {
             visibileCellsIndexPath.append(indexPath)
         }
         
-        let view = insertCellInVertical(withIndexPath: indexPath)
-        visibileCellsInVertical.append(view)
+        let view = insertCell(withIndexPath: indexPath)
+        visibileCells.append(view)
         
         var frame = view.frame
         frame.origin.y = bottomEdge
@@ -180,8 +180,8 @@ class DLTableView: UIScrollView {
             visibileCellsIndexPath.insert(indexPath, at: 0)
         }
         
-        let view = insertCellInVertical(withIndexPath: indexPath)
-        visibileCellsInVertical.insert(view, at: 0)
+        let view = insertCell(withIndexPath: indexPath)
+        visibileCells.insert(view, at: 0)
         
         var frame = view.frame
         frame.origin.x = 0
@@ -197,7 +197,7 @@ class DLTableView: UIScrollView {
     }
     
     
-    func insertCellInVertical(withIndexPath indexPath: IndexPath) -> DLTableViewCell {
+    func insertCell(withIndexPath indexPath: IndexPath) -> DLTableViewCell {
         if let ds = self.dataSource {
             let cell = ds.tableView(self, cellForRowAt: indexPath)
             cell.frame = CGRect(x: 0, y: 0, width: 60, height: 100)
@@ -221,9 +221,9 @@ class DLTableView: UIScrollView {
         }
         contentOffset = CGPoint(x: 0, y: 0)
         containerView.frame = CGRect(x: 0, y: 0, width: contentSize.width, height: contentSize.height)
-        reuseCellsInVerticalSet.removeAll()
+        reuseCellsSet.removeAll()
         visibileCellsIndexPath.removeAll()
-        visibileCellsInVertical.removeAll()
+        visibileCells.removeAll()
         containerView.removeAllSubviews()
         setNeedsLayout()
     }
@@ -269,9 +269,9 @@ class DLTableView: UIScrollView {
     
     
     func dequeueReusableCell(withIdentifier identifier: String) -> DLTableViewCell {
-        for cell in reuseCellsInVerticalSet {
+        for cell in reuseCellsSet {
             if cell.reuseID == identifier {
-                reuseCellsInVerticalSet.remove(cell)
+                reuseCellsSet.remove(cell)
                 return cell
             }
         }
