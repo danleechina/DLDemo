@@ -14,6 +14,7 @@ class CycleTableViewController: UIViewController {
     private lazy var tableView:DLTableView = {
         let tableView = DLTableView()
         tableView.delegate = self
+        tableView.tableViewDelegate = self
         tableView.dataSource = self
         tableView.backgroundColor = UIColor.brown
         tableView.frame = CGRect(x: 10, y: 100, width: self.view.frame.width - 20, height: self.view.frame.height - 150)
@@ -72,10 +73,15 @@ extension CycleTableViewController: DLTableViewDelegate, DLTableViewDataSource {
         return 30
     }
     
-    func tableView(_ tableView: DLTableView, cellForRowAt indexPath: IndexPath) -> DLTableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "HelloCell")
-        cell.titleLabel.text = "This is the \(indexPath.row)th"
-        return cell
+    func tableView(_ tableView: DLTableView, cellForRowAt indexPath: IndexPath) -> DLTableViewCell? {
+        if let cell = tableView.dequeueReusableCell(withIdentifier: "HelloCell") {
+            cell.titleLabel.text = "This is the \(indexPath.row)th"
+            return cell
+        } else {
+            let cell = DLTableViewCell.init(style: .Default, reuseIdentifier: "HelloCell")
+            cell.titleLabel.text = "This is the \(indexPath.row)th"
+            return cell
+        }
     }
     
     // delegate
@@ -89,5 +95,10 @@ extension CycleTableViewController: DLTableViewDelegate, DLTableViewDataSource {
     
     func tableView(_ tableView: DLTableView, widthForRowAt indexPath: IndexPath) -> CGFloat {
         return 130
+    }
+    
+    func tableView(_ tableView: DLTableView, didSelectRowAt indexPath: IndexPath) {
+        print("tableView tap at = \(indexPath)")
+        tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
     }
 }

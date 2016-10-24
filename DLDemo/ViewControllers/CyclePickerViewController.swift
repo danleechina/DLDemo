@@ -20,25 +20,89 @@ class CyclePickerViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        cyclePickerView.frame = CGRect(x: 10, y: 100, width: self.view.frame.width - 20, height: self.view.frame.height - 150)
+        cyclePickerView.frame = CGRect(x: 10, y: 100, width: self.view.frame.width - 20, height: self.view.frame.width - 20)
         self.view.addSubview(cyclePickerView)
-        self.view.backgroundColor = UIColor.lightGray        
-//        let button = UIButton()
+        self.view.backgroundColor = UIColor.lightGray
+        
+        let button = UIButton()
+        button.addTarget(self, action: #selector(buttonTapped(sender:)), for: .touchUpInside)
+        button.setTitle("改变布局方式", for: .normal)
+        button.setTitleColor(UIColor.blue, for: .normal)
+        button.frame = CGRect(x: 10, y: self.view.frame.height - 50, width: 150, height: 55)
+        self.view.addSubview(button)
+    }
+    
+    func buttonTapped(sender: UIButton) {
+        switch cyclePickerView.layoutStyle {
+        case .Vertical:
+            cyclePickerView.layoutStyle = .Horizontal
+            sender.setTitle("改成垂直布局方式", for: .normal)
+            break
+        case .Horizontal:
+            cyclePickerView.layoutStyle = .Vertical
+            sender.setTitle("改成水平布局方式", for: .normal)
+            break
+        }
     }
 }
 
 extension CyclePickerViewController: DLPickerViewDataSource, DLPickerViewDelegate {
     // dataSource
     func numberOfComponents(in pickerView: DLPickerView) -> Int {
-        return 2
+        return 3
     }
     
     func pickerView(_ pickerView: DLPickerView, numberOfRowsInComponent component: Int) -> Int {
-        return 30
+        if component == 0 {
+            return 11
+        } else if component == 1 {
+            return 4
+        }
+        return 7
     }
     
     // delegate
     func enableCycleScroll(in pickerView: DLPickerView, forComponent component: Int) -> Bool {
+        if component == 0 {
+            return false
+        }
         return true
+    }
+    
+    func pickerView(_ pickerView: DLPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        return "r:\(row+1) c:\(component+1)"
+    }
+    
+    //    func pickerView(_ pickerView: DLPickerView, attributedTitleForRow row: Int, forComponent component: Int) -> NSAttributedString? {
+    //
+    //    }
+    //
+    //    func pickerView(_ pickerView: DLPickerView, viewForRow row: Int, forComponent component: Int, reusing view: UIView?) -> UIView {
+    //
+    //    }
+    
+    func pickerView(_ pickerView: DLPickerView, widthForComponent component: Int) -> CGFloat {
+        if component == 0 {
+            return 100
+        } else if component == 1 {
+            return 80
+        } else if component == 2 {
+            return 120
+        } else  {
+            return 0
+        }
+    }
+    
+    func pickerView(_ pickerView: DLPickerView, rowHeightForRow row: Int, inComponent component: Int) -> CGFloat {
+        if row == 2 && component == 1 {
+            return 10
+        } else if row == 2 && component == 0 {
+            return 150
+        }
+        return 64
+    }
+    
+    func pickerView(_ pickerView: DLPickerView, didSelectRow row: Int, inComponent component: Int) {
+        print("tap row=\(row+1) in component=\(component+1)")
     }
 }

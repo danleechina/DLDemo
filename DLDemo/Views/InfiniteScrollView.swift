@@ -205,9 +205,9 @@ class InfiniteScrollView: UIScrollView {
         if reuseCellsInVerticalSet.isEmpty {
             let label = UILabel()
             label.numberOfLines = 3
-            label.text = "1024 Block Street\nShaffer, CA\n95014"
+            label.text = "Hello there, this is made by Dan Lee"
             label.textColor = UIColor.blue
-            label.frame = CGRect(x: 0, y: 0, width: 50, height: 100)
+            label.frame = CGRect(x: 0, y: 0, width: 100, height: 150)
             view.addSubview(label)
         } else {
             view = reuseCellsInVerticalSet.removeFirst()
@@ -222,9 +222,9 @@ class InfiniteScrollView: UIScrollView {
         if reuseCellsInHorizontalSet.isEmpty {
             let label = UILabel()
             label.numberOfLines = 3
-            label.text = "1024 Block Street\nShaffer, CA\n95014"
+            label.text = "Hello there, this is made by Dan Lee"
             label.textColor = UIColor.blue
-            label.frame = CGRect(x: 0, y: 0, width: 50, height: 110)
+            label.frame = CGRect(x: 0, y: 0, width: 100, height: 150)
             view.addSubview(label)
         } else {
             view = reuseCellsInHorizontalSet.removeFirst()

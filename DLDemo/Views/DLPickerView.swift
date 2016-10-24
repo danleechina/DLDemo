@@ -40,7 +40,7 @@ protocol DLPickerViewDataSource : NSObjectProtocol {
     optional func pickerView(_ pickerView: DLPickerView, didSelectRow row: Int, inComponent component: Int)
     
     /*      ------------------------------------------------
-            Following methods are Specific for DLPickerView
+            Following methods are specific for DLPickerView
             ------------------------------------------------
      */
     
@@ -53,15 +53,41 @@ protocol DLPickerViewDataSource : NSObjectProtocol {
     optional func pickerView(_ pickerView: DLPickerView, rowHeightForRow row: Int, inComponent component: Int) -> CGFloat
 }
 
+enum DLPickerViewLayoutStyle {
+    case Vertical
+    case Horizontal
+}
+
+enum DLPickerViewStyle {
+    case System
+    case Custom
+}
+
+class DLPickerViewInternalCell: DLTableViewCell {
+    var customView = UIView()
+    
+    override var frame: CGRect {
+        didSet {
+            titleLabel.frame = CGRect(x: self.frame.width/4, y: 0, width: self.frame.width/2, height: self.frame.height)
+            customView.frame = CGRect(x: 0, y: 0, width: self.frame.width, height: self.frame.height)
+        }
+    }
+    
+    override init(style: DLTableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        addSubview(customView)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
 class DLPickerView : UIView {
     
     weak var dataSource: DLPickerViewDataSource? {// default is nil. weak reference
         didSet {
-            if let ds = self.dataSource {
-                self.numberOfComponents = ds.numberOfComponents(in: self)
-            } else {
-                self.numberOfComponents = 0
-            }
+            setAppearance()
         }
     }
     
@@ -78,19 +104,36 @@ class DLPickerView : UIView {
                 let tableView = DLTableView()
                 tableView.tag = index
                 tableView.delegate = self
+                tableView.tableViewDelegate = self
                 tableView.dataSource = self
                 if let enableCycleScroll = self.delegate?.enableCycleScroll?(in: self, forComponent: index) {
                     tableView.enableCycleScroll = enableCycleScroll
                 } else {
                     tableView.enableCycleScroll = false
                 }
+                var frame = tableView.frame
                 if let width = self.delegate?.pickerView?(self, widthForComponent: index) {
-                    tableView.frame.size.width = width
+                    frame.size.width = width
+                    frame.origin.x = self.tableViews.last?.frame.maxX ?? 0
                 } else {
-                    tableView.frame.size.width = self.frame.width / CGFloat(numberOfComponents)
+                    frame.size.width = self.frame.width / CGFloat(numberOfComponents)
+                    frame.origin.x = CGFloat(index) * self.frame.width / CGFloat(numberOfComponents)
                 }
+                frame.origin.y = 0
+                frame.size.height = self.frame.height
+                tableView.frame = frame
                 self.tableViews.append(tableView)
                 self.containerView.addSubview(tableView)
+                
+                if index == 0 {
+                    tableView.backgroundColor = UIColor.white
+                } else if index == 1 {
+                    tableView.backgroundColor = UIColor.green
+                } else if index == 2 {
+                    tableView.backgroundColor = UIColor.red
+                } else if index == 3 {
+                    tableView.backgroundColor = UIColor.purple
+                }
             }
         }
     }
@@ -110,16 +153,20 @@ class DLPickerView : UIView {
     // or nil if the row/component is not visible or the delegate does not implement
     // pickerView:viewForRow:forComponent:reusingView:
     func view(forRow row: Int, forComponent component: Int) -> UIView? {
-        return nil
+        let cachedCustomView = cachedCustomViews["\(component)=\(row)"]
+        if cachedCustomView?.superview == nil {
+            return nil
+        }
+        return cachedCustomView
     }
     
     // Reloading whole view or single component
     func reloadAllComponents() {
-        
+        setAppearance()
     }
     
     func reloadComponent(_ component: Int) {
-        
+        setAppearance()
     }
     
     // selection. in this case, it means showing the appropriate row in the middle
@@ -134,6 +181,7 @@ class DLPickerView : UIView {
     override var frame: CGRect {
         didSet {
             containerView.frame = CGRect(x: 0, y: 0, width: frame.width, height: frame.height)
+            setAppearance()
         }
     }
     
@@ -151,7 +199,31 @@ class DLPickerView : UIView {
     fileprivate var tableViews = Array<DLTableView>()
     fileprivate var containerView = UIView()
     fileprivate static let DefaultRowHeight:CGFloat = 44
+    fileprivate var cachedCustomViews = Dictionary<String, UIView>()
+    var layoutStyle = DLPickerViewLayoutStyle.Horizontal {
+        didSet {
+            // This is ugly but simple, and everything inside is transformed. typically, you'd better not use it.
+            // If you really want a vertical layout, you should be careful about the transformed content.
+            // You can anti-transform a square content when you set.
+            switch layoutStyle {
+            case .Horizontal:
+                self.transform = CGAffineTransform(rotationAngle: 0)
+                break
+            case .Vertical:
+                self.transform = CGAffineTransform(rotationAngle: CGFloat(M_PI/2 * 3))
+                break
+            }
+        }
+    }
     
+    
+    fileprivate func setAppearance() {
+        if let ds = self.dataSource {
+            self.numberOfComponents = ds.numberOfComponents(in: self)
+        } else {
+            self.numberOfComponents = 0
+        }
+    }
 }
 
 extension DLPickerView: DLTableViewDelegate, DLTableViewDataSource {
@@ -160,9 +232,43 @@ extension DLPickerView: DLTableViewDelegate, DLTableViewDataSource {
         return self.numberOfRows(inComponent: tableView.tag)
     }
     
-    func tableView(_ tableView: DLTableView, cellForRowAt indexPath: IndexPath) -> DLTableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "HelloCell")
-        cell.titleLabel.text = "r:\(indexPath.row) c:\(tableView.tag)"
+    func tableView(_ tableView: DLTableView, cellForRowAt indexPath: IndexPath) -> DLTableViewCell? {
+        var temp = tableView.dequeueReusableCell(withIdentifier: "HelloCell") as? DLPickerViewInternalCell
+        if temp == nil {
+            temp = DLPickerViewInternalCell.init(style: .Default, reuseIdentifier: "HelloCell")
+        }
+        let cell = temp!
+        
+        let cachedCustomView = cachedCustomViews["\(tableView.tag)=\(indexPath.row)"]
+        if let arrtTitle = self.delegate?.pickerView?(self, attributedTitleForRow: indexPath.row, forComponent: tableView.tag) {
+            cell.titleLabel.isHidden = false
+            cell.customView.isHidden = true
+            cell.titleLabel.attributedText = arrtTitle
+        } else if let title = self.delegate?.pickerView?(self, titleForRow: indexPath.row, forComponent: tableView.tag) {
+            cell.titleLabel.isHidden = false
+            cell.customView.isHidden = true
+            cell.titleLabel.text = title
+        } else if let view = self.delegate?.pickerView?(self, viewForRow: indexPath.row, forComponent: tableView.tag, reusing: cachedCustomView) {
+            if cachedCustomView != view {
+                // FIX: if there are too many rows in the component, memory usage will be high.
+                cachedCustomViews["\(tableView.tag)=\(indexPath.row)"] = view
+            }
+            view.frame.origin.x = tableView.frame.width/2 - view.frame.width/2
+            if let height = self.delegate?.pickerView?(self, rowHeightForComponent: tableView.tag) {
+                view.frame.origin.y = height/2 - view.frame.height/2
+            } else if let height = self.delegate?.pickerView?(self, rowHeightForRow: indexPath.row, inComponent: tableView.tag) {
+                view.frame.origin.y = height/2 - view.frame.height/2
+            } else {
+                view.frame.origin.y = DLPickerView.DefaultRowHeight/2 - view.frame.height/2
+            }
+            cell.titleLabel.isHidden = true
+            cell.customView.isHidden = false
+            cell.customView.removeAllSubviews()
+            cell.customView.addSubview(view)
+        } else {
+            assert(false)
+        }
+        cell.titleLabel.font = UIFont.systemFont(ofSize: 13)
         return cell
     }
     
@@ -176,4 +282,40 @@ extension DLPickerView: DLTableViewDelegate, DLTableViewDataSource {
         }
         return DLPickerView.DefaultRowHeight
     }
+    
+    func tableView(_ tableView: DLTableView, didSelectRowAt indexPath: IndexPath) {
+        self.delegate?.pickerView?(self, didSelectRow: indexPath.row, inComponent: tableView.tag)
+    }
+    
+    // scrollview delegate
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        print("scroll did scroll")
+    }
+    
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        
+    }
+    
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        if !decelerate {
+            let tableView = scrollView as! DLTableView
+            if let indexPath = tableView.visibileCellsIndexPath.getMiddleElement() {
+                tableView.scrollToRow(at: indexPath, at: .middle, animated: true)
+            }
+        }
+    }
+    
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        let tableView = scrollView as! DLTableView
+        if let indexPath = tableView.visibileCellsIndexPath.getMiddleElement() {
+            tableView.scrollToRow(at: indexPath, at: .middle, animated: true)
+        }
+    }
+    
+//    func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
+//        let tableView = scrollView as! DLTableView
+//        if let indexPath = tableView.visibileCellsIndexPath.getMiddleElement() {
+//            tableView.scrollToRow(at: indexPath, animated: true)
+//        }
+//    }
 }

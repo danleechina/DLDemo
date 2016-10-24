@@ -10,7 +10,7 @@ import UIKit
 
 class HomeTableViewController: UITableViewController {
 
-    private let titles: Array<String> = ["可配置滚动图片", "可配置无限循环滚动 ScrollView", "可配置无限循环滚动 TableView", "可配置无限循环滚动 PickerView"]
+    private let titles: Array<String> = ["可配置滚动图片", "可配置方向的无限循环滚动 ScrollView", "配置方向、无限循环滚动 TableView", "配置方向、无限循环滚动 PickerView"]
     private let detailTexts: Array<String> = ["无", "无", "无", "无"]
     private let viewControllers: Array<String> = [ "FirstViewController", "InfiniteScrollViewController", "CycleTableViewController", "CyclePickerViewController"]
     
@@ -26,7 +26,8 @@ class HomeTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier", for: indexPath)
         
-        cell.textLabel?.text = titles[indexPath.row]
+        cell.textLabel?.text = "\(indexPath.row + 1). \(titles[indexPath.row])"
+        cell.textLabel?.font = UIFont.systemFont(ofSize: 13)
         cell.detailTextLabel?.text = detailTexts[indexPath.row]
 
         return cell

@@ -94,4 +94,14 @@ extension UIView {
     func removeAllSubviews() {
         self.subviews.forEach({$0.removeFromSuperview()})
     }
+    
+    func whichSubviewContains(point: CGPoint) -> Array<UIView> {
+        var ret = Array<UIView>()
+        for view in self.subviews {
+            if view.frame.contains(point) {
+                ret.append(view)
+            }
+        }
+        return ret
+    }
 }
