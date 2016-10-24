@@ -21,6 +21,8 @@ class CycleTableViewController: UIViewController {
         return tableView
     }()
     
+    var positionScroll = DLTableViewScrollPosition.bottom
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -29,17 +31,24 @@ class CycleTableViewController: UIViewController {
         
         let button = UIButton()
         button.addTarget(self, action: #selector(buttonTapped(sender:)), for: .touchUpInside)
-        button.setTitle("改成循环滚动", for: .normal)
+        button.setTitle("循环滚动", for: .normal)
         button.setTitleColor(UIColor.blue, for: .normal)
-        button.frame = CGRect(x: 10, y: self.view.frame.height - 50, width: 150, height: 55)
+        button.frame = CGRect(x: 10, y: self.view.frame.height - 50, width: 100, height: 55)
         self.view.addSubview(button)
         
         let button1 = UIButton()
         button1.addTarget(self, action: #selector(button1Tapped(sender:)), for: .touchUpInside)
-        button1.setTitle("改成水平滚动", for: .normal)
+        button1.setTitle("水平滚动", for: .normal)
         button1.setTitleColor(UIColor.blue, for: .normal)
-        button1.frame = CGRect(x: self.view.frame.width - 160, y: self.view.frame.height - 50, width: 150, height: 55)
+        button1.frame = CGRect(x: button.frame.maxX + 5, y: self.view.frame.height - 50, width: 100, height: 55)
         self.view.addSubview(button1)
+        
+        let button2 = UIButton()
+        button2.addTarget(self, action: #selector(button2Tapped(sender:)), for: .touchUpInside)
+        button2.setTitle("滚动效果", for: .normal)
+        button2.setTitleColor(UIColor.blue, for: .normal)
+        button2.frame = CGRect(x: button1.frame.maxX + 5, y: self.view.frame.height - 50, width: 100, height: 55)
+        self.view.addSubview(button2)
         
         /*
          Attention: I still don't know why I should set this so the DLTableView can work perfectly
@@ -50,19 +59,32 @@ class CycleTableViewController: UIViewController {
     func buttonTapped(sender: UIButton) {
         tableView.enableCycleScroll = !tableView.enableCycleScroll
         if tableView.enableCycleScroll {
-            sender.setTitle("改成非循环滚动", for: .normal)
+            sender.setTitle("非循环滚动", for: .normal)
         } else {
-            sender.setTitle("改成循环滚动", for: .normal)
+            sender.setTitle("循环滚动", for: .normal)
         }
     }
     
     func button1Tapped(sender: UIButton) {
         if tableView.scrollDirection == .Vertical {
             tableView.scrollDirection = .Horizontal
-            sender.setTitle("改成垂直滚动", for: .normal)
+            sender.setTitle("垂直滚动", for: .normal)
         } else {
             tableView.scrollDirection = .Vertical
-            sender.setTitle("改成水平滚动", for: .normal)
+            sender.setTitle("水平滚动", for: .normal)
+        }
+    }
+    
+    func button2Tapped(sender: UIButton) {
+        if positionScroll == .bottom {
+            sender.setTitle("滚动到中", for: .normal)
+            positionScroll = .middle
+        } else if positionScroll == .middle {
+            sender.setTitle("滚动到顶", for: .normal)
+            positionScroll = .top
+        } else if positionScroll == .top {
+            sender.setTitle("滚动到底", for: .normal)
+            positionScroll = .bottom
         }
     }
 }
@@ -99,6 +121,6 @@ extension CycleTableViewController: DLTableViewDelegate, DLTableViewDataSource {
     
     func tableView(_ tableView: DLTableView, didSelectRowAt indexPath: IndexPath) {
         print("tableView tap at = \(indexPath)")
-        tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
+        tableView.scrollToRow(at: indexPath, at: positionScroll, animated: true)
     }
 }
