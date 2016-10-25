@@ -21,11 +21,25 @@ class CycleTableViewController: UIViewController {
         return tableView
     }()
     
+    func setHeader() {
+        tableView.tableHeaderView = UIView()
+        tableView.tableHeaderView?.backgroundColor = UIColor.purple
+        tableView.tableHeaderView?.frame = CGRect(x: 0, y: 0, width: 100, height: 100)
+    }
+    func setFooter() {
+        tableView.tableFooterView = UIView()
+        tableView.tableFooterView?.backgroundColor = UIColor.yellow
+        tableView.tableFooterView?.frame = CGRect(x: 0, y: 0, width: 100, height: 100)
+    }
+    
     var positionScroll = DLTableViewScrollPosition.bottom
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.setHeader()
+        self.setFooter()
+        tableView.reloadViews()
         self.view.addSubview(tableView)
         self.view.backgroundColor = UIColor.lightGray
         
@@ -63,6 +77,9 @@ class CycleTableViewController: UIViewController {
         } else {
             sender.setTitle("循环滚动", for: .normal)
         }
+//        self.setHeader()
+//        self.setFooter()
+        tableView.reloadViews()
     }
     
     func button1Tapped(sender: UIButton) {
@@ -73,6 +90,10 @@ class CycleTableViewController: UIViewController {
             tableView.scrollDirection = .Vertical
             sender.setTitle("水平滚动", for: .normal)
         }
+        self.setHeader()
+        self.setFooter()
+        tableView.reloadViews()
+//        tableView.scrollToRow(at: IndexPath.init(row: 1000000, section: 0), at: .bottom, animated: true)
     }
     
     func button2Tapped(sender: UIButton) {
@@ -92,7 +113,7 @@ class CycleTableViewController: UIViewController {
 extension CycleTableViewController: DLTableViewDelegate, DLTableViewDataSource {
     // dataSource
     func tableView(_ tableView: DLTableView, numberOfRowsInSection section: Int) -> Int {
-        return 30
+        return 6
     }
     
     func tableView(_ tableView: DLTableView, cellForRowAt indexPath: IndexPath) -> DLTableViewCell? {

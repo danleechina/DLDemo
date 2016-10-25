@@ -21,6 +21,7 @@ class CyclePickerViewController: UIViewController {
         super.viewDidLoad()
         
         cyclePickerView.frame = CGRect(x: 10, y: 100, width: self.view.frame.width - 20, height: self.view.frame.width - 20)
+        cyclePickerView.reloadAllComponents()
         self.view.addSubview(cyclePickerView)
         self.view.backgroundColor = UIColor.lightGray
         
@@ -30,6 +31,10 @@ class CyclePickerViewController: UIViewController {
         button.setTitleColor(UIColor.blue, for: .normal)
         button.frame = CGRect(x: 10, y: self.view.frame.height - 50, width: 150, height: 55)
         self.view.addSubview(button)
+        /*
+         Attention: I still don't know why I should set this so the DLTableView can work perfectly
+         */
+        self.automaticallyAdjustsScrollViewInsets = false
     }
     
     func buttonTapped(sender: UIButton) {
@@ -73,34 +78,36 @@ extension CyclePickerViewController: DLPickerViewDataSource, DLPickerViewDelegat
         return "r:\(row+1) c:\(component+1)"
     }
     
-    //    func pickerView(_ pickerView: DLPickerView, attributedTitleForRow row: Int, forComponent component: Int) -> NSAttributedString? {
-    //
-    //    }
-    //
-    //    func pickerView(_ pickerView: DLPickerView, viewForRow row: Int, forComponent component: Int, reusing view: UIView?) -> UIView {
-    //
-    //    }
+//        func pickerView(_ pickerView: DLPickerView, attributedTitleForRow row: Int, forComponent component: Int) -> NSAttributedString? {
+//    
+//        }
+//    
+//        func pickerView(_ pickerView: DLPickerView, viewForRow row: Int, forComponent component: Int, reusing view: UIView?) -> UIView {
+//    
+//        }
     
-    func pickerView(_ pickerView: DLPickerView, widthForComponent component: Int) -> CGFloat {
-        if component == 0 {
-            return 100
-        } else if component == 1 {
-            return 80
-        } else if component == 2 {
-            return 120
-        } else  {
-            return 0
-        }
-    }
+//    func pickerView(_ pickerView: DLPickerView, widthForComponent component: Int) -> CGFloat {
+//        if component == 0 {
+//            return 100
+//        } else if component == 1 {
+//            return 80
+//        } else if component == 2 {
+//            return 120
+//        } else  {
+//            return 0
+//        }
+//    }
     
-    func pickerView(_ pickerView: DLPickerView, rowHeightForRow row: Int, inComponent component: Int) -> CGFloat {
-        if row == 2 && component == 1 {
-            return 10
-        } else if row == 2 && component == 0 {
-            return 150
-        }
-        return 64
-    }
+//    func pickerView(_ pickerView: DLPickerView, rowHeightForRow row: Int, inComponent component: Int) -> CGFloat {
+//        
+//        if row == 2 && component == 0 {
+//            return 150
+//        }
+//        if row == 2 && component == 1 {
+//            return 10
+//        }
+//        return 64
+//    }
     
     func pickerView(_ pickerView: DLPickerView, didSelectRow row: Int, inComponent component: Int) {
         print("tap row=\(row+1) in component=\(component+1)")

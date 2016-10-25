@@ -81,7 +81,7 @@ class DLTableViewCell: UIView {
     
 }
 
-// This class will not implement things like tableHeaderView, tableFooterView, sectionHeader, sectionFooter, etc.
+// This class will not implement things like sectionHeader, sectionFooter, etc.
 // These can be implemented by using different kind of cell.
 // For the floating section view, you can inherit DLTableView and add a subview to the top of the tableView when the row which is a fake section is about to scroll out.
 class DLTableView: UIScrollView {
@@ -91,6 +91,7 @@ class DLTableView: UIScrollView {
     fileprivate var reuseCellsSet = Set<DLTableViewCell>()
     fileprivate var containerView = UIView()
     fileprivate static let DefaultCellLength:CGFloat = 40
+    fileprivate var isContentSizeLessThanFrameSize = false
     
     override func layoutSubviews() {
         super.layoutSubviews()
@@ -123,7 +124,6 @@ class DLTableView: UIScrollView {
     }
     
     fileprivate func tileCells(inVisibleBounds visibleBounds: CGRect) {
-        
         let minXOrY = scrollDirection == .Vertical ? visibleBounds.minY : visibleBounds.minX
         let maxXOrY = scrollDirection == .Vertical ? visibleBounds.maxY : visibleBounds.maxX
         
@@ -133,14 +133,34 @@ class DLTableView: UIScrollView {
         
         var lastCell = visibileCells.last!
         var nextEdge = scrollDirection == .Vertical ? lastCell.frame.maxY : lastCell.frame.maxX
+
         while nextEdge < maxXOrY {
             nextEdge = placeNewCell(onNextEdge: nextEdge)
         }
         
         if nextEdge == CGFloat.greatestFiniteMagnitude {
-            contentSize = scrollDirection == .Vertical ?
-                CGSize(width: contentSize.width, height: visibileCells.last!.frame.maxY) :
-                CGSize(width: visibileCells.last!.frame.maxX, height: contentSize.height)
+            var needContentSize = CGSize(width: 0, height: 0)
+            if enableCycleScroll || tableFooterView == nil {
+                needContentSize = scrollDirection == .Vertical ?
+                    CGSize(width: contentSize.width, height: visibileCells.last!.frame.maxY) :
+                    CGSize(width: visibileCells.last!.frame.maxX, height: contentSize.height)
+            } else if let view = tableFooterView {
+                if !isPositionForTableFooterViewKnown {
+                    _ = scrollDirection == .Vertical ?
+                        (view.frame.origin.y  = visibileCells.last!.frame.maxY) :
+                        (view.frame.origin.x  = visibileCells.last!.frame.maxX)
+                    isPositionForTableFooterViewKnown = true
+                }
+                needContentSize = scrollDirection == .Vertical ?
+                    CGSize(width: contentSize.width, height: view.frame.maxY) :
+                    CGSize(width: view.frame.maxX, height: contentSize.height)
+            }
+            if needContentSize.height < self.frame.height && scrollDirection == .Vertical {
+                needContentSize.height = self.frame.height + 5
+            } else if needContentSize.width < self.frame.width && scrollDirection == .Horizontal {
+                needContentSize.width = self.frame.width + 5
+            }
+            contentSize = needContentSize
         }
         
         var headCell = visibileCells.first!
@@ -151,27 +171,24 @@ class DLTableView: UIScrollView {
         
         lastCell = visibileCells.last!
         while (scrollDirection == .Vertical ? lastCell.frame.origin.y : lastCell.frame.origin.x) > maxXOrY {
+            if visibileCells.count == 1 {
+                // don't make visibileCells empty otherwise there is a problem
+                break
+            }
             lastCell.removeFromSuperview()
             visibileCellsIndexPath.removeLast()
             reuseCellsSet.insert(visibileCells.removeLast())
-            if visibileCells.isEmpty {
-                break
-            }
             lastCell = visibileCells.last!
-        }
-        
-        if visibileCells.isEmpty {
-            return
         }
         
         headCell = visibileCells.first!
         while (scrollDirection == .Vertical ? headCell.frame.maxY : headCell.frame.maxX) < minXOrY {
+            if visibileCells.count == 1 {
+                break
+            }
             headCell.removeFromSuperview()
             visibileCellsIndexPath.removeFirst()
             reuseCellsSet.insert(visibileCells.removeFirst())
-            if visibileCells.isEmpty {
-                break
-            }
             headCell = visibileCells.first!
         }
     }
@@ -179,6 +196,7 @@ class DLTableView: UIScrollView {
     fileprivate func placeNewCell(onNextEdge nextEdge: CGFloat) -> CGFloat {
         
         var indexPath = IndexPath.init(row: 0, section: 0)
+        
         if visibileCellsIndexPath.isEmpty {
             visibileCellsIndexPath.append(indexPath)
         } else {
@@ -195,11 +213,17 @@ class DLTableView: UIScrollView {
         }
         
         let view = insertCell(withIndexPath: indexPath)
+        var offsetXOrY: CGFloat = 0
+        if let view = tableHeaderView {
+            if visibileCells.isEmpty && !enableCycleScroll {
+                offsetXOrY = scrollDirection == .Vertical ? view.frame.maxY : view.frame.maxX
+            }
+        }
         visibileCells.append(view)
         
         var frame = view.frame
         if scrollDirection == .Vertical {
-            frame.origin.y = nextEdge
+            frame.origin.y = nextEdge + offsetXOrY
             frame.origin.x = 0
             frame.size.width = self.frame.width
             frame.size.height = DLTableView.DefaultCellLength
@@ -208,7 +232,7 @@ class DLTableView: UIScrollView {
             }
         } else {
             frame.origin.y = 0
-            frame.origin.x = nextEdge
+            frame.origin.x = nextEdge + offsetXOrY
             frame.size.width = DLTableView.DefaultCellLength
             frame.size.height = self.frame.height
             if let width = self.tableViewDelegate?.tableView?(self, widthForRowAt: indexPath) {
@@ -264,7 +288,6 @@ class DLTableView: UIScrollView {
         return scrollDirection == .Vertical ? frame.minY : frame.minX
     }
     
-    
     func insertCell(withIndexPath indexPath: IndexPath) -> DLTableViewCell {
         if let cell = self.dataSource?.tableView(self, cellForRowAt: indexPath) {
             cell.frame = CGRect(x: 0, y: 0, width: 60, height: 100)
@@ -277,13 +300,19 @@ class DLTableView: UIScrollView {
         }
     }
     
-    fileprivate func setAppearance() {
+    func reloadViews() {
         switch scrollDirection {
         case .Vertical:
-            contentSize = CGSize(width: self.frame.width, height: self.frame.height * 5000)
+            contentSize = CGSize(width: self.frame.width, height:  10000)
+            if !enableCycleScroll {
+                contentSize = CGSize(width: self.frame.width, height: CGFloat.greatestFiniteMagnitude)
+            }
             break
         case .Horizontal:
-            contentSize = CGSize(width: self.frame.width * 5000, height: self.frame.height)
+            contentSize = CGSize(width:  10000, height: self.frame.height)
+            if !enableCycleScroll {
+                contentSize = CGSize(width: CGFloat.greatestFiniteMagnitude, height: self.frame.height)
+            }
             break
         }
         contentOffset = CGPoint(x: 0, y: 0)
@@ -292,12 +321,56 @@ class DLTableView: UIScrollView {
         visibileCellsIndexPath.removeAll()
         visibileCells.removeAll()
         containerView.removeAllSubviews()
+        isPositionForTableFooterViewKnown = false
+        
+        if !enableCycleScroll {
+            if let view = tableFooterView {
+                containerView.addSubview(view)
+            }
+            if let view = tableHeaderView {
+                containerView.addSubview(view)
+            }
+            
+            if scrollDirection == .Vertical {
+                if let view = tableHeaderView {
+                    view.frame.origin.x = 0
+                    view.frame.origin.y = 0
+                    view.frame.size.width = self.frame.width
+                }
+            } else {
+                if let view = tableHeaderView {
+                    view.frame.origin.x = 0
+                    view.frame.origin.y = 0
+                    view.frame.size.height = self.frame.height
+                }
+            }
+            
+            if scrollDirection == .Vertical {
+                if let view = tableFooterView {
+                    view.frame.origin.x = 0
+                    view.frame.origin.y = -CGFloat.greatestFiniteMagnitude
+                    view.frame.size.width = self.frame.width
+                }
+            } else {
+                if let view = tableFooterView {
+                    view.frame.origin.x = -CGFloat.greatestFiniteMagnitude
+                    view.frame.origin.y = 0
+                    view.frame.size.height = self.frame.height
+                }
+            }
+        }
         setNeedsLayout()
     }
     
-    override var frame: CGRect {
-        didSet {
-            setAppearance()
+    func reloadData() {
+        for (index, indexPath) in visibileCellsIndexPath.enumerated() {
+            if let newCell = self.dataSource?.tableView(self, cellForRowAt: indexPath) {
+                let cell = visibileCells[index]
+                newCell.frame = cell.frame
+                visibileCells[index] = newCell
+                cell.removeFromSuperview()
+                self.containerView.addSubview(newCell)
+            }
         }
     }
     
@@ -328,16 +401,9 @@ class DLTableView: UIScrollView {
     weak var tableViewDelegate: DLTableViewDelegate?
     // dataSource can not be nil or crash
     weak var dataSource: DLTableViewDataSource?
-    var enableCycleScroll = false {
-        didSet {
-            setAppearance()
-        }
-    }
-    var scrollDirection = DLTableViewScrollDirection.Vertical {
-        didSet {
-            setAppearance()
-        }
-    }
+    var enableCycleScroll = false
+    // FIX when you change the value, tableHeaderView's and tableFooterView's frame will be wrong
+    var scrollDirection = DLTableViewScrollDirection.Vertical
     
     func dequeueReusableCell(withIdentifier identifier: String) -> DLTableViewCell? {
         for cell in reuseCellsSet {
@@ -349,8 +415,19 @@ class DLTableView: UIScrollView {
         return nil
     }
     
+    
+    // when enableCycleScroll is true, there is no table header view
+    var tableHeaderView: UIView? // accessory view for above row content. default is nil. not to be confused with section header
+    // when enableCycleScroll is true, there is no table footer view
+    var tableFooterView: UIView? // accessory view below content. default is nil. not to be confused with section footer
+    fileprivate var isPositionForTableFooterViewKnown = false
+    
     // if the scroll effect doesn't match your need, you can implement customed method based on this method
     func scrollToRow(at indexPath: IndexPath, at scrollPosition: DLTableViewScrollPosition, animated: Bool) {
+        // TODO if indexPath is too large
+        // adjust visibleCells' frame and visibleCellIndexPath to the near of indexPath
+        //
+        
         var finialOffset: CGPoint = CGPoint(x: 0, y: 0)
         if enableCycleScroll {
             finialOffset = getOffset(forIndexPath: indexPath)
