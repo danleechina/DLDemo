@@ -33,6 +33,10 @@ enum DLTableViewCellStyle {
     
     @objc
     optional func tableView(_ tableView: DLTableView, didSelectRowAt indexPath: IndexPath)
+    
+    // specific for cycle enable table view to get the exact indexPath in case of many same indexPath in visible bound
+    @objc
+    optional func tableView(_ tableView: DLTableView, didSelectRowAt indexPath: IndexPath, withInternalIndex index: Int)
 
 }
 
@@ -53,12 +57,18 @@ class DLTableViewCell: UIView {
     override var frame: CGRect {
         didSet {
             titleLabel.frame = CGRect(x: 0, y: 0, width: self.frame.width, height: self.frame.height)
+            selectedBackgroundColorView.frame = CGRect(x: 0, y: 0, width: self.frame.width, height: self.frame.height)
+            selectedBackgroundColorView.backgroundColor = UIColor.lightGray.withAlphaComponent(0.9)
         }
     }
+    
+    fileprivate let selectedBackgroundColorView = UIView()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         addSubview(titleLabel)
+        addSubview(selectedBackgroundColorView)
+        selectedBackgroundColorView.isHidden = true
     }
     
     init(style: DLTableViewCellStyle, reuseIdentifier: String?) {
@@ -73,6 +83,8 @@ class DLTableViewCell: UIView {
         }
         reuseID = reuseIdentifier
         addSubview(titleLabel)
+        addSubview(selectedBackgroundColorView)
+        selectedBackgroundColorView.isHidden = true
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -381,17 +393,81 @@ class DLTableView: UIScrollView {
         showsHorizontalScrollIndicator = false
         
         let tapGest = UITapGestureRecognizer.init(target: self, action: #selector(tableViewTapped(sender:)))
+        tapGest.cancelsTouchesInView = false
         self.addGestureRecognizer(tapGest)
+        
+        let longPressGest = UILongPressGestureRecognizer.init(target: self, action: #selector(tableViewLongPressDetected(sender:)))
+        longPressGest.minimumPressDuration = 0.1
+        self.addGestureRecognizer(longPressGest)
+        tapGest.require(toFail: longPressGest)
+        
     }
     
     @objc fileprivate func tableViewTapped(sender: UITapGestureRecognizer) {
         let point = sender.location(in: self.containerView)
         if let cell = self.containerView.whichSubviewContains(point: point).last as? DLTableViewCell {
             if let index = self.visibileCells.index(of: cell) {
-                self.tableViewDelegate?.tableView?(self, didSelectRowAt: self.visibileCellsIndexPath[index])
+                cell.selectedBackgroundColorView.isHidden = false
+                pressedCell = cell
+                if !enableCycleScroll {
+                    self.tableViewDelegate?.tableView?(self, didSelectRowAt: self.visibileCellsIndexPath[index])
+                } else {
+                    self.tableViewDelegate?.tableView?(self, didSelectRowAt: self.visibileCellsIndexPath[index], withInternalIndex: index)
+                }
             }
         }
     }
+    
+    fileprivate var pressedCell: DLTableViewCell?
+    @objc fileprivate func tableViewLongPressDetected(sender: UILongPressGestureRecognizer) {
+        switch sender.state {
+        case .began:
+            let point = sender.location(in: self.containerView)
+            if let cell = self.containerView.whichSubviewContains(point: point).last as? DLTableViewCell {
+                cell.selectedBackgroundColorView.isHidden = false
+                pressedCell = cell
+            }
+            break
+        default:
+            if let cell = pressedCell {
+                cell.selectedBackgroundColorView.isHidden = true
+                pressedCell = nil
+            }
+        }
+    }
+    
+    
+    func deselectRow(at indexPath: IndexPath, animated: Bool) {
+        deselectRow(at: indexPath, withInternalIndex: nil, animated: animated)
+    }
+    
+    
+    func deselectRow(at indexPath: IndexPath, withInternalIndex index: Int?, animated: Bool) {
+        var idx = -1
+        if let i = index {
+            idx = i
+        }
+        if idx == -1 {
+            for (i, ip) in visibileCellsIndexPath.enumerated() {
+                if indexPath.row == ip.row && indexPath.section == ip.section {
+                    idx = i
+                    break
+                }
+            }
+        }
+        if idx != -1 {
+            visibileCells[idx].selectedBackgroundColorView.isHidden = false
+            if animated {
+                UIView.animate(withDuration: 0.5, animations: {
+                    self.visibileCells[idx].selectedBackgroundColorView.alpha = 0
+                    }, completion: { (comp) in
+                        self.visibileCells[idx].selectedBackgroundColorView.isHidden = true
+                        self.visibileCells[idx].selectedBackgroundColorView.alpha = 1
+                })
+            }
+        }
+    }
+    
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -423,14 +499,15 @@ class DLTableView: UIScrollView {
     fileprivate var isPositionForTableFooterViewKnown = false
     
     // if the scroll effect doesn't match your need, you can implement customed method based on this method
-    func scrollToRow(at indexPath: IndexPath, at scrollPosition: DLTableViewScrollPosition, animated: Bool) {
+    // internalIndex is specific for cycle table view to get the exact indexPath when there may be many same indexPath in visible bound
+    func scrollToRow(at indexPath: IndexPath, withInternalIndex index: Int?, at scrollPosition: DLTableViewScrollPosition, animated: Bool) {
         // TODO if indexPath is too large
         // adjust visibleCells' frame and visibleCellIndexPath to the near of indexPath
         //
         
         var finialOffset: CGPoint = CGPoint(x: 0, y: 0)
         if enableCycleScroll {
-            finialOffset = getOffset(forIndexPath: indexPath)
+            finialOffset = getOffset(forIndexPath: indexPath, withInternalIndex: index)
         } else {
             finialOffset = getOffsetWithNoCycle(forIndexPath: indexPath)
         }
@@ -472,8 +549,15 @@ class DLTableView: UIScrollView {
         setContentOffset(finialOffset, animated: animated)
     }
     
+    func scrollToRow(at indexPath: IndexPath, at scrollPosition: DLTableViewScrollPosition, animated: Bool) {
+        scrollToRow(at: indexPath, withInternalIndex: nil, at: scrollPosition, animated: animated)
+    }
+    
     // FIX: we'd better cache the offset
-    func getOffset(forIndexPath indexPath: IndexPath) -> CGPoint {
+    func getOffset(forIndexPath indexPath: IndexPath, withInternalIndex index: Int?) -> CGPoint {
+        if let i = index {
+            return visibileCells[i].frame.origin
+        }
         for (i, index) in visibileCellsIndexPath.enumerated() {
             if index.row == indexPath.row && index.section == indexPath.section {
                 return visibileCells[i].frame.origin
@@ -667,5 +751,11 @@ class DLTableView: UIScrollView {
             return count
         }
         return 0
+    }
+}
+
+extension DLTableView: UIGestureRecognizerDelegate {
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        return true
     }
 }

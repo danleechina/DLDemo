@@ -101,8 +101,12 @@ class DLPickerView : UIView {
         return 0
     }
     
-    func rowSize(forComponent component: Int) -> CGSize {
-        return CGSize(width: 0, height: 0)
+    func rowSize(at row: Int, forComponent component: Int) -> CGSize {
+        let tableView = self.tableViews[component]
+        if let height = tableView.tableViewDelegate?.tableView?(tableView, heightForRowAt: IndexPath.init(row: row, section: 0)) {
+            return CGSize(width: tableView.frame.width, height: height)
+        }
+        return CGSize(width: tableView.frame.width, height: DLPickerView.DefaultRowHeight)
     }
     
     // returns the view provided by the delegate via pickerView:viewForRow:forComponent:reusingView:
@@ -131,6 +135,7 @@ class DLPickerView : UIView {
     
     // selection. in this case, it means showing the appropriate row in the middle
     func selectRow(_ row: Int, inComponent component: Int, animated: Bool){ // scrolls the specified row to center.
+        self.tableViews[component].scrollToRow(at: IndexPath.init(row: row, section: 0), at: .middle, animated: true)
     }
     
     
@@ -299,7 +304,12 @@ extension DLPickerView: DLTableViewDelegate, DLTableViewDataSource {
     
     func tableView(_ tableView: DLTableView, didSelectRowAt indexPath: IndexPath) {
         self.delegate?.pickerView?(self, didSelectRow: indexPath.row, inComponent: tableView.tag)
-        tableView.scrollToRow(at: indexPath, at: .middle, animated: true)
+        tableView.scrollToRow(at: indexPath, withInternalIndex: nil, at: .middle, animated: true)
+    }
+    
+    func tableView(_ tableView: DLTableView, didSelectRowAt indexPath: IndexPath, withInternalIndex index: Int) {
+        self.delegate?.pickerView?(self, didSelectRow: indexPath.row, inComponent: tableView.tag)
+        tableView.scrollToRow(at: indexPath, withInternalIndex: index, at: .middle, animated: true)
     }
     
     // scrollview delegate
@@ -332,7 +342,7 @@ extension DLPickerView: DLTableViewDelegate, DLTableViewDataSource {
                 minIndex = index
             }
         }
-        tableView.scrollToRow(at: tableView.visibileCellsIndexPath[minIndex], at: .middle, animated: true)
+        tableView.scrollToRow(at: tableView.visibileCellsIndexPath[minIndex], withInternalIndex: nil, at: .middle, animated: true)
     }
     
     func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {

@@ -51,6 +51,26 @@ class FirstViewController: UIViewController  {
         numberButton.addTarget(self, action: #selector(changeNumber), for: .touchUpInside)
         self.view.addSubview(numberButton)
         imageSliderView.startToSlide()
+        
+        let button1 = UIButton()
+        button1.frame = CGRect(x: 0, y: self.view.frame.height - 44, width: 100, height: 44)
+        button1.setTitle("设置图片", for: .normal)
+        button1.setTitleColor(UIColor.blue, for: .normal)
+        button1.addTarget(self, action: #selector(setImage), for: .touchUpInside)
+        self.view.addSubview(button1)
+        
+        imageView.frame = CGRect(x:5, y:100, width:self.view.frame.width / 2, height:self.view.frame.height / 2)
+        imageView.isHidden = true
+        imageView.contentMode = .scaleAspectFit
+        self.view.addSubview(imageView)
+    }
+    
+    private let imageView = UIImageView()
+    
+    func setImage() {
+        imageView.image = imageSliderView.getImage(ofRect: CGRect(x: 0, y: 0, width: imageSliderView.frame.width, height: imageSliderView.frame.height))
+        imageView.isHidden = false
+        imageSliderView.alpha = 0.5
     }
 
     func changeDirection(sender: UIButton?) {

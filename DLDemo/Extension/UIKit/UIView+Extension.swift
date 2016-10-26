@@ -105,4 +105,39 @@ extension UIView {
         }
         return ret
     }
+    
+    func getImage(ofRect rect: CGRect) -> UIImage {
+        UIGraphicsBeginImageContextWithOptions(self.bounds.size, self.isOpaque, 0)
+        self.layer.render(in: UIGraphicsGetCurrentContext()!)
+        let img = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        
+        let imgRef = img!.cgImage!.cropping(to: rect.scaleFrame(scale: UIScreen.main.scale))
+        let croppedImg = UIImage.init(cgImage: imgRef!, scale: 0, orientation: img!.imageOrientation)
+        return croppedImg
+    }
+}
+
+extension UIImage {
+    func scaleToSize(size: CGSize) -> UIImage {
+        UIGraphicsBeginImageContextWithOptions(size, false, 0)
+        self .draw(in: CGRect(x: 0, y: 0, width: size.width, height: size.height))
+        let img = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return img!
+    }
+}
+
+extension CGRect {
+    func scaleSize(scale: CGFloat) -> CGRect {
+        return CGRect(x: self.origin.x, y: self.origin.y, width: self.width * scale, height: self.height * scale)
+    }
+    
+    func scaleOrigin(scale: CGFloat) -> CGRect {
+        return CGRect(x: self.origin.x * scale, y: self.origin.y * scale, width: self.width, height: self.height)
+    }
+    
+    func scaleFrame(scale: CGFloat) -> CGRect {
+        return self.scaleSize(scale: scale).scaleOrigin(scale: scale)
+    }
 }

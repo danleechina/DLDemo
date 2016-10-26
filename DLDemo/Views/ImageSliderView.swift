@@ -42,6 +42,10 @@ class ImageSliderView: UIView {
                     leftImageContainerView.image = images[0]
                     centerImageContainerView.image = nil
                     rightImageContainerView.image = nil
+                } else {
+                    leftImageContainerView.image = nil
+                    centerImageContainerView.image = nil
+                    rightImageContainerView.image = nil
                 }
                 setAppearance()
             }
