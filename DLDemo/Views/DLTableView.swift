@@ -35,6 +35,7 @@ enum DLTableViewCellStyle {
     optional func tableView(_ tableView: DLTableView, didSelectRowAt indexPath: IndexPath)
     
     // specific for cycle enable table view to get the exact indexPath in case of many same indexPath in visible bound
+    // and you should implement this method if you are using cyclable table view.
     @objc
     optional func tableView(_ tableView: DLTableView, didSelectRowAt indexPath: IndexPath, withInternalIndex index: Int)
 
@@ -397,7 +398,7 @@ class DLTableView: UIScrollView {
         self.addGestureRecognizer(tapGest)
         
         let longPressGest = UILongPressGestureRecognizer.init(target: self, action: #selector(tableViewLongPressDetected(sender:)))
-        longPressGest.minimumPressDuration = 0.1
+        longPressGest.minimumPressDuration = 0.5
         self.addGestureRecognizer(longPressGest)
         tapGest.require(toFail: longPressGest)
         
@@ -428,6 +429,19 @@ class DLTableView: UIScrollView {
                 pressedCell = cell
             }
             break
+        case .changed:
+            if let cell = pressedCell {
+                let point = sender.location(in: self.containerView)
+                if !cell.frame.contains(point) {
+                    UIView.animate(withDuration: 0.5, animations: {
+                        cell.selectedBackgroundColorView.alpha = 0
+                        }, completion: { (comp) in
+                            cell.selectedBackgroundColorView.isHidden = true
+                            cell.selectedBackgroundColorView.alpha = 1
+                    })
+                }
+            }
+            break
         default:
             if let cell = pressedCell {
                 cell.selectedBackgroundColorView.isHidden = true
@@ -456,13 +470,15 @@ class DLTableView: UIScrollView {
             }
         }
         if idx != -1 {
-            visibileCells[idx].selectedBackgroundColorView.isHidden = false
+            // maybe out of range when animation finish, so use a variable
+            let cell = visibileCells[idx]
+            cell.selectedBackgroundColorView.isHidden = false
             if animated {
                 UIView.animate(withDuration: 0.5, animations: {
-                    self.visibileCells[idx].selectedBackgroundColorView.alpha = 0
+                    cell.selectedBackgroundColorView.alpha = 0
                     }, completion: { (comp) in
-                        self.visibileCells[idx].selectedBackgroundColorView.isHidden = true
-                        self.visibileCells[idx].selectedBackgroundColorView.alpha = 1
+                        cell.selectedBackgroundColorView.isHidden = true
+                        cell.selectedBackgroundColorView.alpha = 1
                 })
             }
         }

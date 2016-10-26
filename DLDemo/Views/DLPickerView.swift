@@ -305,11 +305,13 @@ extension DLPickerView: DLTableViewDelegate, DLTableViewDataSource {
     func tableView(_ tableView: DLTableView, didSelectRowAt indexPath: IndexPath) {
         self.delegate?.pickerView?(self, didSelectRow: indexPath.row, inComponent: tableView.tag)
         tableView.scrollToRow(at: indexPath, withInternalIndex: nil, at: .middle, animated: true)
+        tableView.deselectRow(at: indexPath, withInternalIndex: nil, animated: true)
     }
     
     func tableView(_ tableView: DLTableView, didSelectRowAt indexPath: IndexPath, withInternalIndex index: Int) {
         self.delegate?.pickerView?(self, didSelectRow: indexPath.row, inComponent: tableView.tag)
         tableView.scrollToRow(at: indexPath, withInternalIndex: index, at: .middle, animated: true)
+        tableView.deselectRow(at: indexPath, withInternalIndex: index, animated: true)
     }
     
     // scrollview delegate
