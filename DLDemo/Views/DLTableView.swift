@@ -51,15 +51,18 @@ class DLTableViewCell: UIView {
     var reuseID: String?
     var titleLabel: UILabel = {
         let label = UILabel()
+        label.textAlignment = .center
         label.textColor = UIColor.blue
         return label
     }()
+    var containerView = UIView()
+    
     
     override var frame: CGRect {
         didSet {
             titleLabel.frame = CGRect(x: 0, y: 0, width: self.frame.width, height: self.frame.height)
+            containerView.frame = CGRect(x: 0, y: 0, width: self.frame.width, height: self.frame.height)
             selectedBackgroundColorView.frame = CGRect(x: 0, y: 0, width: self.frame.width, height: self.frame.height)
-            selectedBackgroundColorView.backgroundColor = UIColor.lightGray.withAlphaComponent(0.9)
         }
     }
     
@@ -67,9 +70,11 @@ class DLTableViewCell: UIView {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        addSubview(titleLabel)
+        addSubview(containerView)
+        containerView.addSubview(titleLabel)
         addSubview(selectedBackgroundColorView)
         selectedBackgroundColorView.isHidden = true
+        selectedBackgroundColorView.backgroundColor = UIColor.lightGray.withAlphaComponent(0.9)
     }
     
     init(style: DLTableViewCellStyle, reuseIdentifier: String?) {
@@ -83,9 +88,11 @@ class DLTableViewCell: UIView {
             break
         }
         reuseID = reuseIdentifier
-        addSubview(titleLabel)
+        addSubview(containerView)
+        containerView.addSubview(titleLabel)
         addSubview(selectedBackgroundColorView)
         selectedBackgroundColorView.isHidden = true
+        selectedBackgroundColorView.backgroundColor = UIColor.lightGray.withAlphaComponent(0.9)
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -101,6 +108,8 @@ class DLTableView: UIScrollView {
 
     var visibileCells = Array<DLTableViewCell>()
     var visibileCellsIndexPath = Array<IndexPath>()
+    var selectedColor: UIColor?
+    
     fileprivate var reuseCellsSet = Set<DLTableViewCell>()
     fileprivate var containerView = UIView()
     fileprivate static let DefaultCellLength:CGFloat = 40
@@ -304,6 +313,7 @@ class DLTableView: UIScrollView {
     func insertCell(withIndexPath indexPath: IndexPath) -> DLTableViewCell {
         if let cell = self.dataSource?.tableView(self, cellForRowAt: indexPath) {
             cell.frame = CGRect(x: 0, y: 0, width: 60, height: 100)
+            cell.selectedBackgroundColorView.backgroundColor = selectedColor ?? cell.selectedBackgroundColorView.backgroundColor
             containerView.addSubview(cell)
             return cell
         }  else {

@@ -68,14 +68,13 @@ class DLPickerViewInternalCell: DLTableViewCell {
     
     override var frame: CGRect {
         didSet {
-            titleLabel.frame = CGRect(x: self.frame.width/4, y: 0, width: self.frame.width/2, height: self.frame.height)
             customView.frame = CGRect(x: 0, y: 0, width: self.frame.width, height: self.frame.height)
         }
     }
     
     override init(style: DLTableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        addSubview(customView)
+        containerView.addSubview(customView)
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -148,6 +147,7 @@ class DLPickerView : UIView {
         numberOfComponents = 0
         super.init(frame: frame)
         addSubview(containerView)
+        addSubview(selectionIndicatorView)
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -158,6 +158,7 @@ class DLPickerView : UIView {
     fileprivate var containerView = UIView()
     fileprivate static let DefaultRowHeight:CGFloat = 44
     fileprivate var cachedCustomViews = Dictionary<String, UIView>()
+    fileprivate var selectionIndicatorView = UIView()
     var layoutStyle = DLPickerViewLayoutStyle.Horizontal {
         didSet {
             // This is ugly but simple, and everything inside is transformed. typically, you'd better not use it.
@@ -174,9 +175,16 @@ class DLPickerView : UIView {
         }
     }
     
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        for tableView in self.tableViews {
+            transformCellLayer(scrollView: tableView)
+        }
+    }
     
     fileprivate func setAppearance() {
         containerView.frame = CGRect(x: 0, y: 0, width: frame.width, height: frame.height)
+        selectionIndicatorView.frame = CGRect(x: 0, y: frame.height/2 - DLPickerView.DefaultRowHeight/2, width: frame.width, height: DLPickerView.DefaultRowHeight)
         if let ds = self.dataSource {
             self.numberOfComponents = ds.numberOfComponents(in: self)
         } else {
@@ -208,7 +216,6 @@ class DLPickerView : UIView {
             frame.size.height = self.frame.height
             tableView.frame = frame
             
-            
             if !tableView.enableCycleScroll {
                 
                 var lastCellHeight = DLPickerView.DefaultRowHeight
@@ -228,7 +235,7 @@ class DLPickerView : UIView {
                 tableView.tableHeaderView?.backgroundColor = UIColor.purple
                 tableView.tableFooterView?.backgroundColor = UIColor.yellow
             }
-            
+            tableView.selectedColor = UIColor.clear
             self.tableViews.append(tableView)
             self.containerView.addSubview(tableView)
             
@@ -257,7 +264,7 @@ extension DLPickerView: DLTableViewDelegate, DLTableViewDataSource {
             temp = DLPickerViewInternalCell.init(style: .Default, reuseIdentifier: "HelloCell")
         }
         let cell = temp!
-        
+        cell.containerView.layer.drawsAsynchronously = true
         let cachedCustomView = cachedCustomViews["\(tableView.tag)=\(indexPath.row)"]
         if let arrtTitle = self.delegate?.pickerView?(self, attributedTitleForRow: indexPath.row, forComponent: tableView.tag) {
             cell.titleLabel.isHidden = false
@@ -316,6 +323,7 @@ extension DLPickerView: DLTableViewDelegate, DLTableViewDataSource {
     
     // scrollview delegate
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        transformCellLayer(scrollView: scrollView)
     }
     
     func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
@@ -332,6 +340,9 @@ extension DLPickerView: DLTableViewDelegate, DLTableViewDataSource {
         scrollToCenter(scrollView: scrollView)
     }
     
+    func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
+    }
+    
     func scrollToCenter(scrollView: UIScrollView) {
         let tableView = scrollView as! DLTableView
         let centerY = tableView.contentOffset.y + tableView.frame.height/2
@@ -344,9 +355,22 @@ extension DLPickerView: DLTableViewDelegate, DLTableViewDataSource {
                 minIndex = index
             }
         }
-        tableView.scrollToRow(at: tableView.visibileCellsIndexPath[minIndex], withInternalIndex: nil, at: .middle, animated: true)
+        tableView.scrollToRow(at: tableView.visibileCellsIndexPath[minIndex], withInternalIndex: minIndex, at: .middle, animated: true)
     }
     
-    func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
+    func transformCellLayer(scrollView: UIScrollView) {
+        let currCenterOffset = scrollView.contentOffset.y + scrollView.frame.height/2
+        let tableView = scrollView as! DLTableView
+        for cell in tableView.visibileCells {
+            let distanceFromCenter = currCenterOffset - cell.frame.origin.y
+            let disPercent = distanceFromCenter / scrollView.frame.height * 2
+            var rotationPerspectiveTrans = CATransform3DIdentity
+            rotationPerspectiveTrans.m34 = -1 / 500
+            rotationPerspectiveTrans = CATransform3DRotate(rotationPerspectiveTrans, disPercent * CGFloat(M_PI/180 * 60), 1, 0, 0)
+            //            let diff = cell.frame.origin.y - scrollView.contentOffset.y
+            //            cell.containerView.layer.anchorPoint = CGPoint(x: 0.5, y: 0.5 + (disPercent)/3)
+            //            rotationPerspectiveTrans = CATransform3DScale(rotationPerspectiveTrans, -fabs(disPercent)/7 + 1, 1, 1)
+            cell.containerView.layer.transform = rotationPerspectiveTrans
+        }
     }
 }
