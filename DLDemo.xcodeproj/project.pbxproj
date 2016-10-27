@@ -19,6 +19,7 @@
 		3772EC281DB8A58A009C5222 /* InfiniteScrollViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3772EC271DB8A58A009C5222 /* InfiniteScrollViewController.swift */; };
 		3772EC2A1DB8A5C7009C5222 /* InfiniteScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3772EC291DB8A5C7009C5222 /* InfiniteScrollView.swift */; };
 		377879151DBDBCF10089967E /* UIColor+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 377879141DBDBCF10089967E /* UIColor+Extension.swift */; };
+		37C4A5881DC0DB9200CFDB46 /* ContextMaker.m in Sources */ = {isa = PBXBuildFile; fileRef = 37C4A5871DC0DB9200CFDB46 /* ContextMaker.m */; };
 		37D59C751DBB3368005033F7 /* CyclePickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37D59C741DBB3368005033F7 /* CyclePickerViewController.swift */; };
 		37D59C771DBB339D005033F7 /* DLPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37D59C761DBB339D005033F7 /* DLPickerView.swift */; };
 		37D59C791DBB34EE005033F7 /* DLTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37D59C781DBB34EE005033F7 /* DLTableView.swift */; };
@@ -41,6 +42,9 @@
 		3772EC271DB8A58A009C5222 /* InfiniteScrollViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = InfiniteScrollViewController.swift; path = ViewControllers/InfiniteScrollViewController.swift; sourceTree = "<group>"; };
 		3772EC291DB8A5C7009C5222 /* InfiniteScrollView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = InfiniteScrollView.swift; path = Views/InfiniteScrollView.swift; sourceTree = "<group>"; };
 		377879141DBDBCF10089967E /* UIColor+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "UIColor+Extension.swift"; path = "Extension/UIKit/UIColor+Extension.swift"; sourceTree = "<group>"; };
+		37C4A5851DC0DB9200CFDB46 /* DLDemo-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "DLDemo-Bridging-Header.h"; sourceTree = "<group>"; };
+		37C4A5861DC0DB9200CFDB46 /* ContextMaker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ContextMaker.h; path = OC/ContextMaker.h; sourceTree = "<group>"; };
+		37C4A5871DC0DB9200CFDB46 /* ContextMaker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ContextMaker.m; path = OC/ContextMaker.m; sourceTree = "<group>"; };
 		37D59C741DBB3368005033F7 /* CyclePickerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CyclePickerViewController.swift; path = ViewControllers/CyclePickerViewController.swift; sourceTree = "<group>"; };
 		37D59C761DBB339D005033F7 /* DLPickerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DLPickerView.swift; path = Views/DLPickerView.swift; sourceTree = "<group>"; };
 		37D59C781DBB34EE005033F7 /* DLTableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DLTableView.swift; path = Views/DLTableView.swift; sourceTree = "<group>"; };
@@ -87,6 +91,8 @@
 				3710190F1DB31E270046B359 /* ViewControllers */,
 				371019121DB3246D0046B359 /* Views */,
 				371019151DB32FC10046B359 /* Extension */,
+				37C4A5891DC0DB9800CFDB46 /* OC */,
+				37C4A5851DC0DB9200CFDB46 /* DLDemo-Bridging-Header.h */,
 			);
 			path = DLDemo;
 			sourceTree = "<group>";
@@ -140,6 +146,15 @@
 			name = UIKit;
 			sourceTree = "<group>";
 		};
+		37C4A5891DC0DB9800CFDB46 /* OC */ = {
+			isa = PBXGroup;
+			children = (
+				37C4A5861DC0DB9200CFDB46 /* ContextMaker.h */,
+				37C4A5871DC0DB9200CFDB46 /* ContextMaker.m */,
+			);
+			name = OC;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -173,6 +188,7 @@
 					371018F51DB314E30046B359 = {
 						CreatedOnToolsVersion = 8.0;
 						DevelopmentTeam = VCJVQ6T6G2;
+						LastSwiftMigration = 0800;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -218,6 +234,7 @@
 				37D59C7B1DBB350F005033F7 /* CycleTableViewController.swift in Sources */,
 				37D59C771DBB339D005033F7 /* DLPickerView.swift in Sources */,
 				3710190E1DB31E210046B359 /* FirstViewController.swift in Sources */,
+				37C4A5881DC0DB9200CFDB46 /* ContextMaker.m in Sources */,
 				A045222E1DB9A6D7006FC360 /* UIView+Extension.swift in Sources */,
 				371019141DB32F990046B359 /* Array+Extension.swift in Sources */,
 				377879151DBDBCF10089967E /* UIColor+Extension.swift in Sources */,
@@ -349,11 +366,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				DEVELOPMENT_TEAM = VCJVQ6T6G2;
 				INFOPLIST_FILE = DLDemo/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.danlee.DLDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "DLDemo/DLDemo-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
@@ -362,11 +382,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				DEVELOPMENT_TEAM = VCJVQ6T6G2;
 				INFOPLIST_FILE = DLDemo/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.danlee.DLDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "DLDemo/DLDemo-Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
