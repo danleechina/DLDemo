@@ -75,10 +75,24 @@ class DLPickerViewInternalCell: DLTableViewCell {
     override init(style: DLTableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         containerView.addSubview(customView)
+        titleLabel.font = UIFont.systemFont(ofSize: 20)
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+}
+
+class DLPickerViewInternalMagnifyingView: UIView {
+    weak var magnifyingView: UIView?
+    override func draw(_ rect: CGRect) {
+        if let magnifyingView = self.magnifyingView {
+            let ctx = UIGraphicsGetCurrentContext()
+            ctx?.scaleBy(x: 1.05, y: 1.05)
+            ctx?.translateBy(x: -5, y: -magnifyingView.frame.height/2 + DLPickerView.DefaultRowHeight/2)
+            // ios8 has a bug, see detail in https://github.com/lionheart/openradar-mirror/issues/2641
+            magnifyingView.layer.render(in: ctx!)
+        }
     }
 }
 
@@ -148,6 +162,9 @@ class DLPickerView : UIView {
         super.init(frame: frame)
         addSubview(containerView)
         addSubview(selectionIndicatorView)
+        selectionIndicatorView.magnifyingView = containerView
+        selectionIndicatorView.layer.borderColor = UIColor.black.cgColor
+        selectionIndicatorView.layer.borderWidth = 1
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -158,7 +175,7 @@ class DLPickerView : UIView {
     fileprivate var containerView = UIView()
     fileprivate static let DefaultRowHeight:CGFloat = 44
     fileprivate var cachedCustomViews = Dictionary<String, UIView>()
-    fileprivate var selectionIndicatorView = UIView()
+    fileprivate var selectionIndicatorView = DLPickerViewInternalMagnifyingView()
     var layoutStyle = DLPickerViewLayoutStyle.Horizontal {
         didSet {
             // This is ugly but simple, and everything inside is transformed. typically, you'd better not use it.
@@ -294,7 +311,6 @@ extension DLPickerView: DLTableViewDelegate, DLTableViewDataSource {
         } else {
             assert(false)
         }
-        cell.titleLabel.font = UIFont.systemFont(ofSize: 13)
         return cell
     }
     
@@ -323,6 +339,7 @@ extension DLPickerView: DLTableViewDelegate, DLTableViewDataSource {
     
     // scrollview delegate
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        selectionIndicatorView.setNeedsDisplay()
         transformCellLayer(scrollView: scrollView)
     }
     

@@ -75,7 +75,7 @@ extension CyclePickerViewController: DLPickerViewDataSource, DLPickerViewDelegat
     }
     
     func pickerView(_ pickerView: DLPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-        return "r:\(row+1) c:\(component+1)"
+        return "\(row+1)"
     }
     
 //        func pickerView(_ pickerView: DLPickerView, attributedTitleForRow row: Int, forComponent component: Int) -> NSAttributedString? {
