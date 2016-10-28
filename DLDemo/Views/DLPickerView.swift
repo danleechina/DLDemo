@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import AVFoundation
 
 protocol DLPickerViewDataSource : NSObjectProtocol {
     // returns the number of 'columns' to display.
@@ -75,7 +76,7 @@ class DLPickerViewInternalCell: DLTableViewCell {
     override init(style: DLTableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         containerView.addSubview(customView)
-        titleLabel.font = UIFont.systemFont(ofSize: 20)
+        titleLabel.font = UIFont.systemFont(ofSize: 23)
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -88,10 +89,11 @@ class DLPickerViewInternalMagnifyingView: UIView {
     override func draw(_ rect: CGRect) {
         if let magnifyingView = self.magnifyingView {
             let ctx = UIGraphicsGetCurrentContext()
-            ctx?.scaleBy(x: 1.05, y: 1.05)
-            ctx?.translateBy(x: -5, y: -magnifyingView.frame.height/2 + DLPickerView.DefaultRowHeight/2)
-            // ios8 has a bug, see detail in https://github.com/lionheart/openradar-mirror/issues/2641
-            magnifyingView.layer.render(in: ctx!)
+            ctx!.scaleBy(x: 1.04, y: 1.04)
+            ctx!.translateBy(x: -frame.origin.x, y: -magnifyingView.frame.height/2 + DLPickerView.DefaultRowHeight/2)
+            // not sure why this method will crash in ios 8 and working with warning in ios 10
+            // magnifyingView.layer.render(in: ctx!)
+            magnifyingView.drawHierarchy(in: magnifyingView.bounds, afterScreenUpdates: true)
         }
     }
 }
@@ -161,10 +163,6 @@ class DLPickerView : UIView {
         numberOfComponents = 0
         super.init(frame: frame)
         addSubview(containerView)
-        addSubview(selectionIndicatorView)
-        selectionIndicatorView.magnifyingView = containerView
-        selectionIndicatorView.layer.borderColor = UIColor.black.cgColor
-        selectionIndicatorView.layer.borderWidth = 1
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -173,9 +171,10 @@ class DLPickerView : UIView {
     
     fileprivate var tableViews = Array<DLTableView>()
     fileprivate var containerView = UIView()
-    fileprivate static let DefaultRowHeight:CGFloat = 44
+    fileprivate static let DefaultRowHeight:CGFloat = 40
     fileprivate var cachedCustomViews = Dictionary<String, UIView>()
-    fileprivate var selectionIndicatorView = DLPickerViewInternalMagnifyingView()
+    fileprivate var selectionIndicatorViews = Array<DLPickerViewInternalMagnifyingView>()
+    
     var layoutStyle = DLPickerViewLayoutStyle.Horizontal {
         didSet {
             // This is ugly but simple, and everything inside is transformed. typically, you'd better not use it.
@@ -192,16 +191,8 @@ class DLPickerView : UIView {
         }
     }
     
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        for tableView in self.tableViews {
-            transformCellLayer(scrollView: tableView)
-        }
-    }
-    
     fileprivate func setAppearance() {
         containerView.frame = CGRect(x: 0, y: 0, width: frame.width, height: frame.height)
-        selectionIndicatorView.frame = CGRect(x: 0, y: frame.height/2 - DLPickerView.DefaultRowHeight/2, width: frame.width, height: DLPickerView.DefaultRowHeight)
         if let ds = self.dataSource {
             self.numberOfComponents = ds.numberOfComponents(in: self)
         } else {
@@ -210,6 +201,7 @@ class DLPickerView : UIView {
         
         self.tableViews.forEach({$0.removeFromSuperview()})
         self.tableViews.removeAll()
+        self.selectionIndicatorViews.removeAll()
         for index in 0 ..< numberOfComponents {
             let tableView = DLTableView()
             tableView.tag = index
@@ -256,6 +248,17 @@ class DLPickerView : UIView {
             self.tableViews.append(tableView)
             self.containerView.addSubview(tableView)
             
+            let selectionIndicatorView = DLPickerViewInternalMagnifyingView()
+            selectionIndicatorView.magnifyingView = self.containerView
+            selectionIndicatorView.layer.borderColor = UIColor.black.cgColor
+            selectionIndicatorView.layer.borderWidth = 1
+            selectionIndicatorView.backgroundColor = UIColor.clear
+            selectionIndicatorView.isUserInteractionEnabled = false
+            selectionIndicatorView.frame = CGRect(x: frame.origin.x, y: frame.height/2 - DLPickerView.DefaultRowHeight/2, width: frame.width, height: DLPickerView.DefaultRowHeight)
+
+            self.selectionIndicatorViews.append(selectionIndicatorView)
+            self.addSubview(selectionIndicatorView)
+
             if index == 0 {
                 tableView.backgroundColor = UIColor.white
             } else if index == 1 {
@@ -266,6 +269,28 @@ class DLPickerView : UIView {
                 tableView.backgroundColor = UIColor.purple
             }
         }
+    }
+    
+    static private var mySound:SystemSoundID = {
+        var aSound:SystemSoundID = 1000
+        if let soundURL = Bundle.main.url(forResource: "clockwork", withExtension: "wav") {
+            AudioServicesCreateSystemSoundID(soundURL as CFURL, &aSound)
+        }
+        return aSound
+    }()
+    
+    var isLoading = true
+    func playSoundEffect() {
+        if isLoading {
+            return
+        }
+        AudioServicesPlaySystemSound(DLPickerView.mySound)
+    }
+    
+    override func didMoveToSuperview() {
+        super.didMoveToSuperview()
+        // FIXME not working
+        isLoading = false
     }
 }
 
@@ -311,10 +336,17 @@ extension DLPickerView: DLTableViewDelegate, DLTableViewDataSource {
         } else {
             assert(false)
         }
+        playSoundEffect()
         return cell
     }
     
     // delegate
+    func tableView(_ tableView: DLTableView, didEndDisplaying cell: DLTableViewCell, forRowAt indexPath: IndexPath) {
+        if !tableView.enableCycleScroll {
+            playSoundEffect()
+        }
+    }
+    
     func tableView(_ tableView: DLTableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if let height = self.delegate?.pickerView?(self, rowHeightForComponent: tableView.tag) {
             return height
@@ -339,8 +371,9 @@ extension DLPickerView: DLTableViewDelegate, DLTableViewDataSource {
     
     // scrollview delegate
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        selectionIndicatorView.setNeedsDisplay()
+        let tableView = scrollView as! DLTableView
         transformCellLayer(scrollView: scrollView)
+        selectionIndicatorViews[tableView.tag].setNeedsDisplay()
     }
     
     func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
@@ -367,12 +400,13 @@ extension DLPickerView: DLTableViewDelegate, DLTableViewDataSource {
         var minIndex = 0
         var minValue = fabs(tableView.visibileCells.first!.frame.origin.y - centerY)
         for (index, cell) in tableView.visibileCells.enumerated() {
-            if fabs(cell.frame.origin.y - centerY) < minValue {
+            if fabs(cell.frame.origin.y + cell.frame.height/2 - centerY) < minValue {
                 minValue = fabs(cell.frame.origin.y - centerY)
                 minIndex = index
             }
         }
         tableView.scrollToRow(at: tableView.visibileCellsIndexPath[minIndex], withInternalIndex: minIndex, at: .middle, animated: true)
+
     }
     
     func transformCellLayer(scrollView: UIScrollView) {
@@ -383,10 +417,7 @@ extension DLPickerView: DLTableViewDelegate, DLTableViewDataSource {
             let disPercent = distanceFromCenter / scrollView.frame.height * 2
             var rotationPerspectiveTrans = CATransform3DIdentity
             rotationPerspectiveTrans.m34 = -1 / 500
-            rotationPerspectiveTrans = CATransform3DRotate(rotationPerspectiveTrans, disPercent * CGFloat(M_PI/180 * 60), 1, 0, 0)
-            //            let diff = cell.frame.origin.y - scrollView.contentOffset.y
-            //            cell.containerView.layer.anchorPoint = CGPoint(x: 0.5, y: 0.5 + (disPercent)/3)
-            //            rotationPerspectiveTrans = CATransform3DScale(rotationPerspectiveTrans, -fabs(disPercent)/7 + 1, 1, 1)
+            rotationPerspectiveTrans = CATransform3DRotate(rotationPerspectiveTrans, disPercent * CGFloat(M_PI/180 * 65), 1, 0, 0)
             cell.containerView.layer.transform = rotationPerspectiveTrans
         }
     }

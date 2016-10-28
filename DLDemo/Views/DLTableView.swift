@@ -26,6 +26,9 @@ enum DLTableViewCellStyle {
 
 @objc protocol DLTableViewDelegate : NSObjectProtocol, UIScrollViewDelegate{
     @objc
+    optional func tableView(_ tableView: DLTableView, didEndDisplaying cell: DLTableViewCell, forRowAt indexPath: IndexPath)
+    
+    @objc
     optional func tableView(_ tableView: DLTableView,  heightForRowAt indexPath: IndexPath) -> CGFloat
     
     @objc
@@ -198,8 +201,10 @@ class DLTableView: UIScrollView {
                 break
             }
             lastCell.removeFromSuperview()
-            visibileCellsIndexPath.removeLast()
-            reuseCellsSet.insert(visibileCells.removeLast())
+            let delIndexPath = visibileCellsIndexPath.removeLast()
+            let delCell = visibileCells.removeLast()
+            reuseCellsSet.insert(delCell)
+            self.tableViewDelegate?.tableView?(self, didEndDisplaying: delCell, forRowAt: delIndexPath)
             lastCell = visibileCells.last!
         }
         
@@ -209,8 +214,10 @@ class DLTableView: UIScrollView {
                 break
             }
             headCell.removeFromSuperview()
-            visibileCellsIndexPath.removeFirst()
-            reuseCellsSet.insert(visibileCells.removeFirst())
+            let delIndexPath = visibileCellsIndexPath.removeFirst()
+            let delCell = visibileCells.removeFirst()
+            reuseCellsSet.insert(delCell)
+            self.tableViewDelegate?.tableView?(self, didEndDisplaying: delCell, forRowAt: delIndexPath)
             headCell = visibileCells.first!
         }
     }
@@ -526,7 +533,7 @@ class DLTableView: UIScrollView {
     
     // if the scroll effect doesn't match your need, you can implement customed method based on this method
     // internalIndex is specific for cycle table view to get the exact indexPath when there may be many same indexPath in visible bound
-    func scrollToRow(at indexPath: IndexPath, withInternalIndex index: Int?, at scrollPosition: DLTableViewScrollPosition, animated: Bool) {
+    func scrollToRow(at indexPath: IndexPath, withInternalIndex index: Int?, at scrollPosition: DLTableViewScrollPosition, animated: Bool, completion: ((Bool) -> Swift.Void)? = nil) {
         // TODO if indexPath is too large
         // adjust visibleCells' frame and visibleCellIndexPath to the near of indexPath
         //

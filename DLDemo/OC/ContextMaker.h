@@ -7,9 +7,11 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 #import <CoreImage/CoreImage.h>
 
 @interface ContextMaker : NSObject
 
 + (CIContext*) makeMeAContext;
++ (void)renderForMe:(UIView *)view;
 @end

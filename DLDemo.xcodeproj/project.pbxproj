@@ -18,6 +18,7 @@
 		371019181DB34EE50046B359 /* UIImage+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 371019171DB34EE50046B359 /* UIImage+Extension.swift */; };
 		3772EC281DB8A58A009C5222 /* InfiniteScrollViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3772EC271DB8A58A009C5222 /* InfiniteScrollViewController.swift */; };
 		3772EC2A1DB8A5C7009C5222 /* InfiniteScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3772EC291DB8A5C7009C5222 /* InfiniteScrollView.swift */; };
+		3776FF571DC3538F00909BF6 /* clockwork.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3776FF561DC3538F00909BF6 /* clockwork.wav */; };
 		377879151DBDBCF10089967E /* UIColor+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 377879141DBDBCF10089967E /* UIColor+Extension.swift */; };
 		37C4A5881DC0DB9200CFDB46 /* ContextMaker.m in Sources */ = {isa = PBXBuildFile; fileRef = 37C4A5871DC0DB9200CFDB46 /* ContextMaker.m */; };
 		37D59C751DBB3368005033F7 /* CyclePickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37D59C741DBB3368005033F7 /* CyclePickerViewController.swift */; };
@@ -41,6 +42,7 @@
 		371019171DB34EE50046B359 /* UIImage+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "UIImage+Extension.swift"; path = "Extension/UIKit/UIImage+Extension.swift"; sourceTree = "<group>"; };
 		3772EC271DB8A58A009C5222 /* InfiniteScrollViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = InfiniteScrollViewController.swift; path = ViewControllers/InfiniteScrollViewController.swift; sourceTree = "<group>"; };
 		3772EC291DB8A5C7009C5222 /* InfiniteScrollView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = InfiniteScrollView.swift; path = Views/InfiniteScrollView.swift; sourceTree = "<group>"; };
+		3776FF561DC3538F00909BF6 /* clockwork.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = clockwork.wav; sourceTree = "<group>"; };
 		377879141DBDBCF10089967E /* UIColor+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "UIColor+Extension.swift"; path = "Extension/UIKit/UIColor+Extension.swift"; sourceTree = "<group>"; };
 		37C4A5851DC0DB9200CFDB46 /* DLDemo-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "DLDemo-Bridging-Header.h"; sourceTree = "<group>"; };
 		37C4A5861DC0DB9200CFDB46 /* ContextMaker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ContextMaker.h; path = OC/ContextMaker.h; sourceTree = "<group>"; };
@@ -115,6 +117,7 @@
 				3772EC291DB8A5C7009C5222 /* InfiniteScrollView.swift */,
 				37D59C781DBB34EE005033F7 /* DLTableView.swift */,
 				37D59C761DBB339D005033F7 /* DLPickerView.swift */,
+				3776FF561DC3538F00909BF6 /* clockwork.wav */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -217,6 +220,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				371019041DB314E30046B359 /* LaunchScreen.storyboard in Resources */,
+				3776FF571DC3538F00909BF6 /* clockwork.wav in Resources */,
 				371019011DB314E30046B359 /* Assets.xcassets in Resources */,
 				371018FF1DB314E30046B359 /* Main.storyboard in Resources */,
 			);
