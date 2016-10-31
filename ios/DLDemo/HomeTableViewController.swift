@@ -10,9 +10,9 @@ import UIKit
 
 class HomeTableViewController: UITableViewController {
 
-    private let titles: Array<String> = ["可配置滚动图片", "可配置方向的无限循环滚动 ScrollView", "配置方向、无限循环滚动 TableView", "配置方向、无限循环滚动 PickerView"]
-    private let detailTexts: Array<String> = ["无", "无", "无", "无"]
-    private let viewControllers: Array<String> = [ "FirstViewController", "InfiniteScrollViewController", "CycleTableViewController", "CyclePickerViewController"]
+    private let titles: Array<String> = ["可配置滚动图片", "可配置方向的无限循环滚动 ScrollView", "配置方向、无限循环滚动 TableView", "配置方向、无限循环滚动 PickerView", "React Native Demo",]
+    private let detailTexts: Array<String> = ["无", "无", "无", "无", "无"]
+    private let viewControllers: Array<String> = [ "FirstViewController", "InfiniteScrollViewController", "CycleTableViewController", "CyclePickerViewController", "ReactNativeDemoViewController"]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -45,6 +45,8 @@ class HomeTableViewController: UITableViewController {
             vc = CycleTableViewController()
         } else if indexPath.row == 3 {
             vc = CyclePickerViewController()
+        } else if indexPath.row == 4 {
+            vc = ReactNativeDemoViewController()
         }
         
         self.navigationController?.pushViewController(vc, animated: true)

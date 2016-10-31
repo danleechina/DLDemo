@@ -9,3 +9,5 @@ Pods
 
 #merge 
 **/*.orig
+
+node_modules/*
