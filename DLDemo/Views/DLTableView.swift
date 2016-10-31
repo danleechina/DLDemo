@@ -149,6 +149,8 @@ class DLTableView: UIScrollView {
     }
     
     fileprivate func tileCells(inVisibleBounds visibleBounds: CGRect) {
+        var cellChange = false
+        let visibleCellsCount = visibileCells.count
         let minXOrY = scrollDirection == .Vertical ? visibleBounds.minY : visibleBounds.minX
         let maxXOrY = scrollDirection == .Vertical ? visibleBounds.maxY : visibleBounds.maxX
         
@@ -206,6 +208,7 @@ class DLTableView: UIScrollView {
             reuseCellsSet.insert(delCell)
             self.tableViewDelegate?.tableView?(self, didEndDisplaying: delCell, forRowAt: delIndexPath)
             lastCell = visibileCells.last!
+            cellChange = true
         }
         
         headCell = visibileCells.first!
@@ -219,6 +222,11 @@ class DLTableView: UIScrollView {
             reuseCellsSet.insert(delCell)
             self.tableViewDelegate?.tableView?(self, didEndDisplaying: delCell, forRowAt: delIndexPath)
             headCell = visibileCells.first!
+            cellChange = true
+        }
+        
+        if cellChange || visibleCellsCount != visibileCells.count {
+            NotificationCenter.default.post(name: .DLTableViewCellDidChange, object: self)
         }
     }
     
@@ -791,4 +799,8 @@ extension DLTableView: UIGestureRecognizerDelegate {
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return true
     }
+}
+
+extension Notification.Name {
+    static let DLTableViewCellDidChange = Notification.Name("DLTableViewCellDidChange")
 }

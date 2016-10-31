@@ -170,6 +170,29 @@ class DLPickerView : UIView {
     }
     
     fileprivate var tableViews = Array<DLTableView>()
+    fileprivate var initCountOfCell = Array<Int>()
+    fileprivate var hasFinishInitTableViewCount = 0 {
+        didSet {
+            if hasFinishInitTableViewCount == self.tableViews.count {
+                hasFinishAll = true
+            }
+        }
+    }
+    fileprivate var hasFinishAll = false {
+        didSet {
+            if hasFinishAll {
+                for tableView in self.tableViews {
+                    scrollToCenter(scrollView: tableView)
+                    transformCellLayer(scrollView: tableView)
+                }
+                perform(#selector(nowWeCanPlaySound), with: nil, afterDelay: 0.5)
+            }
+        }
+    }
+    func nowWeCanPlaySound() {
+        canPlaySound = true
+    }
+    fileprivate var canPlaySound = false
     fileprivate var containerView = UIView()
     fileprivate static let DefaultRowHeight:CGFloat = 40
     fileprivate var cachedCustomViews = Dictionary<String, UIView>()
@@ -250,8 +273,6 @@ class DLPickerView : UIView {
             
             let selectionIndicatorView = DLPickerViewInternalMagnifyingView()
             selectionIndicatorView.magnifyingView = self.containerView
-            selectionIndicatorView.layer.borderColor = UIColor.black.cgColor
-            selectionIndicatorView.layer.borderWidth = 1
             selectionIndicatorView.backgroundColor = UIColor.clear
             selectionIndicatorView.isUserInteractionEnabled = false
             selectionIndicatorView.frame = CGRect(x: frame.origin.x, y: frame.height/2 - DLPickerView.DefaultRowHeight/2, width: frame.width, height: DLPickerView.DefaultRowHeight)
@@ -269,6 +290,40 @@ class DLPickerView : UIView {
                 tableView.backgroundColor = UIColor.purple
             }
         }
+        initInitCountOfCell()
+    }
+    
+    func initInitCountOfCell() {
+        hasFinishInitTableViewCount = 0
+        hasFinishAll = false
+        canPlaySound = false
+        initCountOfCell.removeAll()
+        for table in tableViews {
+            var cnt = 0
+            var height: CGFloat = 0
+            if table.tableHeaderView != nil {
+                height += table.tableHeaderView!.frame.height
+            }
+            let numberOfCell = table.dataSource?.tableView(table, numberOfRowsInSection: 0)
+            var indexOfRow = 0
+            while height < table.frame.height {
+                if let ch = table.tableViewDelegate?.tableView?(table, heightForRowAt: IndexPath.init(row: indexOfRow, section: 0)) {
+                    height += ch
+                } else {
+                    height += DLPickerView.DefaultRowHeight
+                }
+                cnt += 1
+                indexOfRow += 1
+                if indexOfRow > numberOfCell! - 1 {
+                    if !table.enableCycleScroll {
+                        break
+                    } else {
+                        indexOfRow = 0
+                    }
+                }
+            }
+            initCountOfCell.append(cnt)
+        }
     }
     
     static private var mySound:SystemSoundID = {
@@ -279,19 +334,13 @@ class DLPickerView : UIView {
         return aSound
     }()
     
-    var isLoading = true
     func playSoundEffect() {
-        if isLoading {
-            return
+        if canPlaySound {
+            AudioServicesPlaySystemSound(DLPickerView.mySound)
         }
-        AudioServicesPlaySystemSound(DLPickerView.mySound)
     }
+    var playJustOnce = true
     
-    override func didMoveToSuperview() {
-        super.didMoveToSuperview()
-        // FIXME not working
-        isLoading = false
-    }
 }
 
 extension DLPickerView: DLTableViewDelegate, DLTableViewDataSource {
@@ -337,12 +386,21 @@ extension DLPickerView: DLTableViewDelegate, DLTableViewDataSource {
             assert(false)
         }
         playSoundEffect()
+        playJustOnce = true
+        // sub one is because datasource called before insert into visibileCells
+        if tableView.visibileCells.count >= initCountOfCell[tableView.tag] - 1{
+            hasFinishInitTableViewCount += 1
+        }
         return cell
     }
     
     // delegate
     func tableView(_ tableView: DLTableView, didEndDisplaying cell: DLTableViewCell, forRowAt indexPath: IndexPath) {
         if !tableView.enableCycleScroll {
+            if playJustOnce {
+                playJustOnce = false
+                return
+            }
             playSoundEffect()
         }
     }
