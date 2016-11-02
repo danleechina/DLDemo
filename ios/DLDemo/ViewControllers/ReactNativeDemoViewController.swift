@@ -33,7 +33,7 @@ class ReactNativeDemoViewController: UIViewController {
         
         let rootView = RCTRootView(
             bundleURL: jsCodeLocation,
-            moduleName: "RNHighScores",
+            moduleName: "Clock",
             initialProperties: mockData as [NSObject : AnyObject],
             launchOptions: nil
         )

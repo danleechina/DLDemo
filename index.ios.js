@@ -1,3 +1,5 @@
+// @flow
+
 'use strict';
 
 import React from 'react';
@@ -5,23 +7,90 @@ import {
   AppRegistry,
   StyleSheet,
   Text,
-  View
+  TabBarIOS,
 } from 'react-native';
 
-class RNHighScores extends React.Component {
+import AlarmView from './js/AlarmView';
+import BedtimeView from './js/BedtimeView';
+import StopwatchView from './js/StopwatchView';
+import TimerView from './js/TimerView';
+import WorldClockView from './js/WorldClockView';
+
+class Clock extends React.Component {
+  state: {
+    selectedTab: string
+  }
+  constructor(props) {
+    super(props);
+    this.state = {
+      selectedTab: "World Clock"
+    };
+  }
+
   render() {
-    var contents = this.props["scores"].map(
-      score => <Text key={score.name}>{score.name}:{score.value}{"\n"}</Text>
-    );
     return (
-      <View style={styles.container}>
-        <Text style={styles.highScoresTitle}>
-          2048 High Scores!
-        </Text>
-        <Text style={styles.scores}>
-          {contents}
-        </Text>
-      </View>
+      <TabBarIOS
+        selectedTab={this.state.selectedTab}
+        style={styles.container}
+        unselectedTintColor="yellow"
+        tintColor="white"
+        barTintColor="darkslateblue">
+        <TabBarIOS.Item
+          title="World Clock"
+          icon={require('./img/logo.png')}
+          selected={this.state.selectedTab === 'World Clock'}
+          onPress={() => {
+            this.setState({
+              selectedTab: 'World Clock'
+            });
+          }}>
+          <WorldClockView/>
+        </TabBarIOS.Item>
+        <TabBarIOS.Item
+          title="Alarm"
+          icon={require('./img/logo.png')}
+          selected={this.state.selectedTab === 'Alarm'}
+          onPress={() => {
+            this.setState({
+              selectedTab: 'Alarm'
+            });
+          }}>
+          <AlarmView/>
+        </TabBarIOS.Item>
+        <TabBarIOS.Item
+          title="Bedtime"
+          icon={require('./img/logo.png')}
+          selected={this.state.selectedTab === 'Bedtime'}
+          onPress={() => {
+            this.setState({
+              selectedTab: 'Bedtime'
+            });
+          }}>
+          <BedtimeView/>
+        </TabBarIOS.Item>
+        <TabBarIOS.Item
+          title="Stopwatch"
+          icon={require('./img/logo.png')}
+          selected={this.state.selectedTab === 'Stopwatch'}
+          onPress={() => {
+            this.setState({
+              selectedTab: 'Stopwatch'
+            });
+          }}>
+          <StopwatchView/>
+        </TabBarIOS.Item>
+        <TabBarIOS.Item
+          title="Timer"
+          icon={require('./img/logo.png')}
+          selected={this.state.selectedTab === 'Timer'}
+          onPress={() => {
+            this.setState({
+              selectedTab: 'Timer'
+            });
+          }}>
+          <TimerView/>
+        </TabBarIOS.Item>
+      </TabBarIOS>
     );
   }
 }
@@ -32,18 +101,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
-  },
-  highScoresTitle: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  scores: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
+  }
 });
 
 // Module name
-AppRegistry.registerComponent('RNHighScores', () => RNHighScores);
+AppRegistry.registerComponent('Clock', () => Clock);
