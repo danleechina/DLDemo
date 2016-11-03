@@ -23,18 +23,13 @@ class ReactNativeDemoViewController: UIViewController {
     }
     
     func gotoReactNativePage(sender: UIButton) {
-        let jsCodeLocation = URL.init(string: "http://localhost:8081/index.ios.bundle?platform=ios")
-        let mockData:NSDictionary = ["scores":
-            [
-                ["name":"Alex", "value":"42"],
-                ["name":"Joel", "value":"10"]
-            ]
-        ]
+        let jsCodeLocation = URL.init(string: "http://192.168.30.161:8081/index.ios.bundle?platform=ios")
+
         
         let rootView = RCTRootView(
             bundleURL: jsCodeLocation,
             moduleName: "Clock",
-            initialProperties: mockData as [NSObject : AnyObject],
+            initialProperties: nil,
             launchOptions: nil
         )
         let vc = UIViewController()

@@ -32,9 +32,9 @@ class Clock extends React.Component {
       <TabBarIOS
         selectedTab={this.state.selectedTab}
         style={styles.container}
-        unselectedTintColor="yellow"
-        tintColor="white"
-        barTintColor="darkslateblue">
+        unselectedTintColor="white"
+        tintColor="rgba(253,148,38,1)"
+        barTintColor="black">
         <TabBarIOS.Item
           title="World Clock"
           icon={require('./img/logo.png')}
