@@ -23,7 +23,8 @@ class ReactNativeDemoViewController: UIViewController {
     }
     
     func gotoReactNativePage(sender: UIButton) {
-        let jsCodeLocation = URL.init(string: "http://192.168.30.161:8081/index.ios.bundle?platform=ios")
+    //    let jsCodeLocation = URL.init(string: "http://192.168.30.161:8081/index.ios.bundle?platform=ios")
+        let jsCodeLocation = URL.init(string: "http://localhost:8081/index.ios.bundle?platform=ios")
 
         
         let rootView = RCTRootView(
