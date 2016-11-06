@@ -15,114 +15,73 @@ import {
 } from 'react-native';
 import CityListView from './CityListView';
 
+var data = [
+  {
+    city: 'San Francisco',
+    country: 'USA',
+    time_diff: -8,
+  },
+  {
+    city: 'Beijing',
+    country: 'China',
+    time_diff: 8,
+  },
+  {
+    city: 'London',
+    country: 'UK',
+    time_diff: 0,
+  },
+];
+
+var routes = [
+  {title: 'World Clock', index: 0, component: IntervalListView, hiddenNavigatorBar:false,},
+  {title: 'Choose a City.', index: 1, component: CityListView, hiddenNavigatorBar:true,},
+];
+
 class WorldClockView extends React.Component {
   state: {
-    hideNavigationBar: bool,
+    data: Array,
   }
-  constructor() {
-    super();
-    this._renderScene.bind(this);
-    this.state = {
-      hideNavigationBar: false,
-    }
-  }
-
   render() {
-    var NavigationBarRouteMapper = {
-      LeftButton: (route, navigator, index, navState) => {
-        if (route.index === 0) {
-          return (
-            <TouchableHighlight onPress={() => {}}>
-              <Text style={{ color: 'rgba(253,148,38,1)', fontSize: 20, marginLeft: 10, marginTop: 12}}>Edit</Text>
-            </TouchableHighlight>
-          );
-        }
-      },
-      RightButton: (route, navigator, index, navState) => {
-        if (route.index === 0) {
-          return (
-            <TouchableHighlight onPress={() => navigator.push(routes[1])}>
-              <Text style={{ color: 'rgba(253,148,38,1)', fontSize: 30, marginRight: 10, marginTop: 7,}}>+</Text>
-            </TouchableHighlight>
-          );
-        }
-        else if (route.index === 1) {
-          // return (
-          //   <TouchableHighlight onPress={() => navigator.pop()}>
-          //     <Text style={{ color: 'rgba(253,148,38,1)', fontSize: 15, padding: 10,}}>Cancel</Text>
-          //   </TouchableHighlight>
-          // );
-          return null;
-        }
-
-      },
-      Title: (route, navigator, index, navState) => {
-        if (route.index === 0) {
-          return (
-            <Text style={{ color: 'white', fontSize: 22, marginRight: 10, marginTop: 11, fontWeight: 'bold'}}>{route.title}</Text>
-          );
-        }
-        else if (route.index === 1) {
-          // return (
-          //   <Text style={{color: 'white', fontSize: 10, marginTop: 0,}}>{route.title}</Text>
-          // );
-          return null;
-        }
-      },
-    };
-
-    const routes = [
-      {title: 'World Clock', index: 0},
-      {title: 'Choose a City.', index: 1},
-    ];
-
-    // if (this.state.hideNavigationBar) {
-    //   return (
-    //     <View style={{flex: 1}}>
-    //       <StatusBar backgroundColor='black' barStyle='light-content'/>
-    //       <Navigator
-    //         style={styles.mainView}
-    //         initialRoute={routes[0]}
-    //         initialRouteStack={routes}
-    //         renderScene={(route, navigator) => {
-    //             if (route.index === 0) {
-    //               return (<IntervalListView/>);
-    //             } else if (route.index === 1) {
-    //               return (<CityListView/>);
-    //             }
-    //           }
-    //         }
-    //         configureScene={(route, routeStack) => Navigator.SceneConfigs.FloatFromBottom}
-    //       />
-    //     </View>
-    //   );
-    // }
-    // else {
-      return (
-        <View style={{flex: 1}}>
-          <StatusBar backgroundColor='black' barStyle='light-content'/>
-          <Navigator
-            ref="nav"
-            style={styles.mainView}
-            initialRoute={routes[0]}
-            initialRouteStack={routes}
-            renderScene={this._renderScene}
-            configureScene={(route, routeStack) => Navigator.SceneConfigs.FloatFromBottom}
-            navigationBar={ this.state.hideNavigationBar ? null :
-              <Navigator.NavigationBar routeMapper={NavigationBarRouteMapper}/>
-            }
-          />
-        </View>
-      );
-    // }
+    return (
+      <View style={{flex: 1}}>
+        <StatusBar backgroundColor='black' barStyle='light-content'/>
+        <Navigator
+          style={{backgroundColor: 'black',}}
+          initialRoute={routes[0]}
+          initialRouteStack={routes}
+          renderScene={this._renderScene}
+          configureScene={(route, routeStack) => Navigator.SceneConfigs.FloatFromBottom}
+        />
+      </View>
+    );
   }
 
   _renderScene(route: any, navigator: Navigator) {
       if (route.index === 0) {
-        return (<IntervalListView/>);
+        return (<IntervalListView navigator={navigator}/>);
       } else if (route.index === 1) {
-        return (<CityListView navigator={this.refs.nav}/>);
+        return (<CityListView navigator={navigator}/>);
       }
+  }
+}
+
+class CustomNavigationBar extends React.Component {
+  render() {
+    return (
+      <View style={{flexDirection: 'column',height: 64,paddingTop: 20}}>
+        <View style={{flex: 1, justifyContent: 'space-between', flexDirection: 'row'}}>
+          <TouchableHighlight onPress={() => {}} >
+            <Text style={{ color: 'rgba(253,148,38,1)', fontSize: 20, marginLeft: 10, marginTop: 12}}>Edit</Text>
+          </TouchableHighlight>
+          <Text style={{color: 'white',fontSize: 30,fontWeight: 'bold',paddingTop: 7,}}>{this.props.route.title}</Text>
+          <TouchableHighlight onPress={() => this.props.navigator.push(routes[1])}>
+            <Text style={{ color: 'rgba(253,148,38,1)', fontSize: 30, marginRight: 10, marginTop: 7,}}>+</Text>
+          </TouchableHighlight>
+        </View>
+        <View style={{height:0.5, backgroundColor:'rgba(255,255,255,0.5)'}}/>
+      </View>
+    );
   }
 }
 
@@ -137,29 +96,32 @@ class IntervalListView extends React.Component {
     super(props);
     const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
     this.state = {
-      dataSource: ds.cloneWithRows(['row 1', 'hie2']),
+      dataSource: ds.cloneWithRows(data),
     };
   }
 
   render() {
     return (
+      <View style={{flex: 1}}>
+        <CustomNavigationBar navigator={this.props.navigator} route={routes[0]}/>
         <ListView
-          style={styles.listView}
+          style={{flex: 1,backgroundColor: 'yellow', }}
           dataSource={this.state.dataSource}
           renderRow={this._renderRow}
           renderSeparator={this._renderSeparator}
         />
+      </View>
     );
   }
 
-  _renderRow(rowData: string, sectionID: number, rowID: number, highlightRow: (sectionID: number, rowID: number) => void) {
+  _renderRow(rowData: Object, sectionID: number, rowID: number, highlightRow: (sectionID: number, rowID: number) => void) {
     return (
       <View style={styles.row}
         key={`${sectionID}-${rowID}`}>
         <View style={ styles.leftView}>
             <View style={{ flexDirection:'column', flex:1,}}>
               <View style={{flex: 1}}></View>
-              <Text style={{flex:3, padding: 0}, styles.leftTopText} numberOfLines={1} adjustsFontSizeToFit={true} >San Francisco </Text>
+              <Text style={{flex:3, padding: 0}, styles.leftTopText} numberOfLines={1} adjustsFontSizeToFit={true} >{rowData.city}</Text>
             </View>
             <View style={{ flexDirection:'column', flex:1,}}>
               <Text style={{flex:2}, styles.leftBottomText} numberOfLines={1}  adjustsFontSizeToFit={true}>Yesterday, +44HRS</Text>
@@ -183,17 +145,6 @@ class IntervalListView extends React.Component {
 }
 
 var styles = StyleSheet.create({
-  mainView: {
-    flex: 1,
-    backgroundColor: 'black',
-  },
-
-  listView: {
-    flex: 1,
-    backgroundColor: 'black',
-    marginTop: 44,
-  },
-
   row: {
     flex: 1,
     height: 100,
