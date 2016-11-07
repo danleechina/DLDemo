@@ -11,3 +11,9 @@ Pods
 **/*.orig
 
 node_modules/*
+
+.vscode/
+ios/build/
+tsconfig.json
+typings/
+ios/npm-debug.log

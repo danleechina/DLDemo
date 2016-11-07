@@ -27,7 +27,7 @@ var ds = new ListView.DataSource({
   sectionHeaderHasChanged: (s1, s2) => s1 !== s2,
 });
 
-var data = require('../Resources/cities.json');
+var data = require('../../Resources/cities.json');
 var rawData = data.map(elem => {
   var time = elem['time_zone'].substring(1, elem['time_zone'].indexOf(')'));
   var hour = Number(time.substring(4,6));
