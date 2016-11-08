@@ -15,24 +15,6 @@ import {
 } from 'react-native';
 import CityListView from './CityListView';
 
-var data = [
-  {
-    city: 'San Francisco',
-    country: 'USA',
-    time_diff: -8,
-  },
-  {
-    city: 'Beijing',
-    country: 'China',
-    time_diff: 8,
-  },
-  {
-    city: 'London',
-    country: 'UK',
-    time_diff: 0,
-  },
-];
-
 var routes = [
   {title: 'World Clock', index: 0, component: IntervalListView, hiddenNavigatorBar:false,},
   {title: 'Choose a City.', index: 1, component: CityListView, hiddenNavigatorBar:true,},
@@ -42,6 +24,7 @@ class WorldClockView extends React.Component {
   state: {
     data: Array,
   }
+
   render() {
     return (
       <View style={{flex: 1}}>
@@ -50,7 +33,7 @@ class WorldClockView extends React.Component {
           style={{backgroundColor: 'black',}}
           initialRoute={routes[0]}
           initialRouteStack={routes}
-          renderScene={this._renderScene}
+          renderScene={(route: any, navigator: Navigator) => this._renderScene(route, navigator)}
           configureScene={(route, routeStack) => Navigator.SceneConfigs.FloatFromBottom}
         />
       </View>
@@ -59,9 +42,9 @@ class WorldClockView extends React.Component {
 
   _renderScene(route: any, navigator: Navigator) {
       if (route.index === 0) {
-        return (<IntervalListView navigator={navigator}/>);
+        return (<IntervalListView navigator={navigator} worldClockData={this.props.worldClockData}/>);
       } else if (route.index === 1) {
-        return (<CityListView navigator={navigator}/>);
+        return (<CityListView navigator={navigator} addWorldClock={this.props.addWorldClock}/>);
       }
   }
 }
@@ -95,6 +78,9 @@ class IntervalListView extends React.Component {
   constructor(props: Props) {
     super(props);
     const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+    var data = this.props.worldClockData.map(element => {
+      return element.data;
+    });
     this.state = {
       dataSource: ds.cloneWithRows(data),
     };

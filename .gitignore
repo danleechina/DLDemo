@@ -17,3 +17,4 @@ ios/build/
 tsconfig.json
 typings/
 ios/npm-debug.log
+npm-debug.log

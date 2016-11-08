@@ -3,18 +3,8 @@
 'use strict';
 
 import React from 'react';
-import {
-  AppRegistry,
-  StyleSheet,
-  Text,
-  TabBarIOS,
-} from 'react-native';
-
-import AlarmView from './js/components/AlarmView';
-import BedtimeView from './js/components/BedtimeView';
-import StopwatchView from './js/components/StopwatchView';
-import TimerView from './js/components/TimerView';
-import WorldClockView from './js/components/WorldClockView';
+import { AppRegistry } from 'react-native';
+import App from './js/containers/App';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import worldclocks from './js/reducers/worldclock';
@@ -23,107 +13,55 @@ import { addWorldClock } from './js/actions/actions';
 let store = createStore(worldclocks); 
 
 class Clock extends React.Component {
-  state: {
-    selectedTab: string
-  }
-  constructor(props) {
-    super(props);
-    this.state = {
-      selectedTab: "World Clock"
-    };
-  }
-
   render() {
     return (
       <Provider store={store}>
-        <TabBarIOS
-          selectedTab={this.state.selectedTab}
-          style={styles.container}
-          unselectedTintColor="white"
-          tintColor="rgba(253,148,38,1)"
-          barTintColor="black">
-          <TabBarIOS.Item
-            title="World Clock"
-            icon={require('./img/logo.png')}
-            selected={this.state.selectedTab === 'World Clock'}
-            onPress={() => {
-              this.setState({
-                selectedTab: 'World Clock'
-              });
-            }}>
-            <WorldClockView  addWorldClock={data => dispatch(addWorldClock(data))}/>
-          </TabBarIOS.Item>
-          <TabBarIOS.Item
-            title="Alarm"
-            icon={require('./img/logo.png')}
-            selected={this.state.selectedTab === 'Alarm'}
-            onPress={() => {
-              this.setState({
-                selectedTab: 'Alarm'
-              });
-            }}>
-            <AlarmView/>
-          </TabBarIOS.Item>
-          <TabBarIOS.Item
-            title="Bedtime"
-            icon={require('./img/logo.png')}
-            selected={this.state.selectedTab === 'Bedtime'}
-            onPress={() => {
-              this.setState({
-                selectedTab: 'Bedtime'
-              });
-            }}>
-            <BedtimeView/>
-          </TabBarIOS.Item>
-          <TabBarIOS.Item
-            title="Stopwatch"
-            icon={require('./img/logo.png')}
-            selected={this.state.selectedTab === 'Stopwatch'}
-            onPress={() => {
-              this.setState({
-                selectedTab: 'Stopwatch'
-              });
-            }}>
-            <StopwatchView/>
-          </TabBarIOS.Item>
-          <TabBarIOS.Item
-            title="Timer"
-            icon={require('./img/logo.png')}
-            selected={this.state.selectedTab === 'Timer'}
-            onPress={() => {
-              this.setState({
-                selectedTab: 'Timer'
-              });
-            }}>
-            <TimerView/>
-          </TabBarIOS.Item>
-        </TabBarIOS>
+        <App/>
       </Provider>
     );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#FFFFFF',
-  }
-});
-
+var data = [
+  {
+    city: 'San Francisco',
+    country: 'USA',
+    time_diff: -8,
+  },
+  {
+    city: 'Beijing',
+    country: 'China',
+    time_diff: 8,
+  },
+  {
+    city: 'London',
+    country: 'UK',
+    time_diff: 0,
+  },
+];
 // Module name
 AppRegistry.registerComponent('Clock', () => Clock);
 
 console.log(store.getState());
 let unsubscribe = store.subscribe(() =>
-  console.log(store.getState())
+  console.log(store.getState().worldclocks)
 )
 
 // 发起一系列 action
-store.dispatch(addWorldClock('Learn about actions'))
-store.dispatch(addWorldClock('Learn about reducers'))
-store.dispatch(addWorldClock('Learn about store'))
+store.dispatch(addWorldClock({
+    city: 'San Francisco',
+    country: 'USA',
+    time_diff: -8,
+  }))
+store.dispatch(addWorldClock({
+    city: 'Beijing',
+    country: 'China',
+    time_diff: 8,
+  }))
+store.dispatch(addWorldClock({
+    city: 'London',
+    country: 'UK',
+    time_diff: 0,
+  }))
 
 // 停止监听 state 更新
 unsubscribe();

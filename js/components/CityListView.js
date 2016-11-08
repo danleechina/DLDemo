@@ -12,9 +12,6 @@ import {
   Navigator,
   TouchableHighlight,
 } from 'react-native';
-type Props = {
-  navigator: Navigator,
-};
 
 type DataFormat = {
   city: string,
@@ -76,7 +73,7 @@ class CityListView extends React.Component {
     return {blob, sectionIds};
   }
 
-  constructor(props: Props) {
+  constructor(props) {
     super(props);
     var {blob, sectionIds} = this.constructData();
     this.state = {
@@ -88,6 +85,8 @@ class CityListView extends React.Component {
     return (
       <TouchableHighlight onPress={()=>{
         this.props.navigator.pop();
+          // this.props.addWorldClock(rowData);
+          console.log(this.props.addWorldClock);
         highlightRow(sectionID, rowID);
       }}>
         <View style={styles.row} key={`${sectionID}-${rowID}`}>
