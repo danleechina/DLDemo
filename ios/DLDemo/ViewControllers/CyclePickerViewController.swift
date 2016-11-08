@@ -63,7 +63,7 @@ extension CyclePickerViewController: DLPickerViewDataSource, DLPickerViewDelegat
         } else if component == 1 {
             return 4
         }
-        return 7
+        return 20
     }
     
     // delegate
@@ -112,4 +112,19 @@ extension CyclePickerViewController: DLPickerViewDataSource, DLPickerViewDelegat
     func pickerView(_ pickerView: DLPickerView, didSelectRow row: Int, inComponent component: Int) {
         print("tap row=\(row+1) in component=\(component+1)")
     }
+    
+    func pickerView(_ pickerView: DLPickerView, enableScrollWithinRangeForComponent component: Int) -> Bool {
+        if component == 2 {
+            return true
+        }
+        return false
+    }
+    
+    func pickerView(_ pickerView: DLPickerView, getRangeForScrollInComponent component: Int) -> NSRange {
+        if component == 2 {
+            return NSRange.init(location: 2, length: 5)
+        }
+        return NSRange.init()
+    }
+    
 }

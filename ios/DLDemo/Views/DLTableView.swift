@@ -542,6 +542,15 @@ class DLTableView: UIScrollView {
     // if the scroll effect doesn't match your need, you can implement customed method based on this method
     // internalIndex is specific for cycle table view to get the exact indexPath when there may be many same indexPath in visible bound
     func scrollToRow(at indexPath: IndexPath, withInternalIndex index: Int?, at scrollPosition: DLTableViewScrollPosition, animated: Bool, completion: ((Bool) -> Swift.Void)? = nil) {
+        let finialOffset = getOffset(at: indexPath, withInternalIndex: index, at: scrollPosition)
+        setContentOffset(finialOffset, animated: animated)
+    }
+    
+    func scrollToRow(at indexPath: IndexPath, at scrollPosition: DLTableViewScrollPosition, animated: Bool) {
+        scrollToRow(at: indexPath, withInternalIndex: nil, at: scrollPosition, animated: animated)
+    }
+    
+    func getOffset(at indexPath: IndexPath, withInternalIndex index: Int?, at scrollPosition: DLTableViewScrollPosition) -> CGPoint {
         // TODO if indexPath is too large
         // adjust visibleCells' frame and visibleCellIndexPath to the near of indexPath
         //
@@ -587,11 +596,7 @@ class DLTableView: UIScrollView {
         if !enableCycleScroll {
             finialOffset = restraint(offSet: finialOffset)
         }
-        setContentOffset(finialOffset, animated: animated)
-    }
-    
-    func scrollToRow(at indexPath: IndexPath, at scrollPosition: DLTableViewScrollPosition, animated: Bool) {
-        scrollToRow(at: indexPath, withInternalIndex: nil, at: scrollPosition, animated: animated)
+        return finialOffset;
     }
     
     // FIX: we'd better cache the offset
