@@ -44,7 +44,7 @@ class WorldClockView extends React.Component {
       if (route.index === 0) {
         return (<IntervalListView navigator={navigator} worldClockData={this.props.worldClockData}/>);
       } else if (route.index === 1) {
-        return (<CityListView navigator={navigator} addWorldClock={this.props.addWorldClock}/>);
+        return (<CityListView navigator={navigator} addWorldClock={(data)=>this.props.addWorldClock(data)}/>);
       }
   }
 }
@@ -78,12 +78,18 @@ class IntervalListView extends React.Component {
   constructor(props: Props) {
     super(props);
     const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
-    var data = this.props.worldClockData.map(element => {
-      return element.data;
-    });
     this.state = {
-      dataSource: ds.cloneWithRows(data),
+      ds: ds,
+      dataSource: ds.cloneWithRows(this.props.worldClockData),
     };
+  }
+
+  componentWillReceiveProps (nextProps) {
+    if (nextProps.worldClockData !== this.props.worldClockData) {
+      this.setState({
+        dataSource: this.state.dataSource.cloneWithRows(nextProps.worldClockData),
+      })
+    }
   }
 
   render() {

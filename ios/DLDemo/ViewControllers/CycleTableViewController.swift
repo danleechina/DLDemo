@@ -148,6 +148,7 @@ extension CycleTableViewController: DLTableViewDelegate, DLTableViewDataSource {
     
     // must implement this when enable cycle scroll.
     func tableView(_ tableView: DLTableView, didSelectRowAt indexPath: IndexPath, withInternalIndex index: Int) {
+        print("tableView tap at = \(indexPath)")
         tableView.scrollToRow(at: indexPath, withInternalIndex: index, at: positionScroll, animated: true)
         tableView.deselectRow(at: indexPath, withInternalIndex: index, animated: true)
     }

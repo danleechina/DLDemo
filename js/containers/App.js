@@ -16,6 +16,7 @@ import BedtimeView from '../components/BedtimeView';
 import StopwatchView from '../components/StopwatchView';
 import TimerView from '../components/TimerView';
 import WorldClockView from '../components/WorldClockView';
+import { addWorldClock } from '../actions/actions'
 
 class App extends React.Component {
   state: {
@@ -47,7 +48,9 @@ class App extends React.Component {
                 selectedTab: 'World Clock'
                 });
             }}>
-            <WorldClockView  addWorldClock={data => dispatch(addWorldClock(data))} worldClockData={worldClocks}/>
+            <WorldClockView  addWorldClock={(data) => dispatch(addWorldClock(data))} worldClockData={worldClocks.map(element => {
+                  return element.data;
+                })}/>
             </TabBarIOS.Item>
             <TabBarIOS.Item
             title="Alarm"
@@ -113,4 +116,4 @@ function select(state) {
   }
 }
 
-export default connect(select)(App); 
+export default connect(select)(App);

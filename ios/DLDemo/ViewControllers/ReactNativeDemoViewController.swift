@@ -15,18 +15,16 @@ class ReactNativeDemoViewController: UIViewController {
         super.viewDidLoad()
         
         let button1 = UIButton()
-        button1.frame = CGRect(x: self.view.frame.width/2 - 50, y: self.view.frame.height/2 - 50, width: 100, height: 100)
+        button1.frame = CGRect(x: self.view.frame.width/2 - 100, y: self.view.frame.height/2 - 50, width: 200, height: 100)
         button1.setTitle("Start React Native!", for: .normal)
         button1.setTitleColor(UIColor.blue, for: .normal)
         button1.addTarget(self, action: #selector(gotoReactNativePage), for: .touchUpInside)
+        self.view.backgroundColor = UIColor.white
         self.view.addSubview(button1)
     }
     
     func gotoReactNativePage(sender: UIButton) {
-    //    let jsCodeLocation = URL.init(string: "http://192.168.30.161:8081/index.ios.bundle?platform=ios")
         let jsCodeLocation = URL.init(string: "http://localhost:8081/index.ios.bundle?platform=ios")
-
-        
         let rootView = RCTRootView(
             bundleURL: jsCodeLocation,
             moduleName: "Clock",

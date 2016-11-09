@@ -12,6 +12,7 @@ import {
   Navigator,
   TouchableHighlight,
 } from 'react-native';
+import { addWorldClock } from '../actions/actions';
 
 type DataFormat = {
   city: string,
@@ -84,10 +85,9 @@ class CityListView extends React.Component {
   _renderRow(rowData: DataFormat, sectionID: number, rowID: number, highlightRow: (sectionID: number, rowID: number) => void) {
     return (
       <TouchableHighlight onPress={()=>{
-        this.props.navigator.pop();
-          // this.props.addWorldClock(rowData);
-          console.log(this.props.addWorldClock);
         highlightRow(sectionID, rowID);
+        this.props.addWorldClock(rowData);
+        this.props.navigator.pop();
       }}>
         <View style={styles.row} key={`${sectionID}-${rowID}`}>
           <Text style={styles.rowText}>{rowData.city + ', ' + rowData.country}</Text>

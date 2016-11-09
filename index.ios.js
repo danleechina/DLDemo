@@ -10,9 +10,35 @@ import { createStore } from 'redux';
 import worldclocks from './js/reducers/worldclock';
 import { addWorldClock } from './js/actions/actions';
 
-let store = createStore(worldclocks); 
+let store = createStore(worldclocks);
 
 class Clock extends React.Component {
+
+
+  componentWillMount() {
+
+    // 发起一系列 action
+    store.dispatch(addWorldClock({
+        city: 'San Francisco',
+        country: 'USA',
+        time_diff: -8,
+      }));
+    store.dispatch(addWorldClock({
+        city: 'Beijing',
+        country: 'China',
+        time_diff: 8,
+      }));
+    store.dispatch(addWorldClock({
+        city: 'London',
+        country: 'UK',
+        time_diff: 0,
+      }));
+  }
+
+  componentWillUnMount() {
+
+    unsubscribe();
+  }
   render() {
     return (
       <Provider store={store}>
@@ -21,47 +47,11 @@ class Clock extends React.Component {
     );
   }
 }
-var data = [
-  {
-    city: 'San Francisco',
-    country: 'USA',
-    time_diff: -8,
-  },
-  {
-    city: 'Beijing',
-    country: 'China',
-    time_diff: 8,
-  },
-  {
-    city: 'London',
-    country: 'UK',
-    time_diff: 0,
-  },
-];
 // Module name
 AppRegistry.registerComponent('Clock', () => Clock);
 
 console.log(store.getState());
-let unsubscribe = store.subscribe(() =>
-  console.log(store.getState().worldclocks)
-)
-
-// 发起一系列 action
-store.dispatch(addWorldClock({
-    city: 'San Francisco',
-    country: 'USA',
-    time_diff: -8,
-  }))
-store.dispatch(addWorldClock({
-    city: 'Beijing',
-    country: 'China',
-    time_diff: 8,
-  }))
-store.dispatch(addWorldClock({
-    city: 'London',
-    country: 'UK',
-    time_diff: 0,
-  }))
-
-// 停止监听 state 更新
-unsubscribe();
+let unsubscribe = store.subscribe(() => {
+  console.log("HIIIII");
+  console.log(store.getState().worldclocks);
+})

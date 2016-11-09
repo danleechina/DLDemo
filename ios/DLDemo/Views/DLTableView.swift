@@ -114,7 +114,7 @@ class DLTableView: UIScrollView {
     var selectedColor: UIColor?
     
     fileprivate var reuseCellsSet = Set<DLTableViewCell>()
-    fileprivate var containerView = UIView()
+    internal var containerView = UIView()
     fileprivate static let DefaultCellLength:CGFloat = 40
     fileprivate var isContentSizeLessThanFrameSize = false
     
@@ -412,43 +412,69 @@ class DLTableView: UIScrollView {
         }
     }
     
+    fileprivate lazy var tapGest: UITapGestureRecognizer = {
+        let tapGest = UITapGestureRecognizer.init(target: self, action: #selector(tableViewTapped(sender:)))
+        tapGest.cancelsTouchesInView = false
+        tapGest.require(toFail: self.longPressGest)
+        return tapGest
+    }()
+    
+    fileprivate lazy var longPressGest: UILongPressGestureRecognizer = {
+        let longPressGest = UILongPressGestureRecognizer.init(target: self, action: #selector(tableViewLongPressDetected(sender:)))
+        longPressGest.minimumPressDuration = 0.5
+        return longPressGest
+    }()
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         addSubview(containerView)
         showsVerticalScrollIndicator = false
         showsHorizontalScrollIndicator = false
         
-        let tapGest = UITapGestureRecognizer.init(target: self, action: #selector(tableViewTapped(sender:)))
-        tapGest.cancelsTouchesInView = false
         self.addGestureRecognizer(tapGest)
-        
-        let longPressGest = UILongPressGestureRecognizer.init(target: self, action: #selector(tableViewLongPressDetected(sender:)))
-        longPressGest.minimumPressDuration = 0.5
         self.addGestureRecognizer(longPressGest)
-        tapGest.require(toFail: longPressGest)
         
     }
+    var disableLongPressGest = false {
+        didSet {
+            longPressGest.isEnabled = !disableLongPressGest
+        }
+    }
+    var disableTapGest = false {
+        didSet {
+            tapGest.isEnabled = !disableTapGest
+        }
+    }
+    
     
     @objc fileprivate func tableViewTapped(sender: UITapGestureRecognizer) {
         let point = sender.location(in: self.containerView)
-        if let cell = self.containerView.whichSubviewContains(point: point).last as? DLTableViewCell {
-            if let index = self.visibileCells.index(of: cell) {
-                cell.selectedBackgroundColorView.isHidden = false
-                pressedCell = cell
-                if !enableCycleScroll {
-                    self.tableViewDelegate?.tableView?(self, didSelectRowAt: self.visibileCellsIndexPath[index])
-                } else {
-                    self.tableViewDelegate?.tableView?(self, didSelectRowAt: self.visibileCellsIndexPath[index], withInternalIndex: index)
+        switch sender.state {
+        case .ended:
+            if let cell = self.containerView.whichSubviewContains(point: point).last as? DLTableViewCell {
+                if let index = self.visibileCells.index(of: cell) {
+                    cell.selectedBackgroundColorView.isHidden = false
+                    pressedCell = cell
+                    if !enableCycleScroll {
+                        self.tableViewDelegate?.tableView?(self, didSelectRowAt: self.visibileCellsIndexPath[index])
+                    } else {
+                        self.tableViewDelegate?.tableView?(self, didSelectRowAt: self.visibileCellsIndexPath[index], withInternalIndex: index)
+                    }
                 }
             }
+            break
+        default:
+            print(sender.state)
+            break
         }
     }
     
     fileprivate var pressedCell: DLTableViewCell?
+    fileprivate var lastTouchPoint: CGPoint?
     @objc fileprivate func tableViewLongPressDetected(sender: UILongPressGestureRecognizer) {
+        let point = sender.location(in: self.containerView)
         switch sender.state {
         case .began:
-            let point = sender.location(in: self.containerView)
             if let cell = self.containerView.whichSubviewContains(point: point).last as? DLTableViewCell {
                 cell.selectedBackgroundColorView.isHidden = false
                 pressedCell = cell
@@ -456,7 +482,6 @@ class DLTableView: UIScrollView {
             break
         case .changed:
             if let cell = pressedCell {
-                let point = sender.location(in: self.containerView)
                 if !cell.frame.contains(point) {
                     UIView.animate(withDuration: 0.5, animations: {
                         cell.selectedBackgroundColorView.alpha = 0
@@ -464,15 +489,34 @@ class DLTableView: UIScrollView {
                             cell.selectedBackgroundColorView.isHidden = true
                             cell.selectedBackgroundColorView.alpha = 1
                     })
+                    pressedCell = nil
+                } else if let ltp = lastTouchPoint {
+                    if (self.scrollDirection == .Vertical ? fabs(ltp.y - point.y) > 5 : fabs(ltp.x - point.x) > 5) {
+                        UIView.animate(withDuration: 0.5, animations: {
+                            cell.selectedBackgroundColorView.alpha = 0
+                            }, completion: { (comp) in
+                                cell.selectedBackgroundColorView.isHidden = true
+                                cell.selectedBackgroundColorView.alpha = 1
+                        })
+                        pressedCell = nil
+                    }
                 }
             }
             break
         default:
             if let cell = pressedCell {
-                cell.selectedBackgroundColorView.isHidden = true
-                pressedCell = nil
+                if let index = self.visibileCells.index(of: cell) {
+                    cell.selectedBackgroundColorView.isHidden = false
+                    pressedCell = cell
+                    if !enableCycleScroll {
+                        self.tableViewDelegate?.tableView?(self, didSelectRowAt: self.visibileCellsIndexPath[index])
+                    } else {
+                        self.tableViewDelegate?.tableView?(self, didSelectRowAt: self.visibileCellsIndexPath[index], withInternalIndex: index)
+                    }
+                }
             }
         }
+        lastTouchPoint = point
     }
     
     
