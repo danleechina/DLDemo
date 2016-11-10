@@ -50,17 +50,10 @@ protocol DLTableViewDataSource: class {
 }
 
 // there are really not many things about the cell. It's totally up to you to inherit it and custom it.
+// make sure your views are added to containerView.
 class DLTableViewCell: UIView {
-    var reuseID: String?
-    var titleLabel: UILabel = {
-        let label = UILabel()
-        label.textAlignment = .center
-        label.textColor = UIColor.blue
-        return label
-    }()
+    var titleLabel = UILabel()
     var containerView = UIView()
-    
-    
     override var frame: CGRect {
         didSet {
             titleLabel.frame = CGRect(x: 0, y: 0, width: self.frame.width, height: self.frame.height)
@@ -69,12 +62,12 @@ class DLTableViewCell: UIView {
         }
     }
     
-    fileprivate let selectedBackgroundColorView = UIView()
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
-        addSubview(containerView)
+        titleLabel.textAlignment = .center
+        titleLabel.textColor = UIColor.blue
         containerView.addSubview(titleLabel)
+        addSubview(containerView)
         addSubview(selectedBackgroundColorView)
         selectedBackgroundColorView.isHidden = true
         selectedBackgroundColorView.backgroundColor = UIColor.lightGray.withAlphaComponent(0.9)
@@ -82,6 +75,14 @@ class DLTableViewCell: UIView {
     
     init(style: DLTableViewCellStyle, reuseIdentifier: String?) {
         super.init(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
+        titleLabel.textAlignment = .center
+        titleLabel.textColor = UIColor.blue
+        containerView.addSubview(titleLabel)
+        addSubview(containerView)
+        addSubview(selectedBackgroundColorView)
+        selectedBackgroundColorView.isHidden = true
+        selectedBackgroundColorView.backgroundColor = UIColor.lightGray.withAlphaComponent(0.9)
+        
         switch style {
         case .Custom:
             titleLabel.isHidden = true
@@ -91,22 +92,36 @@ class DLTableViewCell: UIView {
             break
         }
         reuseID = reuseIdentifier
-        addSubview(containerView)
-        containerView.addSubview(titleLabel)
-        addSubview(selectedBackgroundColorView)
-        selectedBackgroundColorView.isHidden = true
-        selectedBackgroundColorView.backgroundColor = UIColor.lightGray.withAlphaComponent(0.9)
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
+    fileprivate var reuseID: String?
+    fileprivate let selectedBackgroundColorView = UIView()
 }
 
-// This class will not implement things like sectionHeader, sectionFooter, etc.
-// These can be implemented by using different kind of cell.
-// For the floating section view, you can inherit DLTableView and add a subview to the top of the tableView when the row which is a fake section is about to scroll out.
+// TODO: add section header and footer
+
+/*
+ 
+ DLTableView/DLTableViewDelegate don't fully support the API like UITableView/UITableViewDelegate provided.
+ DLTableView has these feature that UITableView doesn't have:
+ 
+ 1. Not only scroll vertically, but also horizontally.
+ 2. It can scroll cyclically.
+ 
+ DLTableView curentlly doesn't have these feature that UITableView have:
+ 
+ 1. Don't support for adding section header and footer.
+ 2. The API provided by UITableView/UITableViewDelegate are not fully implemented.
+ 
+ The biggest feature about DLTableView:
+ 
+ 1. The cell is reused and the number of cached cells will be really small. But CPU usage may be high and if you scroll too quickly, the number of cached cells goes up rapidly. I should fix this in the future.
+ 
+ */
 class DLTableView: UIScrollView {
 
     var visibileCells = Array<DLTableViewCell>()
@@ -333,7 +348,7 @@ class DLTableView: UIScrollView {
             return cell
         }  else {
             // ds should not be nil
-            assert(false)
+            assert(false, "DLTableViewDataSource should not be nil")
             return DLTableViewCell()
         }
     }
@@ -763,7 +778,7 @@ class DLTableView: UIScrollView {
                 xOrY = scrollDirection == .Vertical ? visibileCells.first!.frame.origin.y : visibileCells.first!.frame.origin.x
                 var tmpIndexPath = IndexPath.init(row: headIndexPath.row, section: headIndexPath.section)
                 
-                while indexPath.row <= tmpIndexPath.row {
+                while indexPath.row < tmpIndexPath.row {
                     tmpIndexPath.row -= 1
                     var subValue = DLTableView.DefaultCellLength
                     if scrollDirection == .Vertical {
@@ -776,14 +791,13 @@ class DLTableView: UIScrollView {
                         }
                     }
                     xOrY -= subValue
-                    
                 }
             } else {
                 // +
                 xOrY = scrollDirection == .Vertical ? visibileCells.last!.frame.origin.y : visibileCells.last!.frame.origin.x
                 var tmpIndexPath = IndexPath.init(row: lastIndexPath.row, section: lastIndexPath.section)
                 
-                while indexPath.row >= tmpIndexPath.row {
+                while indexPath.row > tmpIndexPath.row {
                     tmpIndexPath.row += 1
                     var addValue = DLTableView.DefaultCellLength
                     if scrollDirection == .Vertical {
