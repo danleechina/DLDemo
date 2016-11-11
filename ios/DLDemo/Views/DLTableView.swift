@@ -120,6 +120,7 @@ class DLTableViewCell: UIView {
  The biggest feature about DLTableView:
  
  1. The cell is reused and the number of cached cells will be really small. But CPU usage may be high and if you scroll too quickly, the number of cached cells goes up rapidly. I should fix this in the future.
+ 2. You can set infinite rows to DLTableView without using too much memory.
  
  */
 class DLTableView: UIScrollView {

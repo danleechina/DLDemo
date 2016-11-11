@@ -1,5 +1,5 @@
 //
-//  CyclePickerViewController.swift
+//  CyclePicker1ViewController.swift
 //  DLDemo
 //
 //  Created by Dan.Lee on 2016/10/22.
@@ -8,10 +8,9 @@
 
 import UIKit
 
-class CyclePickerViewController: UIViewController {
+class CyclePicker1ViewController: UIViewController {
     private lazy var cyclePickerView:DLPickerView = {
         let cyclePickerView = DLPickerView()
-        //cyclePickerView.backgroundColor = UIColor.brown
         cyclePickerView.delegate = self
         cyclePickerView.dataSource = self
         return cyclePickerView
@@ -29,7 +28,6 @@ class CyclePickerViewController: UIViewController {
         super.viewDidLoad()
         
         cyclePickerView.frame = CGRect(x: 10, y: 70, width: self.view.frame.width - 20, height: self.view.frame.width - 20)
-        //cyclePickerView.enableNightMode = true
         cyclePickerView.reloadAllComponents()
         self.view.addSubview(cyclePickerView)
         self.view.backgroundColor = UIColor.lightGray
@@ -168,7 +166,7 @@ class CyclePickerViewController: UIViewController {
     }
 }
 
-extension CyclePickerViewController: DLPickerViewDataSource, DLPickerViewDelegate {
+extension CyclePicker1ViewController: DLPickerViewDataSource, DLPickerViewDelegate {
     // dataSource
     func numberOfComponents(in pickerView: DLPickerView) -> Int {
         return 3
@@ -188,34 +186,30 @@ extension CyclePickerViewController: DLPickerViewDataSource, DLPickerViewDelegat
         return enableCyclically
     }
     
-    func pickerView(_ pickerView: DLPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-        return "\(row)"
+    func pickerView(_ pickerView: DLPickerView, cellForRow row: Int, forComponent component: Int) -> DLPickerViewCell {
+        var cell = pickerView.dequeueReusableCell(forComponent: component, withIdentifier: "Example Cell") as? ExampleCell
+        if !(cell != nil) {
+            // using customized style, if you want to custom the cell. DLTableViewCellStyle.Custom
+            cell = ExampleCell.init(style: .Custom, reuseIdentifier: "Example Cell")
+        }
+        cell?.textLabel.text = "\(row)"
+        return cell!
     }
     
     
-//        func pickerView(_ pickerView: DLPickerView, attributedTitleForRow row: Int, forComponent component: Int) -> NSAttributedString? {
-//    
-//        }
-//    
-//        func pickerView(_ pickerView: DLPickerView, viewForRow row: Int, forComponent component: Int, reusing view: UIView?) -> UIView {
-//    
-//        }
-    
+    func pickerView(_ pickerView: DLPickerView, customScrollEffectForComponent component: Int, withPosition position: CGFloat) -> CATransform3D {
+        // return CATransform3DIdentity means don't transform cell
+        return CATransform3DIdentity
+    }
     
     func pickerView(_ pickerView: DLPickerView, widthForComponent component: Int) -> CGFloat {
-        return 70
+        if component == 2 {
+            return 170
+        } else if component == 1 {
+            return 50
+        }
+        return 40
     }
-    
-//    func pickerView(_ pickerView: DLPickerView, rowHeightForRow row: Int, inComponent component: Int) -> CGFloat {
-//        
-//        if row == 2 && component == 0 {
-//            return 150
-//        }
-//        if row == 2 && component == 1 {
-//            return 10
-//        }
-//        return 64
-//    }
     
     func pickerView(_ pickerView: DLPickerView, didSelectRow row: Int, inComponent component: Int) {
         print("tap row=\(row) in component=\(component)")
@@ -233,16 +227,41 @@ extension CyclePickerViewController: DLPickerViewDataSource, DLPickerViewDelegat
         return NSRange.init(location: minValueToChoose, length: maxValueToChoose - minValueToChoose + 1)
     }
     
-   // func pickerView(_ pickerView: DLPickerView, initiallySelectedRowForComponent component: Int) -> Int {
-   //     if component == 2 {
-   //         return 11
-   //     }
-   //     return component + 2
-   // }
-    
     func pickerView(_ pickerView: DLPickerView, scaleValueForCenterIndicatorInComponent component: Int) -> Double {
         return 1.1
     }
     
 }
 
+class ExampleCell: DLPickerViewCell {
+    let leftView = UIView()
+    let rightView = UIView()
+    let textLabel = UILabel()
+    
+    override var frame: CGRect {
+        didSet {
+            leftView.frame = CGRect(x: 0, y: 0, width: self.containerView.frame.width/2, height: self.containerView.frame.height)
+            rightView.frame = CGRect(x: self.containerView.frame.width/2, y: 0, width: self.containerView.frame.width/2, height: self.containerView.frame.height)
+            textLabel.frame = CGRect(x: 0, y: 0, width: self.containerView.frame.width, height: self.containerView.frame.height)
+        }
+    }
+    
+    override init(style: DLTableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        
+        // make sure everything is add to containerView
+        self.containerView.addSubview(leftView)
+        self.containerView.addSubview(rightView)
+        self.containerView.addSubview(textLabel)
+        leftView.backgroundColor = UIColor.randomColor()
+        rightView.backgroundColor = UIColor.randomColor()
+        textLabel.textColor = UIColor.white
+        textLabel.font = UIFont.systemFont(ofSize: 12)
+        textLabel.textAlignment = .center
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+}

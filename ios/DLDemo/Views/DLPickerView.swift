@@ -39,6 +39,7 @@ protocol DLPickerViewDataSource : NSObjectProtocol {
     
     @objc optional func pickerView(_ pickerView: DLPickerView, attributedTitleForRow row: Int, forComponent component: Int) -> NSAttributedString? // attributed title is favored if both methods are implemented
     
+    // maybe use func pickerView(_ pickerView: DLPickerView, cellForRow row: Int, forComponent component: Int) is a better choice!!
     @objc optional func pickerView(_ pickerView: DLPickerView, viewForRow row: Int, forComponent component: Int, reusing view: UIView?) -> UIView
     
     @objc optional func pickerView(_ pickerView: DLPickerView, didSelectRow row: Int, inComponent component: Int)
@@ -53,6 +54,7 @@ protocol DLPickerViewDataSource : NSObjectProtocol {
      */
     
     // make using DLPickerView just like UITableView, if you implement the methods that return title, attributedTitle or view, this method will not be invoked
+    // func pickerView(_ pickerView: DLPickerView, viewForRow row: Int, forComponent component: Int, reusing view: UIView?) is not recommended to use, because this method is better!!!
     @objc optional func pickerView(_ pickerView: DLPickerView, cellForRow row: Int, forComponent component: Int) -> DLPickerViewCell
     
     // whether or not the specific component can scroll cyclically
@@ -65,18 +67,25 @@ protocol DLPickerViewDataSource : NSObjectProtocol {
     // only specific cells of the component within the returned range can stop at center
     @objc optional func pickerView(_ pickerView: DLPickerView, enableScrollWithinRangeForComponent component: Int) -> Bool
     
-    // if enable scroll within range for the component, this method will be invoked. User can scroll between location to location + length - 1, including both end.
+    // if enable scroll within range for the component, this method will be invoked. User can scroll between location to location + length - 1, including both end
     @objc optional func pickerView(_ pickerView: DLPickerView, getRangeForScrollInComponent component: Int) -> NSRange
     
     // custom the indictor view for the component if you want, make sure that you don't return different indicator views for the same component
     // TODO
-    @objc optional func pickerView(_ pickerView: DLPickerView, customIndicatorViewForComponent component: Int) -> UIView
+    //@objc optional func pickerView(_ pickerView: DLPickerView, customIndicatorViewForComponent component: Int) -> UIView
     
     // custom the scroll effect, so it scrolls not only like wheel, but can also be the style you want, and also by implementing this method you can make some visual effect to differnt cell. The effect should be based on the position
-    // the position means the distance from cell's center to the component's center, and range from -1 to 1, negative value means it is above the center.
+    // the position means the distance from cell's center to the component's center, and it ranges from -1 to 1, negative value means it is above the center.
     @objc optional func pickerView(_ pickerView: DLPickerView, customScrollEffectForComponent component: Int, withPosition position: CGFloat) -> CATransform3D
     // it isn't recommended that you change the content of cell in this method. Change the cell's visiual effect. Basically return a CATransform3D is enough to change the visiual effect
     @objc optional func pickerView(_ pickerView: DLPickerView, customCellForComponent component: Int, withPosition position: CGFloat, andTheCell: DLPickerViewCell)
+    
+    // return the middle row of the component when DLPickerView first appears in the screen
+    // this will not trigger didSelectRow delegate method
+    @objc optional func pickerView(_ pickerView: DLPickerView, initiallySelectedRowForComponent component: Int) -> Int
+    
+    // return the scale value for center indicator view in the component, or you can simply set magnifyingViewScale for all components
+    @objc optional func pickerView(_ pickerView: DLPickerView, scaleValueForCenterIndicatorInComponent component: Int) -> Double
 }
 
 // layout style for components
@@ -91,7 +100,7 @@ enum DLPickerViewSelectionStyle {
     case Custom
 }
 
-// inherit this class, make sure your every subview is added to containerView.
+// inherit this class, make sure your every subview is added to containerView, and using DLTableViewCellStyle.Custom style
 class DLPickerViewCell: DLTableViewCell {
     override var frame: CGRect {
         didSet {
@@ -115,6 +124,7 @@ class DLPickerViewCell: DLTableViewCell {
 }
 
 // FIXME: when enable scroll range, indicator view may jump when animation ends. We should find out a better way to draw DLPickerViewInternalMagnifyingView.
+// FIXME: automaticallyAdjustsScrollViewInsets problem.
 // TODO: customized indicator view for different components.
 
 /*
@@ -129,8 +139,9 @@ class DLPickerViewCell: DLTableViewCell {
  4. You can use DLPickerView like UITableView, and just inherit DLPickerViewCell to implement your own customized cell class.
  5. You can disable the scroll sound effect if you want, and you can also custom the scroll sound effect.
  6. You can custom the scrol effect, so it scrolls not only like wheel, but can also be the style you want. And make some visual effect to the cell based on the cell's position.
- 7. You can adjust the scale value of center indicator view by setting magnifyingViewScale.
+ 7. You can adjust the scale value of center indicator view by setting magnifyingViewScale or implement method in DLPickerViewDelegate.
  8. You can set night mode if you want.
+ 9. You can make a component has infinite rows.
  
  ... If you have some other ideas about the DLPickerView, please let me know.
 
@@ -139,8 +150,9 @@ class DLPickerViewCell: DLTableViewCell {
  1. If you change some properties, make sure to invoke reloadComponent or reloadAllComponent methods.
  2. If you use different row height for a component, be sure to set showsSelectionIndicator to false.
  3. The custom indicator view for different components has not been currently finished developing, and I am think about how many people want this? I think system-provide-style is good enough.
+ 4. When you add DLPickerView to the ViewController'view, sometime you should set automaticallyAdjustsScrollViewInsets to false, if appearance doesn't right.
  
- ... I will be grateful to you if you report some bugs to me.
+ ... I will be very grateful if someone reports bugs to me.
  
 */
 
@@ -194,18 +206,17 @@ class DLPickerView : UIView {
     // change the scale value of center magnify view.
     var magnifyingViewScale = 1.04 {
         didSet {
-            selectionIndicatorViews.forEach({$0.scale = magnifyingViewScale})
+            selectionIndicatorViews.forEach({
+                $0.scale = magnifyingViewScale;
+                $0.setNeedsDisplay();
+            })
         }
     }
     
     // enable night mode, night mode isn't responsible for the content of the cell. default is false
     var enableNightMode = false {
         didSet {
-            if enableNightMode {
-                self.backgroundColor = UIColor.black
-            } else {
-                self.backgroundColor = UIColor.white
-            }
+            self.backgroundColor = enableNightMode ? UIColor.black :  UIColor.white
         }
     }
     
@@ -266,11 +277,12 @@ class DLPickerView : UIView {
     }
     
     // selection. in this case, it means showing the appropriate row in the middle
-    func selectRow(_ row: Int, inComponent component: Int, animated: Bool){ // scrolls the specified row to center.
+    // Use pickerView(_ pickerView: DLPickerView, initiallySelectedRowForComponent component: Int), if you want to configure the initially selected row.
+    func selectRow(_ row: Int, inComponent component: Int, animated: Bool) { // scrolls the specified row to center.
         if self.tableViews.count <= component {
             return
         }
-        self.tableViews[component].scrollToRow(at: IndexPath.init(row: row, section: 0), at: .middle, animated: true)
+        self.tableViews[component].scrollToRow(at: IndexPath.init(row: row, section: 0), at: .middle, animated: animated)
     }
     
     // returns selected row. -1 if nothing selected
@@ -279,6 +291,10 @@ class DLPickerView : UIView {
             return -1
         }
         return self.lastSelectedRow[component]
+    }
+    
+    func dequeueReusableCell(forComponent component: Int, withIdentifier identifier: String) -> DLPickerViewCell? {
+        return self.tableViews[component].dequeueReusableCell(withIdentifier: identifier) as? DLPickerViewCell
     }
     
     override init(frame: CGRect) {
@@ -416,6 +432,7 @@ class DLPickerView : UIView {
             tableView.backgroundColor = UIColor.clear
             tableView.disableLongPressGest = true
             tableView.disableTapGest = true
+            tableView.decelerationRate = UIScrollViewDecelerationRateFast
             
             // step 2: set if enable cycle scroll
             if let enableCycleScroll = self.delegate?.enableCycleScroll?(in: self, forComponent: index) {
@@ -485,7 +502,14 @@ class DLPickerView : UIView {
             selectionIndicatorViews.forEach({$0.frame.origin.x += offsetX})
         }
         
-        selectionIndicatorViews.forEach({$0.scale = magnifyingViewScale})
+        // Set customized scale
+        for (idx, indicatorView) in selectionIndicatorViews.enumerated() {
+            if let scale = self.delegate?.pickerView?(self, scaleValueForCenterIndicatorInComponent: idx) {
+                indicatorView.scale = scale
+            } else {
+                indicatorView.scale = magnifyingViewScale
+            }
+        }
         initAppearance(delay: 0.05)
         makeSureIndicatorViewsShowRight(delay: 0.15)
         nowWeCanPlaySound(delay: 0.5)
@@ -496,6 +520,32 @@ class DLPickerView : UIView {
             for (_, tableView) in self.tableViews.enumerated() {
                 self.transformCellLayer(scrollView: tableView)
                 self.scrollToCenter(scrollView: tableView, animated: false)
+            }
+            for idx in 0 ..< self.tableViews.count {
+                if var row = self.delegate?.pickerView?(self, initiallySelectedRowForComponent: idx) {
+                    if let enableScrollRange = self.delegate?.pickerView?(self, enableScrollWithinRangeForComponent: idx) {
+                        if enableScrollRange {
+                            if let range = self.delegate?.pickerView?(self, getRangeForScrollInComponent: idx) {
+                                if row < range.location {
+                                    row = range.location
+                                } else if row > range.location + range.length - 1 {
+                                    row = range.location + range.length - 1
+                                }
+                            }
+                        }
+                    }
+                    self.selectRow(row, inComponent: idx, animated: false)
+                } else {
+                    var row = 0
+                    if let enableScrollRange = self.delegate?.pickerView?(self, enableScrollWithinRangeForComponent: idx) {
+                        if enableScrollRange {
+                            if let range = self.delegate?.pickerView?(self, getRangeForScrollInComponent: idx) {
+                                row = range.location
+                            }
+                        }
+                    }
+                    self.selectRow(row, inComponent: idx, animated: false)
+                }
             }
         }
     }
@@ -516,12 +566,12 @@ class DLPickerView : UIView {
     
     // MARK: - Supporting Function
     
-    fileprivate func toggleSelectedActionIfNeeded(tableView: DLTableView) {
+    fileprivate func triggerSelectedActionIfNeeded(tableView: DLTableView) {
         DLPickerView.cancelPreviousPerformRequests(withTarget: self)
-        self.perform(#selector(toggleSelectedAcionRightAway(tableView:)), with: tableView, afterDelay: 0.5)
+        self.perform(#selector(triggerSelectedAcionRightAway(tableView:)), with: tableView, afterDelay: 0.5)
     }
     
-    @objc fileprivate func toggleSelectedAcionRightAway(tableView: DLTableView) {
+    @objc fileprivate func triggerSelectedAcionRightAway(tableView: DLTableView) {
         let minIndex = getIndexWhichIsTheClosestToCenter(scrollView: tableView)
         if minIndex == -1 {
             return
@@ -618,6 +668,7 @@ class DLPickerView : UIView {
             }
             if let transform = self.delegate?.pickerView?(self, customScrollEffectForComponent: scrollView.tag, withPosition: disPercent) {
                 cell.containerView.layer.transform = transform
+            } else if ((self.delegate?.pickerView?(self, customCellForComponent: scrollView.tag, withPosition: disPercent, andTheCell: cell as! DLPickerViewCell)) != nil) {
             } else {
                 var rotationPerspectiveTrans = CATransform3DIdentity
                 rotationPerspectiveTrans.m34 = -1 / 500
@@ -645,6 +696,10 @@ class DLPickerView : UIView {
             }
         }
     }
+    
+    deinit {
+        // print("DLPickerView Deinit called")
+    }
 }
 
 extension DLPickerView: DLTableViewDelegate, DLTableViewDataSource {
@@ -658,6 +713,7 @@ extension DLPickerView: DLTableViewDelegate, DLTableViewDataSource {
         if usingPickerViewLikeTabelView {
             if let cell = self.delegate?.pickerView?(self, cellForRow: indexPath.row, forComponent: tableView.tag) {
                 usingPickerViewLikeTabelView = true
+                rotateCellContentIfNeed(cell: cell)
                 return cell
             } else {
                 assert(false, "You should implement at least one method to return title, attributedTitle, view, or cell for row")
@@ -666,16 +722,7 @@ extension DLPickerView: DLTableViewDelegate, DLTableViewDataSource {
         var temp = tableView.dequeueReusableCell(withIdentifier: "DLPickViewInternalCell") as? DLPickerViewCell
         if temp == nil {
             temp = DLPickerViewCell.init(style: .Default, reuseIdentifier: "DLPickViewInternalCell")
-            switch layoutStyle {
-            case .Horizontal:
-                //temp!.titleLabel.transform = CGAffineTransform(rotationAngle: 0)
-                temp!.containerView.subviews.forEach({$0.transform = CGAffineTransform(rotationAngle: 0);})
-                break
-            case .Vertical:
-                //temp!.titleLabel.transform = CGAffineTransform(rotationAngle: CGFloat(M_PI/2))
-                temp!.containerView.subviews.forEach({$0.transform = CGAffineTransform(rotationAngle: CGFloat(M_PI/2));})
-                break
-            }
+            rotateCellContentIfNeed(cell: temp)
             if enableNightMode {
                 temp?.titleLabel.textColor = UIColor.white
             } else {
@@ -712,6 +759,19 @@ extension DLPickerView: DLTableViewDelegate, DLTableViewDataSource {
             assert(false, "You should implement at least one method to return title, attributedTitle, view, or cell for row")
         }
         return cell
+    }
+    
+    func rotateCellContentIfNeed(cell: DLPickerViewCell?) {
+        switch layoutStyle {
+        case .Horizontal:
+            //temp!.titleLabel.transform = CGAffineTransform(rotationAngle: 0)
+            cell?.containerView.subviews.forEach({$0.transform = CGAffineTransform(rotationAngle: 0);})
+            break
+        case .Vertical:
+            //temp!.titleLabel.transform = CGAffineTransform(rotationAngle: CGFloat(M_PI/2))
+            cell?.containerView.subviews.forEach({$0.transform = CGAffineTransform(rotationAngle: CGFloat(M_PI/2));})
+            break
+        }
     }
     
     // MARK:- DLTableViewDelegate
@@ -770,7 +830,7 @@ extension DLPickerView: DLTableViewDelegate, DLTableViewDataSource {
         
         self.hasMakeSureNotOutOfRange[scrollView.tag] = false
         makeSureIndicatorViewsShowRight(delay: 0.05)
-        toggleSelectedActionIfNeeded(tableView: scrollView as! DLTableView)
+        triggerSelectedActionIfNeeded(tableView: scrollView as! DLTableView)
     }
     
     func doSomeEndWork(scrollView: UIScrollView) {
@@ -782,7 +842,7 @@ extension DLPickerView: DLTableViewDelegate, DLTableViewDataSource {
         
         scrollToCenter(scrollView: scrollView, animated: true)
         makeSureIndicatorViewsShowRight(delay: 0.05)
-        toggleSelectedActionIfNeeded(tableView: scrollView as! DLTableView)
+        triggerSelectedActionIfNeeded(tableView: scrollView as! DLTableView)
     }
 }
 

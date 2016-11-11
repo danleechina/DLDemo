@@ -16,6 +16,7 @@
 		371019111DB324690046B359 /* ImageSliderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 371019101DB324690046B359 /* ImageSliderView.swift */; };
 		371019141DB32F990046B359 /* Array+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 371019131DB32F990046B359 /* Array+Extension.swift */; };
 		371019181DB34EE50046B359 /* UIImage+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 371019171DB34EE50046B359 /* UIImage+Extension.swift */; };
+		374CF34C1DD5A92F008EE712 /* CyclePicker1ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 374CF34B1DD5A92E008EE712 /* CyclePicker1ViewController.swift */; };
 		3772EC281DB8A58A009C5222 /* InfiniteScrollViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3772EC271DB8A58A009C5222 /* InfiniteScrollViewController.swift */; };
 		3772EC2A1DB8A5C7009C5222 /* InfiniteScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3772EC291DB8A5C7009C5222 /* InfiniteScrollView.swift */; };
 		3776FF571DC3538F00909BF6 /* clockwork.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3776FF561DC3538F00909BF6 /* clockwork.wav */; };
@@ -42,6 +43,7 @@
 		371019101DB324690046B359 /* ImageSliderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ImageSliderView.swift; path = Views/ImageSliderView.swift; sourceTree = "<group>"; };
 		371019131DB32F990046B359 /* Array+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Array+Extension.swift"; path = "Extension/Foundation/Array+Extension.swift"; sourceTree = "<group>"; };
 		371019171DB34EE50046B359 /* UIImage+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "UIImage+Extension.swift"; path = "Extension/UIKit/UIImage+Extension.swift"; sourceTree = "<group>"; };
+		374CF34B1DD5A92E008EE712 /* CyclePicker1ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CyclePicker1ViewController.swift; path = ViewControllers/CyclePicker1ViewController.swift; sourceTree = "<group>"; };
 		3772EC271DB8A58A009C5222 /* InfiniteScrollViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = InfiniteScrollViewController.swift; path = ViewControllers/InfiniteScrollViewController.swift; sourceTree = "<group>"; };
 		3772EC291DB8A5C7009C5222 /* InfiniteScrollView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = InfiniteScrollView.swift; path = Views/InfiniteScrollView.swift; sourceTree = "<group>"; };
 		3776FF561DC3538F00909BF6 /* clockwork.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = clockwork.wav; sourceTree = "<group>"; };
@@ -116,6 +118,7 @@
 				37D59C7A1DBB350F005033F7 /* CycleTableViewController.swift */,
 				37D59C741DBB3368005033F7 /* CyclePickerViewController.swift */,
 				379179CB1DC760DF00276C6F /* ReactNativeDemoViewController.swift */,
+				374CF34B1DD5A92E008EE712 /* CyclePicker1ViewController.swift */,
 			);
 			name = ViewControllers;
 			sourceTree = "<group>";
@@ -311,6 +314,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				374CF34C1DD5A92F008EE712 /* CyclePicker1ViewController.swift in Sources */,
 				3772EC2A1DB8A5C7009C5222 /* InfiniteScrollView.swift in Sources */,
 				3772EC281DB8A58A009C5222 /* InfiniteScrollViewController.swift in Sources */,
 				37D59C7B1DBB350F005033F7 /* CycleTableViewController.swift in Sources */,
