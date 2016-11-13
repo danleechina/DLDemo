@@ -69,10 +69,11 @@ class CustomNavigationBar extends React.Component {
 }
 
 type Props = {};
+var interval;
 class IntervalListView extends React.Component {
   props: Props;
   state: {
-    dataSource: ListView.DataSource
+    dataSource: ListView.DataSource,
   };
 
   constructor(props: Props) {
@@ -92,6 +93,21 @@ class IntervalListView extends React.Component {
     }
   }
 
+  componentDidMount() {
+    interval = setInterval(
+      () => {
+        this.setState({
+          dataSource: this.state.dataSource.cloneWithRows(this.props.worldClockData),
+        });
+      },
+      1000
+    );
+  }
+
+  componentWillUnMount() {
+    clearInterval(interval);
+  }
+
   render() {
     return (
       <View style={{flex: 1}}>
@@ -107,6 +123,17 @@ class IntervalListView extends React.Component {
   }
 
   _renderRow(rowData: Object, sectionID: number, rowID: number, highlightRow: (sectionID: number, rowID: number) => void) {
+    var time = new Date();
+    var hours = time.getUTCHours() + Math.floor(rowData.time_diff);
+    var amOrPm = "AM";
+    if (hours > 12) {
+      hours -= 12;
+      amOrPm = "PM";
+    }
+    let shours = hours < 10 ? "0" + hours : "" + hours
+    var mins = time.getUTCMinutes() + (rowData.time_diff - Math.floor(rowData.time_diff)) * 60;
+    let smins = mins < 10 ? "0" + mins : "" + mins
+    var timeString = shours + ":" + smins;
     return (
       <View style={styles.row}
         key={`${sectionID}-${rowID}`}>
@@ -123,8 +150,8 @@ class IntervalListView extends React.Component {
 
         <View style={styles.rightView}>
           <Text style={styles.rightTimeText} numberOfLines={1} adjustsFontSizeToFit={true}>
-            14:34
-            <Text style={styles.rightAPMText} numberOfLines={1} adjustsFontSizeToFit={true}>PM</Text>
+            {timeString}
+            <Text style={styles.rightAPMText} numberOfLines={1} adjustsFontSizeToFit={true}>{amOrPm}</Text>
           </Text>
         </View>
       </View>

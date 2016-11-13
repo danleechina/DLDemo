@@ -4,12 +4,7 @@
 
 import { connect } from 'react-redux';
 import React from 'react';
-import {
-  AppRegistry,
-  StyleSheet,
-  Text,
-  TabBarIOS,
-} from 'react-native';
+import { StyleSheet, Text, TabBarIOS, } from 'react-native';
 
 import AlarmView from '../components/AlarmView';
 import BedtimeView from '../components/BedtimeView';
@@ -41,7 +36,8 @@ class App extends React.Component {
             barTintColor="black">
             <TabBarIOS.Item
             title="World Clock"
-            icon={require('../../img/logo.png')}
+            icon={require('../../img/Globe.png')}
+            selectedIcon={require('../../img/Globe_Filled.png')}
             selected={this.state.selectedTab === 'World Clock'}
             onPress={() => {
                 this.setState({
@@ -54,7 +50,8 @@ class App extends React.Component {
             </TabBarIOS.Item>
             <TabBarIOS.Item
             title="Alarm"
-            icon={require('../../img/logo.png')}
+            icon={require('../../img/Alarm.png')}
+            selectedIcon={require('../../img/Alarm_Filled.png')}
             selected={this.state.selectedTab === 'Alarm'}
             onPress={() => {
                 this.setState({
@@ -65,7 +62,8 @@ class App extends React.Component {
             </TabBarIOS.Item>
             <TabBarIOS.Item
             title="Bedtime"
-            icon={require('../../img/logo.png')}
+            icon={require('../../img/Clock.png')}
+            selectedIcon={require('../../img/Clock_Filled.png')}
             selected={this.state.selectedTab === 'Bedtime'}
             onPress={() => {
                 this.setState({
@@ -76,7 +74,8 @@ class App extends React.Component {
             </TabBarIOS.Item>
             <TabBarIOS.Item
             title="Stopwatch"
-            icon={require('../../img/logo.png')}
+            icon={require('../../img/Watch.png')}
+            selectedIcon={require('../../img/Watch_Filled.png')}
             selected={this.state.selectedTab === 'Stopwatch'}
             onPress={() => {
                 this.setState({
@@ -87,7 +86,8 @@ class App extends React.Component {
             </TabBarIOS.Item>
             <TabBarIOS.Item
             title="Timer"
-            icon={require('../../img/logo.png')}
+            icon={require('../../img/Timer.png')}
+            selectedIcon={require('../../img/Timer_Filled.png')}
             selected={this.state.selectedTab === 'Timer'}
             onPress={() => {
                 this.setState({

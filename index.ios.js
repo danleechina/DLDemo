@@ -18,21 +18,11 @@ class Clock extends React.Component {
   componentWillMount() {
 
     // 发起一系列 action
-    store.dispatch(addWorldClock({
-        city: 'San Francisco',
-        country: 'USA',
-        time_diff: -8,
-      }));
-    store.dispatch(addWorldClock({
-        city: 'Beijing',
-        country: 'China',
-        time_diff: 8,
-      }));
-    store.dispatch(addWorldClock({
-        city: 'London',
-        country: 'UK',
-        time_diff: 0,
-      }));
+    // store.dispatch(addWorldClock({
+    //     city: 'Beijing',
+    //     country: 'China',
+    //     time_diff: 8,
+    //   }));
   }
 
   componentWillUnMount() {
@@ -50,8 +40,6 @@ class Clock extends React.Component {
 // Module name
 AppRegistry.registerComponent('Clock', () => Clock);
 
-console.log(store.getState());
 let unsubscribe = store.subscribe(() => {
-  console.log("HIIIII");
   console.log(store.getState().worldclocks);
-})
+});
