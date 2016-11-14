@@ -52,14 +52,14 @@ class WorldClockView extends React.Component {
 class CustomNavigationBar extends React.Component {
   render() {
     return (
-      <View style={{flexDirection: 'column',height: 64,paddingTop: 20}}>
+      <View style={{flexDirection: 'column',height: 44,marginTop: 20}}>
         <View style={{flex: 1, justifyContent: 'space-between', flexDirection: 'row'}}>
-          <TouchableHighlight onPress={() => {}} >
-            <Text style={{ color: 'rgba(253,148,38,1)', fontSize: 20, marginLeft: 10, marginTop: 12}}>Edit</Text>
+          <TouchableHighlight onPress={() => this.props.onLeftButtonClick()} >
+            <Text style={{ color: 'rgba(253,148,38,1)', fontSize: 14, marginLeft: 10, marginTop: 15}}>Edit</Text>
           </TouchableHighlight>
-          <Text style={{color: 'white',fontSize: 30,fontWeight: 'bold',paddingTop: 7,}}>{this.props.route.title}</Text>
+          <Text style={{color: 'white',fontSize: 20,paddingTop: 12,}}>{this.props.route.title}</Text>
           <TouchableHighlight onPress={() => this.props.navigator.push(routes[1])}>
-            <Text style={{ color: 'rgba(253,148,38,1)', fontSize: 30, marginRight: 10, marginTop: 7,}}>+</Text>
+            <Text style={{ color: 'rgba(253,148,38,1)', fontSize: 24, marginRight: 10, marginTop: 10,}}>+</Text>
           </TouchableHighlight>
         </View>
         <View style={{height:0.5, backgroundColor:'rgba(255,255,255,0.5)'}}/>
@@ -68,94 +68,140 @@ class CustomNavigationBar extends React.Component {
   }
 }
 
-type Props = {};
-var interval;
 class IntervalListView extends React.Component {
-  props: Props;
-  state: {
-    dataSource: ListView.DataSource,
-  };
+  ds: ListView.DataSource
+  state: Object
+  calculatedData: Object
+  props: Object
+  interval: any
+  editMode: bool
 
-  constructor(props: Props) {
+  constructor(props) {
     super(props);
-    const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+    this.ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+    this.locationTime = 8;
+    this.editMode = false;
+    this.updateDataWithTime();
     this.state = {
-      ds: ds,
-      dataSource: ds.cloneWithRows(this.props.worldClockData),
+      dataSource: this.ds.cloneWithRows(this.calculatedData),
+      editMode: this.editMode,
     };
   }
 
-  componentWillReceiveProps (nextProps) {
-    if (nextProps.worldClockData !== this.props.worldClockData) {
-      this.setState({
-        dataSource: this.state.dataSource.cloneWithRows(nextProps.worldClockData),
-      })
-    }
-  }
-
-  componentDidMount() {
-    interval = setInterval(
-      () => {
-        this.setState({
-          dataSource: this.state.dataSource.cloneWithRows(this.props.worldClockData),
-        });
-      },
-      1000
-    );
-  }
-
-  componentWillUnMount() {
-    clearInterval(interval);
-  }
-
-  render() {
-    return (
-      <View style={{flex: 1}}>
-        <CustomNavigationBar navigator={this.props.navigator} route={routes[0]}/>
-        <ListView
-          style={{flex: 1,backgroundColor: 'yellow', }}
-          dataSource={this.state.dataSource}
-          renderRow={this._renderRow}
-          renderSeparator={this._renderSeparator}
-        />
-      </View>
-    );
-  }
-
-  _renderRow(rowData: Object, sectionID: number, rowID: number, highlightRow: (sectionID: number, rowID: number) => void) {
+  calculateTimeString(element) {
     var time = new Date();
-    var hours = time.getUTCHours() + Math.floor(rowData.time_diff);
+    var hours = time.getUTCHours() + Math.floor(element.time_diff);
+    var hoursIn24Format = hours
     var amOrPm = "AM";
     if (hours > 12) {
       hours -= 12;
       amOrPm = "PM";
     }
     let shours = hours < 10 ? "0" + hours : "" + hours
-    var mins = time.getUTCMinutes() + (rowData.time_diff - Math.floor(rowData.time_diff)) * 60;
-    let smins = mins < 10 ? "0" + mins : "" + mins
-    var timeString = shours + ":" + smins;
-    return (
-      <View style={styles.row}
-        key={`${sectionID}-${rowID}`}>
-        <View style={ styles.leftView}>
-            <View style={{ flexDirection:'column', flex:1,}}>
-              <View style={{flex: 1}}></View>
-              <Text style={{flex:3, padding: 0}, styles.leftTopText} numberOfLines={1} adjustsFontSizeToFit={true} >{rowData.city}</Text>
-            </View>
-            <View style={{ flexDirection:'column', flex:1,}}>
-              <Text style={{flex:2}, styles.leftBottomText} numberOfLines={1}  adjustsFontSizeToFit={true}>Yesterday, +44HRS</Text>
-              <View style={{flex: 1}}></View>
-            </View>
-        </View>
+    var mins = time.getUTCMinutes() + (element.time_diff - Math.floor(element.time_diff)) * 60;
+    let smins = mins < 10 ? "0" + mins : "" + mins;
+    let time_diff = element.time_diff - this.locationTime;
+    let stime_diff = time_diff < 0 ? time_diff : "+" + time_diff;
+    let info = "Today, " + stime_diff + "HRS";
+    if (hoursIn24Format + time_diff < 0) {
+      info = "Yesterday, " + stime_diff + "HRS";
+    } else if (hoursIn24Format + time_diff >= 24) {
+      info = "Tomorrow, " + stime_diff + "HRS";
+    }
+    return [shours + ":" + smins, amOrPm, info];
+  }
 
-        <View style={styles.rightView}>
-          <Text style={styles.rightTimeText} numberOfLines={1} adjustsFontSizeToFit={true}>
-            {timeString}
-            <Text style={styles.rightAPMText} numberOfLines={1} adjustsFontSizeToFit={true}>{amOrPm}</Text>
-          </Text>
-        </View>
+  updateDataWithTime(rowData = this.props.worldClockData) {
+      this.calculatedData = rowData.map((elem) => {
+        var [timeString, amOrPm, info] = this.calculateTimeString(elem);
+        return {  'city': elem['city'],
+                  'country': elem['country'],
+                  'timeString': timeString,
+                  'amOrPm': amOrPm,
+                  'info': info,
+                };
+      });
+  }
+
+  changeModeOfEdit() {
+    this.editMode = !this.editMode;
+    this.setState({
+      editMode: this.editMode,
+    })
+  }
+
+  componentWillReceiveProps (nextProps) {
+    if (nextProps.worldClockData !== this.props.worldClockData) {
+      this.updateDataWithTime(nextProps.worldClockData);
+      this.setState({ dataSource: this.ds.cloneWithRows(this.calculatedData), });
+    }
+  }
+
+  componentDidMount() {
+    this.interval = setInterval(
+      () => {
+        this.updateDataWithTime();
+        this.setState({ dataSource: this.ds.cloneWithRows(this.calculatedData), });
+      },
+      1000
+    );
+  }
+
+  componentWillUnMount() {
+    clearInterval(this.interval);
+  }
+
+  render() {
+    return (
+      <View style={{flex: 1}}>
+        <CustomNavigationBar navigator={this.props.navigator} route={routes[0]} onLeftButtonClick={()=>this.changeModeOfEdit()}/>
+        <ListView
+        style={{backgroundColor: 'yellow',}}
+          dataSource={this.state.dataSource}
+          renderRow={(rowData, sectionID, rowID, highlightRow)=>this._renderRow(rowData, sectionID, rowID, highlightRow)}
+          renderSeparator={this._renderSeparator}
+          enableEmptySections={true}
+        />
       </View>
     );
+  }
+
+  _renderRow(rowData, sectionID, rowID, highlightRow) {
+    if (this.editMode) {
+        return (
+          <View style={styles.row}
+            key={`${sectionID}-${rowID}`}>
+            <View style={ styles.leftView}>
+                  <Text style={styles.leftTopText} numberOfLines={1} minimumFontScale={2} adjustsFontSizeToFit={true}>{rowData.city}</Text>
+                  <Text style={styles.leftBottomText} numberOfLines={1} minimumFontScale={2} adjustsFontSizeToFit={true}>{rowData.info}</Text>
+            </View>
+
+            <View style={styles.rightView}>
+              <Text style={styles.rightTimeText} numberOfLines={1} adjustsFontSizeToFit={true}>
+                {rowData.timeString}
+                <Text style={styles.rightAPMText} numberOfLines={1} adjustsFontSizeToFit={true}>{rowData.amOrPm}</Text>
+              </Text>
+            </View>
+          </View>
+        );
+    } else {
+      return (
+        <View style={styles.row}
+          key={`${sectionID}-${rowID}`}>
+          <View style={ styles.leftView}>
+                <Text style={styles.leftTopText} numberOfLines={1} minimumFontScale={2} adjustsFontSizeToFit={true}>{rowData.city}</Text>
+                <Text style={styles.leftBottomText} numberOfLines={1} minimumFontScale={2} adjustsFontSizeToFit={true}>{rowData.info}</Text>
+          </View>
+
+          <View style={styles.rightView}>
+            <Text style={styles.rightTimeText} numberOfLines={1} adjustsFontSizeToFit={true}>
+              {rowData.timeString}
+              <Text style={styles.rightAPMText} numberOfLines={1} adjustsFontSizeToFit={true}>{rowData.amOrPm}</Text>
+            </Text>
+          </View>
+        </View>
+      );
+    }
   }
 
   _renderSeparator(sectionID: number, rowID: number, adjacentRowHighlighted: bool) {
@@ -165,7 +211,6 @@ class IntervalListView extends React.Component {
 
 var styles = StyleSheet.create({
   row: {
-    flex: 1,
     height: 100,
     flexDirection: 'row',
     backgroundColor: 'black',
@@ -175,15 +220,15 @@ var styles = StyleSheet.create({
   leftView: {
     flex: 1,
     flexDirection: 'column',
+    justifyContent: 'center',
   },
 
   rightView: {
-    flex: 1.4,
+    flex: 1,
     flexDirection: 'row',
   },
 
   leftTopText: {
-    fontWeight: 'bold',
     fontSize: 17,
     color: 'white',
     marginLeft: 10,
@@ -196,14 +241,14 @@ var styles = StyleSheet.create({
   },
 
   rightTimeText: {
-    fontSize: 50,
+    fontSize: 44,
     flex: 1,
     textAlign: 'center',
     color: 'white',
   },
 
   rightAPMText: {
-    fontSize: 30,
+    fontSize: 24,
     flex: 1,
     color: 'white',
   }

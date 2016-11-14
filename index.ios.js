@@ -11,6 +11,9 @@ import worldclocks from './js/reducers/worldclock';
 import { addWorldClock } from './js/actions/actions';
 
 let store = createStore(worldclocks);
+let unsubscribe = store.subscribe(() => {
+  console.log(store.getState().worldclocks);
+});
 
 class Clock extends React.Component {
 
@@ -26,9 +29,9 @@ class Clock extends React.Component {
   }
 
   componentWillUnMount() {
-
     unsubscribe();
   }
+
   render() {
     return (
       <Provider store={store}>
@@ -39,7 +42,3 @@ class Clock extends React.Component {
 }
 // Module name
 AppRegistry.registerComponent('Clock', () => Clock);
-
-let unsubscribe = store.subscribe(() => {
-  console.log(store.getState().worldclocks);
-});

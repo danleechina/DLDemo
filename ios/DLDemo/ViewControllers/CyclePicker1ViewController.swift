@@ -178,7 +178,7 @@ extension CyclePicker1ViewController: DLPickerViewDataSource, DLPickerViewDelega
         } else if component == 1 {
             return 10
         }
-        return 99999999999999999
+        return Int.max
     }
     
     // delegate
