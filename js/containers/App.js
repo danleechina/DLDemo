@@ -44,7 +44,22 @@ class App extends React.Component {
                 selectedTab: 'World Clock'
                 });
             }}>
-            <WorldClockView  addWorldClock={(data) => dispatch(addWorldClock(data))} worldClockData={worldClocks.map(element => {
+            <WorldClockView
+              addWorldClock={(data) => {
+                let idx = worldClocks.findIndex(raw => {
+                  let obj = raw.data;
+                  return obj.city.toUpperCase() === data.city.toUpperCase() && obj.country.toUpperCase() === data.country.toUpperCase() && obj.time_diff === data.time_diff;
+                });
+                console.log(typeof data.city);
+                console.log(typeof data.country);
+                if (idx === -1) {
+                  console.log("don't exist city=" + data.city);
+                  dispatch(addWorldClock(data));
+                } else {
+                  console.log("exist city=" + data.city);
+                }
+              }}
+              worldClockData={worldClocks.map(element => {
                   return element.data;
                 })}/>
             </TabBarIOS.Item>

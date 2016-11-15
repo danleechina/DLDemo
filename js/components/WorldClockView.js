@@ -3,16 +3,7 @@
 'use strict'
 
 import React from 'react';
-import {
-  Text,
-  View,
-  StyleSheet,
-  ListView,
-  NavigatorIOS,
-  Navigator,
-  TouchableHighlight,
-  StatusBar,
-} from 'react-native';
+import {Text,View,StyleSheet,ListView,NavigatorIOS,Navigator,TouchableHighlight,StatusBar,} from 'react-native';
 import CityListView from './CityListView';
 
 var routes = [
@@ -22,7 +13,7 @@ var routes = [
 
 class WorldClockView extends React.Component {
   state: {
-    data: Array,
+    data: array,
   }
 
   render() {
@@ -90,16 +81,23 @@ class IntervalListView extends React.Component {
 
   calculateTimeString(element) {
     var time = new Date();
+    var mins = time.getUTCMinutes() + (element.time_diff - Math.floor(element.time_diff)) * 60;
     var hours = time.getUTCHours() + Math.floor(element.time_diff);
+    if (mins >= 60) {
+      mins -= 60;
+      hours += 1;
+    }
     var hoursIn24Format = hours
     var amOrPm = "AM";
+    if (hours < 0) {
+      hours += 24;
+    }
     if (hours > 12) {
       hours -= 12;
       amOrPm = "PM";
     }
     let shours = hours < 10 ? "0" + hours : "" + hours
-    var mins = time.getUTCMinutes() + (element.time_diff - Math.floor(element.time_diff)) * 60;
-    let smins = mins < 10 ? "0" + mins : "" + mins;
+    let smins = mins < 10 ? "0" + mins : mins;
     let time_diff = element.time_diff - this.locationTime;
     let stime_diff = time_diff < 0 ? time_diff : "+" + time_diff;
     let info = "Today, " + stime_diff + "HRS";
