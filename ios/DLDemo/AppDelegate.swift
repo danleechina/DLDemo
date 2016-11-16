@@ -7,12 +7,16 @@
 //
 
 import UIKit
+import React
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-
+    
+    let bridge =  RCTBridge.init(bundleURL: URL.init(string: "http://localhost:8081/index.ios.bundle?platform=ios"),
+                                 moduleProvider: nil,
+                                 launchOptions: nil)
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.

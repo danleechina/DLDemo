@@ -15,8 +15,10 @@ class HomeTableViewController: UITableViewController {
                                          "配置方向、无限循环滚动 TableView",
                                          "配置方向、无限循环滚动 PickerView",
                                          "React Native Demo",
-                                         "使用自定义cell PickerView",]
+                                         "使用自定义cell PickerView",
+                                         "Generator，可控制函数执行，优化异步回调",]
     private let detailTexts: Array<String> = ["无",
+                                              "无",
                                               "无",
                                               "无",
                                               "无",
@@ -27,11 +29,44 @@ class HomeTableViewController: UITableViewController {
                                                    "CycleTableViewController",
                                                    "CyclePickerViewController",
                                                    "ReactNativeDemoViewController",
-                                                   "CyclePicker1ViewController",]
+                                                   "CyclePicker1ViewController",
+                                                   "ThunkAndGeneratorViewController",]
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.tableView.register(UITableViewCell.self, forCellReuseIdentifier: "reuseIdentifier")
+        
+        //func Thunk(_ method: ((String, String) -> String)) -> ((String) -> String) {
+        //    func function() -> (Any -> Any) {
+        //    }
+        //    return function
+        //}
+        //let thunk = Thunk(printHelloFunc)
+        //thunk("Lizhengda")("ChenWeiFang")
+        
+        //func Thunk(_ met: @escaping (String) -> String) -> (String) -> String {
+        //    func internalFunc(_ name: String) -> String{
+        //        return met(name)
+        //    }
+        //    return internalFunc
+        //}
+        //let thunk = Thunk(printHello)
+        //let result = thunk("Li Zhengda")
+        //print("This is result =[\(result)]")
+        
+        
+        //func Thunk(_ met: @escaping (String, String) -> String) -> (String) -> ((String) -> String) {
+        //    func internalFunc(_ name1: String) -> (String) -> String {
+        //        func iiFunc(_ name2: String) -> String {
+        //            return met(name1, name2)
+        //        }
+        //        return iiFunc
+        //    }
+        //    return internalFunc
+        //}
+        //let thunk = Thunk(printHelloFunc)
+        //let result = thunk("Li Zhengda")("ChenWeiFang")
+        //print("This is result =[\(result)]")
         
     }
 
@@ -64,6 +99,10 @@ class HomeTableViewController: UITableViewController {
             vc = ReactNativeDemoViewController()
         } else if indexPath.row == 5 {
             vc = CyclePicker1ViewController()
+        } else if indexPath.row == 6 {
+            
+            // TODO: many things not right.
+            vc = ThunkAndGeneratorViewController()
         }
         
         self.navigationController?.pushViewController(vc, animated: true)

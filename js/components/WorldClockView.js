@@ -131,6 +131,7 @@ class IntervalListView extends React.Component {
   componentWillReceiveProps (nextProps) {
     if (nextProps.worldClockData !== this.props.worldClockData) {
       this.updateDataWithTime(nextProps.worldClockData);
+      console.log("Log here");
       this.setState({ dataSource: this.ds.cloneWithRows(this.calculatedData), });
     }
   }
@@ -145,7 +146,7 @@ class IntervalListView extends React.Component {
     );
   }
 
-  componentWillUnMount() {
+  componentWillUnmount() {
     clearInterval(this.interval);
   }
 
