@@ -5,6 +5,7 @@
 import React from 'react';
 import {Text,View,StyleSheet,ListView,NavigatorIOS,Navigator,TouchableHighlight,StatusBar,} from 'react-native';
 import CityListView from './CityListView';
+import CustomNavigationBar from './CustomNavigationBar';
 
 var routes = [
   {title: 'World Clock', index: 0, component: IntervalListView, hiddenNavigatorBar:false,},
@@ -37,25 +38,6 @@ class WorldClockView extends React.Component {
       } else if (route.index === 1) {
         return (<CityListView navigator={navigator} addWorldClock={(data)=>this.props.addWorldClock(data)}/>);
       }
-  }
-}
-
-class CustomNavigationBar extends React.Component {
-  render() {
-    return (
-      <View style={{flexDirection: 'column',height: 44,marginTop: 20}}>
-        <View style={{flex: 1, justifyContent: 'space-between', flexDirection: 'row'}}>
-          <TouchableHighlight onPress={() => this.props.onLeftButtonClick()} >
-            <Text style={{ color: 'rgba(253,148,38,1)', fontSize: 14, marginLeft: 10, marginTop: 15}}>Edit</Text>
-          </TouchableHighlight>
-          <Text style={{color: 'white',fontSize: 20,paddingTop: 12,}}>{this.props.route.title}</Text>
-          <TouchableHighlight onPress={() => this.props.navigator.push(routes[1])}>
-            <Text style={{ color: 'rgba(253,148,38,1)', fontSize: 24, marginRight: 10, marginTop: 10,}}>+</Text>
-          </TouchableHighlight>
-        </View>
-        <View style={{height:0.5, backgroundColor:'rgba(255,255,255,0.5)'}}/>
-      </View>
-    );
   }
 }
 
@@ -153,7 +135,13 @@ class IntervalListView extends React.Component {
   render() {
     return (
       <View style={{flex: 1}}>
-        <CustomNavigationBar navigator={this.props.navigator} route={routes[0]} onLeftButtonClick={()=>this.changeModeOfEdit()}/>
+        <CustomNavigationBar
+          route={routes[0]}
+          leftTitle={'Edit'}
+          rightTitle={'+'}
+          onLeftButtonClick={()=>this.changeModeOfEdit()}
+          onRightButtonClick={()=> this.props.navigator.push(routes[1])}
+        />
         <ListView
         style={{backgroundColor: 'yellow',}}
           dataSource={this.state.dataSource}
