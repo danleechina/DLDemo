@@ -18,7 +18,7 @@ class CustomNavigationBar extends React.Component {
           <TouchableHighlight onPress={() => this.props.onLeftButtonClick()} >
             <Text style={{ color: 'rgba(253,148,38,1)', fontSize: 14, marginLeft: 10, marginTop: 15}}>{this.props.leftTitle}</Text>
           </TouchableHighlight>
-          <Text style={{color: 'white',fontSize: 20,paddingTop: 12,}}>{this.props.route.title}</Text>
+          <Text style={{color: 'white',fontSize: 20,paddingTop: 12,}}>{this.props.title}</Text>
           <TouchableHighlight onPress={() => this.props.onRightButtonClick()}>
             <Text style={{ color: 'rgba(253,148,38,1)', fontSize: 24, marginRight: 10, marginTop: 10,}}>{this.props.rightTitle}</Text>
           </TouchableHighlight>

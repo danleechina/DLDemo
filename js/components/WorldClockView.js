@@ -136,7 +136,7 @@ class IntervalListView extends React.Component {
     return (
       <View style={{flex: 1}}>
         <CustomNavigationBar
-          route={routes[0]}
+          title={routes[0].title}
           leftTitle={'Edit'}
           rightTitle={'+'}
           onLeftButtonClick={()=>this.changeModeOfEdit()}
