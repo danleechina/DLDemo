@@ -7,34 +7,30 @@ import { AppRegistry, AsyncStorage } from 'react-native';
 import App from './js/containers/App';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
-import worldclocks from './js/reducers/worldclock';
-import { addWorldClock } from './js/actions/actions';
+import clockApp from './js/reducers/worldclock';
+import { addWorldClock, addAlarmClock, } from './js/actions/actions';
 
-let STORAGE_KEY_WORLD_CLOCK = '@clock:key:world_clock53';
-//let store = createStore(worldclocks);
-
+let STORAGE_KEY_WORLD_CLOCK = '@clock:key:world_clock515';
+let STORAGE_KEY_ALARM_CLOCK = '@clock:key:alarm_clock515';
 
 class Clock extends React.Component {
   constructor() {
     super();
     this.finishLoadData = false;
-    this.store = createStore(worldclocks);
+    this.store = createStore(clockApp);
   }
   componentWillUnmount() {
-    console.log("index.ios.js unmount");
     this.unsubscribe();
   }
 
   componentWillMount() {
-    console.log("index.ios.js mount");
+    this._loadInitialState().done();
     this.unsubscribe = this.store.subscribe(
       this._writeData
     );
   }
 
   componentDidMount() {
-    console.log("index.ios.js mount" + this.finishLoadData);
-    this._loadInitialState().done();
   }
 
   _writeData = async () => {
@@ -44,7 +40,9 @@ class Clock extends React.Component {
     try {
       console.log("Write data");
       console.log(JSON.stringify(this.store.getState().worldclocks));
-      await AsyncStorage.setItem(STORAGE_KEY_WORLD_CLOCK, JSON.stringify(this.store.getState().worldclocks));
+      await AsyncStorage.setItem(STORAGE_KEY_WORLD_CLOCK, JSON.stringify(this.store.getState().worldclocks.worldclocks));
+      await AsyncStorage.setItem(STORAGE_KEY_ALARM_CLOCK, JSON.stringify(this.store.getState().alarmclocks.alarmclocks));
+
     } catch (error) {
       console.log(error.message);
     }
@@ -56,12 +54,18 @@ class Clock extends React.Component {
     }
     try {
         await AsyncStorage.getItem(STORAGE_KEY_WORLD_CLOCK, (err, result) => {
-          console.log("read data");
-          console.log(result);
           let value = JSON.parse(result);
           if (value !== null) {
             for (const data of value) {
               this.store.dispatch(addWorldClock(data.data));
+            }
+          }
+        });
+        await AsyncStorage.getItem(STORAGE_KEY_ALARM_CLOCK, (err, result) => {
+          let value = JSON.parse(result);
+          if (value !== null) {
+            for (const data of value) {
+              this.store.dispatch(addAlarmClock(data.data));
             }
           }
       });
@@ -79,5 +83,6 @@ class Clock extends React.Component {
     );
   }
 }
+
 // Module name
 AppRegistry.registerComponent('Clock', () => Clock);

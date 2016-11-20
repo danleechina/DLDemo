@@ -34,9 +34,19 @@ class WorldClockView extends React.Component {
 
   _renderScene(route: any, navigator: Navigator) {
       if (route.index === 0) {
-        return (<IntervalListView navigator={navigator} worldClockData={this.props.worldClockData}/>);
+        return (
+          <IntervalListView
+            navigator={navigator}
+            worldClockData={this.props.worldClockData}
+          />
+        );
       } else if (route.index === 1) {
-        return (<CityListView navigator={navigator} addWorldClock={(data)=>this.props.addWorldClock(data)}/>);
+        return (
+          <CityListView
+            navigator={navigator}
+            addWorldClock={(data)=>this.props.addWorldClock(data)}
+          />
+        );
       }
   }
 }
@@ -113,7 +123,6 @@ class IntervalListView extends React.Component {
   componentWillReceiveProps (nextProps) {
     if (nextProps.worldClockData !== this.props.worldClockData) {
       this.updateDataWithTime(nextProps.worldClockData);
-      console.log("Log here");
       this.setState({ dataSource: this.ds.cloneWithRows(this.calculatedData), });
     }
   }
@@ -143,7 +152,7 @@ class IntervalListView extends React.Component {
           onRightButtonClick={()=> this.props.navigator.push(routes[1])}
         />
         <ListView
-        style={{backgroundColor: 'yellow',}}
+          style={{backgroundColor: 'yellow',}}
           dataSource={this.state.dataSource}
           renderRow={(rowData, sectionID, rowID, highlightRow)=>this._renderRow(rowData, sectionID, rowID, highlightRow)}
           renderSeparator={this._renderSeparator}

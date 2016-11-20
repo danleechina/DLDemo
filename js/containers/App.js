@@ -11,7 +11,7 @@ import BedtimeView from '../components/BedtimeView';
 import StopwatchView from '../components/StopwatchView';
 import TimerView from '../components/TimerView';
 import WorldClockView from '../components/WorldClockView';
-import { addWorldClock } from '../actions/actions'
+import { addWorldClock, addAlarmClock } from '../actions/actions'
 
 class App extends React.Component {
   state: {
@@ -21,12 +21,12 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      selectedTab: "World Clock"
+      selectedTab: "Alarm Clock"
     };
   }
 
   render() {
-    const { dispatch, worldClocks, } = this.props;
+    const { dispatch, worldClocks, alarmClocks, } = this.props;
     return (
         <TabBarIOS
             selectedTab={this.state.selectedTab}
@@ -50,31 +50,36 @@ class App extends React.Component {
                   let obj = raw.data;
                   return obj.city.toUpperCase() === data.city.toUpperCase() && obj.country.toUpperCase() === data.country.toUpperCase() && obj.time_diff === data.time_diff;
                 });
-                console.log(typeof data.city);
-                console.log(typeof data.country);
                 if (idx === -1) {
-                  console.log("don't exist city=" + data.city);
                   dispatch(addWorldClock(data));
-                } else {
-                  console.log("exist city=" + data.city);
                 }
               }}
               worldClockData={worldClocks.map(element => {
                   return element.data;
-                })}/>
+                })}
+              />
             </TabBarIOS.Item>
+
             <TabBarIOS.Item
-            title="Alarm"
+            title="Alarm Clock"
             icon={require('../../img/Alarm.png')}
             selectedIcon={require('../../img/Alarm_Filled.png')}
-            selected={this.state.selectedTab === 'Alarm'}
+            selected={this.state.selectedTab === 'Alarm Clock'}
             onPress={() => {
                 this.setState({
-                selectedTab: 'Alarm'
+                selectedTab: 'Alarm Clock'
                 });
             }}>
-            <AlarmView/>
+            <AlarmView
+              addAlarmClock={(data) => {
+                dispatch(addAlarmClock(data));
+              }}
+              alarmClockData={alarmClocks.map(element => {
+                return element.data;
+              })}
+            />
             </TabBarIOS.Item>
+
             <TabBarIOS.Item
             title="Bedtime"
             icon={require('../../img/Clock.png')}
@@ -87,6 +92,7 @@ class App extends React.Component {
             }}>
             <BedtimeView/>
             </TabBarIOS.Item>
+
             <TabBarIOS.Item
             title="Stopwatch"
             icon={require('../../img/Watch.png')}
@@ -99,6 +105,7 @@ class App extends React.Component {
             }}>
             <StopwatchView/>
             </TabBarIOS.Item>
+
             <TabBarIOS.Item
             title="Timer"
             icon={require('../../img/Timer.png')}
@@ -111,6 +118,7 @@ class App extends React.Component {
             }}>
             <TimerView/>
             </TabBarIOS.Item>
+
         </TabBarIOS>
     );
   }
@@ -127,7 +135,8 @@ const styles = StyleSheet.create({
 
 function select(state) {
   return {
-    worldClocks: state.worldclocks,
+    worldClocks: state.worldclocks.worldclocks,
+    alarmClocks: state.alarmclocks.alarmclocks,
   }
 }
 

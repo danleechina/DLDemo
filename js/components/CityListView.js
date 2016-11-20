@@ -141,7 +141,11 @@ class CityListView extends React.Component {
     } else {
       return (
         <View style={styles.mainView}>
-          <CustomNavigationBar style={styles.customNavigationBar} onChangeText={(text) => this._searchBarTextChanged(text)} navigator={this.props.navigator}/>
+          <CustomNavigationBar
+            style={styles.customNavigationBar}
+            onChangeText={(text) => this._searchBarTextChanged(text)}
+            navigator={this.props.navigator}
+          />
           <ListView
             ref='listView'
             style={styles.listView}

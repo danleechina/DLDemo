@@ -9,6 +9,7 @@ import {
   StatusBar,
   ListView,
   Navigator,
+  Switch,
 } from 'react-native';
 import CustomNavigationBar from './CustomNavigationBar';
 import ChangeAlarmView from './ChangeAlarmView';
@@ -18,8 +19,8 @@ var styles = StyleSheet.create({
 
 var routes = [
   {title: 'Alarm', index: 0, component: IntervalListView, hiddenNavigatorBar:false,},
-  {title: 'Add Alarm', index: 1, component: ChangeAlarmView, hiddenNavigatorBar:true,},
-  {title: 'Edit Alarm', index: 2, component: ChangeAlarmView, hiddenNavigatorBar:true,},
+  {title: 'Add Alarm', leftTitle: 'Cancel', rightTitle: 'Save', index: 1, component: ChangeAlarmView, hiddenNavigatorBar:true,},
+  {title: 'Edit Alarm', leftTitle: 'Cancel', rightTitle: 'Save', index: 2, component: ChangeAlarmView, hiddenNavigatorBar:true,},
 ];
 
 class AlarmView extends React.Component {
@@ -28,6 +29,7 @@ class AlarmView extends React.Component {
       <View style={{flex: 1}}>
         <StatusBar backgroundColor='black' barStyle='light-content'/>
         <Navigator
+          ref={'navigator'}
           style={{backgroundColor: 'black',}}
           initialRoute={routes[0]}
           initialRouteStack={routes}
@@ -40,23 +42,71 @@ class AlarmView extends React.Component {
 
   _renderScene(route: any, navigator: Navigator) {
       if (route.index === 0) {
-        return (<IntervalListView navigator={navigator}/>);
+        return (
+          <IntervalListView
+            navigator={navigator}
+            alarmClockData={this.props.alarmClockData}
+          />
+        );
       } else if (route.index === 1) {
-        return (<ChangeAlarmView navigator={navigator} />);
+        return (
+          <ChangeAlarmView
+            navigator={navigator}
+            addAlarmClock={(data)=>this.props.addAlarmClock(data)}
+            title={route.title}
+            leftTitle={route.leftTitle}
+            rightTitle={route.rightTitle}
+            onLeftButtonClick={() => this.goBack()}
+            onRightButtonClick={() => this.save()}
+          />
+        );
       } else if (route.index === 2) {
-        return (<ChangeAlarmView navigator={navigator}/>);
+        return (
+          <ChangeAlarmView
+            navigator={navigator}
+            addAlarmClock={(data)=>this.props.addAlarmClock(data)}
+          />
+        );
       }
+  }
+
+  goBack() {
+    this.refs.navigator.pop();
+  }
+
+  save() {
+    console.log(
+      'Save data'
+    );
   }
 }
 
 
 class IntervalListView extends React.Component {
   addButtonTapped() {
-
+    this.props.navigator.push(routes[1]);
   }
 
   editButtonTapped() {
 
+  }
+
+  constructor(props) {
+    super(props);
+    this.ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+    this.editMode = false;
+    this.ddd = [1,2,34,5,6]
+    this.state = {
+      // dataSource: this.ds.cloneWithRows(this.props.alarmClockData),
+      dataSource: this.ds.cloneWithRows(this.ddd),
+      editMode: this.editMode,
+    };
+  }
+
+  componentWillReceiveProps (nextProps) {
+    if (nextProps.alarmClockData !== this.props.alarmClockData) {
+      // this.setState({ dataSource: this.ds.cloneWithRows(nextProps.alarmClockData), });
+    }
   }
 
   render() {
@@ -69,11 +119,107 @@ class IntervalListView extends React.Component {
           onLeftButtonClick={()=>this.editButtonTapped()}
           onRightButtonClick={()=>this.addButtonTapped()}
         />
-        <ListView>
-
-        </ListView>
+        <ListView
+          style={{backgroundColor: 'yellow',}}
+          dataSource={this.state.dataSource}
+          renderRow={(rowData, sectionID, rowID, highlightRow)=>this._renderRow(rowData, sectionID, rowID, highlightRow)}
+          renderSeparator={this._renderSeparator}
+          enableEmptySections={true}
+        />
       </View>
     );
   }
+
+  _renderRow(rowData, sectionID, rowID, highlightRow) {
+    if (this.editMode) {
+        return (
+          <View key={`${sectionID}-${rowID}`}>
+          </View>
+        );
+    } else {
+      // return (
+      //   <View key={`${sectionID}-${rowID}`}>
+      //     <View style={stylesForRow.leftView}>
+      //       <Text style={stylesForRow.leftTopText1}>
+      //         {rowData.time}
+      //         <Text style={stylesForRow.leftTopText1}>
+      //           {rowData.amOrPm}
+      //         </Text>
+      //       </Text>
+      //       <Text style={stylesForRow.leftBottomText}>
+      //         {rowData.name + ', ' rowData.description}
+      //       </Text>
+      //     </View>
+      //
+      //     <View style={stylesForRow.rightView}>
+      //
+      //     </View>
+      //   </View>
+      // );
+      return (
+        <View key={`${sectionID}-${rowID}`} style={stylesForRow.row}>
+          <View style={stylesForRow.leftView}>
+            <Text style={stylesForRow.leftTopText1}>
+              7:00
+              <Text style={stylesForRow.leftTopText2}>
+                AM
+              </Text>
+            </Text>
+            <Text style={stylesForRow.leftBottomText}>
+              No money, every weekday
+            </Text>
+          </View>
+
+          <View style={stylesForRow.rightView}>
+            <Switch
+              style={{alignSelf: 'center'}}
+              value={true}
+              >
+            </Switch>
+          </View>
+        </View>
+      );
+    }
+  }
+
+  _renderSeparator(sectionID: number, rowID: number, adjacentRowHighlighted: bool) {
+    return ( <View key={`${sectionID}-${rowID}`} style={{ height: 0.5, backgroundColor: '#CCCCCC', }} /> );
+  }
 }
+
+var stylesForRow = StyleSheet.create({
+  row: {
+    height: 100,
+    flexDirection: 'row',
+    backgroundColor: 'black',
+  },
+
+  leftView: {
+    marginLeft: 10,
+    flex: 2.5,
+    justifyContent: 'center',
+  },
+
+  rightView: {
+    flex: 1,
+    alignSelf: 'center',
+    marginRight: 10,
+  },
+
+  leftTopText1: {
+    fontSize: 44,
+    color: 'white',
+  },
+
+  leftTopText2: {
+    fontSize: 24,
+    color: 'white',
+  },
+
+  leftBottomText: {
+    fontSize: 15,
+    color: 'gray',
+  },
+});
+
 module.exports = AlarmView;
