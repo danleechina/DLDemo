@@ -13,15 +13,12 @@ import {
 } from 'react-native';
 import CustomNavigationBar from './CustomNavigationBar';
 import ChangeAlarmView from './ChangeAlarmView';
+import AlarmRepeatOptionView from './AlarmRepeatOptionView';
+import AlarmSetNameView from './AlarmSetNameView';
+import {routes} from './RoutesForAlarmView';
 
 var styles = StyleSheet.create({
 });
-
-var routes = [
-  {title: 'Alarm', index: 0, component: IntervalListView, hiddenNavigatorBar:false,},
-  {title: 'Add Alarm', leftTitle: 'Cancel', rightTitle: 'Save', index: 1, component: ChangeAlarmView, hiddenNavigatorBar:true,},
-  {title: 'Edit Alarm', leftTitle: 'Cancel', rightTitle: 'Save', index: 2, component: ChangeAlarmView, hiddenNavigatorBar:true,},
-];
 
 class AlarmView extends React.Component {
   render() {
@@ -34,21 +31,29 @@ class AlarmView extends React.Component {
           initialRoute={routes[0]}
           initialRouteStack={routes}
           renderScene={(route: any, navigator: Navigator) => this._renderScene(route, navigator)}
-          configureScene={(route, routeStack) => Navigator.SceneConfigs.FloatFromBottom}
+          configureScene={(route, routeStack) => this._pushEffect(route, routeStack)}
         />
       </View>
     );
   }
 
+  _pushEffect(route: any, routeStack: any) {
+    if (route.index >= 3) {
+      console.log('route index >= 3');
+      return Navigator.SceneConfigs.PushFromRight;
+    }
+    return Navigator.SceneConfigs.FloatFromBottom;
+  }
+
   _renderScene(route: any, navigator: Navigator) {
-      if (route.index === 0) {
+      if (route.index == 0) {
         return (
           <IntervalListView
             navigator={navigator}
             alarmClockData={this.props.alarmClockData}
           />
         );
-      } else if (route.index === 1) {
+      } else if (route.index == 1) {
         return (
           <ChangeAlarmView
             navigator={navigator}
@@ -60,11 +65,32 @@ class AlarmView extends React.Component {
             onRightButtonClick={() => this.save()}
           />
         );
-      } else if (route.index === 2) {
+      } else if (route.index == 2) {
         return (
           <ChangeAlarmView
             navigator={navigator}
             addAlarmClock={(data)=>this.props.addAlarmClock(data)}
+          />
+        );
+      } else if (route.index == 3) {
+        return (
+          <AlarmRepeatOptionView
+            navigator={navigator}
+            title={route.title}
+            leftTitle={route.leftTitle}
+            rightTitle={route.rightTitle}
+            onLeftButtonClick={() => this.goBack()}
+          />
+        )
+      } else if (route.index == 4) {
+        console.log('route index == 4');
+        return (
+          <AlarmSetNameView
+            navigator={navigator}
+            title={route.title}
+            leftTitle={route.leftTitle}
+            rightTitle={route.rightTitle}
+            onLeftButtonClick={() => this.goBack()}
           />
         );
       }
@@ -75,9 +101,7 @@ class AlarmView extends React.Component {
   }
 
   save() {
-    console.log(
-      'Save data'
-    );
+    console.log('Save data');
   }
 }
 
@@ -111,7 +135,7 @@ class IntervalListView extends React.Component {
 
   render() {
     return (
-      <View>
+      <View style={{flex: 1}}>
         <CustomNavigationBar
           title={routes[0].title}
           leftTitle={'Edit'}

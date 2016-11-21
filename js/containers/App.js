@@ -34,6 +34,7 @@ class App extends React.Component {
             unselectedTintColor="white"
             tintColor="rgba(253,148,38,1)"
             barTintColor="black">
+            
             <TabBarIOS.Item
             title="World Clock"
             icon={require('../../img/Globe.png')}
