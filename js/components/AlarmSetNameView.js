@@ -25,7 +25,7 @@ class AlarmSetNameView extends React.Component {
           onLeftButtonClick={() => this.props.onLeftButtonClick()}/>
         <View style={{flex: 1}}>
           <TextInput
-            style={{height: 40, borderColor: 'gray', borderWidth: 1, color: 'white', marginTop: 200}}
+            style={{height: 40, borderColor: 'gray', borderWidth: 1, color: 'white', marginTop: 160}}
             onChangeText={(text) => this.setState({text})}
             value={this.state.text}/>
         </View>
