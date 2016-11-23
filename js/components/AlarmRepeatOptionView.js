@@ -40,15 +40,20 @@ const style = StyleSheet.create({
 
 class AlarmRepeatOptionView extends React.Component {
 
-  data = [
+  rawData = [
     {text: 'Every Sunday',picked: false,},
     {text: 'Every Monday',picked: false,},
     {text: 'Every Tuesday',picked: false,},
     {text: 'Every Wednesday',picked: false,},
     {text: 'Every Thursday',picked: false,},
     {text: 'Every Friday',picked: false,},
-    {text: 'Every Saturday',picked: true,},
+    {text: 'Every Saturday',picked: false,},
   ];
+
+  data = this.rawData.map((element, index) => {
+    element.picked = this.props.repeats[index];
+    return element;
+  });
 
   ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
   state = {

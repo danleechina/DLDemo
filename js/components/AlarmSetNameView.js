@@ -12,7 +12,7 @@ import CustomNavigationBar from './CustomNavigationBar';
 
 class AlarmSetNameView extends React.Component {
   state = {
-    text: 'This is your label',
+    text: this.props.defaultName,
   };
 
   render() {
@@ -25,8 +25,10 @@ class AlarmSetNameView extends React.Component {
           onLeftButtonClick={() => this.props.onLeftButtonClick()}/>
         <View style={{flex: 1}}>
           <TextInput
-            style={{height: 40, borderColor: 'gray', borderWidth: 1, color: 'white', marginTop: 160}}
-            onChangeText={(text) => this.setState({text})}
+            style={{height: 40, borderColor: 'gray', borderWidth: 1, color: 'white', marginTop: 160, paddingLeft: 5,}}
+            onChangeText={(text) => {
+              this.setState({text});
+            }}
             value={this.state.text}/>
         </View>
       </View>

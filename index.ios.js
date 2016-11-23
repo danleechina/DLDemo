@@ -30,9 +30,6 @@ class Clock extends React.Component {
     );
   }
 
-  componentDidMount() {
-  }
-
   _writeData = async () => {
     if (!this.finishLoadData) {
       return;

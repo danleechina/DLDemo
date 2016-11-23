@@ -100,9 +100,15 @@ class ChangeAlarmView extends React.Component {
       <TouchableHighlight onPress={()=>{
         highlightRow(sectionID, rowID);
         if (rowID == 0) {
-          this.props.navigator.push(routes[3]);
+          // Repeats View
+          let route = routes[3];
+          route.repeats = [false, false, false, true, false, false, false, ];
+          this.props.navigator.push(route);
         } else if (rowID == 1) {
-          this.props.navigator.push(routes[4]);
+          // Set Name View
+          let route = routes[4];
+          route.defaultName = 'I Love You';
+          this.props.navigator.push(route);
         } else if (rowID == 2) {
 
         } else if (rowID == 3) {

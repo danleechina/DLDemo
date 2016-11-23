@@ -39,7 +39,6 @@ class AlarmView extends React.Component {
 
   _pushEffect(route: any, routeStack: any) {
     if (route.index >= 3) {
-      console.log('route index >= 3');
       return Navigator.SceneConfigs.PushFromRight;
     }
     return Navigator.SceneConfigs.FloatFromBottom;
@@ -63,6 +62,7 @@ class AlarmView extends React.Component {
             rightTitle={route.rightTitle}
             onLeftButtonClick={() => this.goBack()}
             onRightButtonClick={() => this.save()}
+            needDeleteButton={route.needDeleteButton}
           />
         );
       } else if (route.index == 2) {
@@ -80,10 +80,10 @@ class AlarmView extends React.Component {
             leftTitle={route.leftTitle}
             rightTitle={route.rightTitle}
             onLeftButtonClick={() => this.goBack()}
+            repeats={route.repeats}
           />
         )
       } else if (route.index == 4) {
-        console.log('route index == 4');
         return (
           <AlarmSetNameView
             navigator={navigator}
@@ -91,6 +91,7 @@ class AlarmView extends React.Component {
             leftTitle={route.leftTitle}
             rightTitle={route.rightTitle}
             onLeftButtonClick={() => this.goBack()}
+            defaultName={route.defaultName}
           />
         );
       }
@@ -119,17 +120,15 @@ class IntervalListView extends React.Component {
     super(props);
     this.ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
     this.editMode = false;
-    this.ddd = [1,2,34,5,6]
     this.state = {
-      // dataSource: this.ds.cloneWithRows(this.props.alarmClockData),
-      dataSource: this.ds.cloneWithRows(this.ddd),
+      dataSource: this.ds.cloneWithRows(this.props.alarmClockData),
       editMode: this.editMode,
     };
   }
 
   componentWillReceiveProps (nextProps) {
     if (nextProps.alarmClockData !== this.props.alarmClockData) {
-      // this.setState({ dataSource: this.ds.cloneWithRows(nextProps.alarmClockData), });
+      this.setState({ dataSource: this.ds.cloneWithRows(nextProps.alarmClockData), });
     }
   }
 
@@ -161,48 +160,62 @@ class IntervalListView extends React.Component {
           </View>
         );
     } else {
-      // return (
-      //   <View key={`${sectionID}-${rowID}`}>
-      //     <View style={stylesForRow.leftView}>
-      //       <Text style={stylesForRow.leftTopText1}>
-      //         {rowData.time}
-      //         <Text style={stylesForRow.leftTopText1}>
-      //           {rowData.amOrPm}
-      //         </Text>
-      //       </Text>
-      //       <Text style={stylesForRow.leftBottomText}>
-      //         {rowData.name + ', ' rowData.description}
-      //       </Text>
-      //     </View>
-      //
-      //     <View style={stylesForRow.rightView}>
-      //
-      //     </View>
-      //   </View>
-      // );
+      // rowData = {
+      //   time: "7:00",
+      //   amOrPm: "AM",
+      //   name: "Wake UP",
+      //   description: "every day",
+      //   enable: true,
+      //   repeat: [1,2,3,4,5,6,7],
+      //   snooze: true,
+      //   sound: 111,
+      // }
       return (
         <View key={`${sectionID}-${rowID}`} style={stylesForRow.row}>
           <View style={stylesForRow.leftView}>
             <Text style={stylesForRow.leftTopText1}>
-              7:00
-              <Text style={stylesForRow.leftTopText2}>
-                AM
+              {rowData.time}
+              <Text style={stylesForRow.leftTopText1}>
+                {rowData.amOrPm}
               </Text>
             </Text>
             <Text style={stylesForRow.leftBottomText}>
-              No money, every weekday
+              {rowData.name + ', ' + rowData.description}
             </Text>
           </View>
 
           <View style={stylesForRow.rightView}>
             <Switch
               style={{alignSelf: 'center'}}
-              value={true}
+              value={rowData.enable}
               >
             </Switch>
           </View>
         </View>
       );
+      // return (
+      //   <View key={`${sectionID}-${rowID}`} style={stylesForRow.row}>
+      //     <View style={stylesForRow.leftView}>
+      //       <Text style={stylesForRow.leftTopText1}>
+      //         7:00
+      //         <Text style={stylesForRow.leftTopText2}>
+      //           AM
+      //         </Text>
+      //       </Text>
+      //       <Text style={stylesForRow.leftBottomText}>
+      //         No money, every weekday
+      //       </Text>
+      //     </View>
+      //
+      //     <View style={stylesForRow.rightView}>
+      //       <Switch
+      //         style={{alignSelf: 'center'}}
+      //         value={true}
+      //         >
+      //       </Switch>
+      //     </View>
+      //   </View>
+      // );
     }
   }
 
