@@ -31,6 +31,8 @@
 		37D59C7B1DBB350F005033F7 /* CycleTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37D59C7A1DBB350F005033F7 /* CycleTableViewController.swift */; };
 		3E0D708B333D3B117A2C77A9 /* Pods_DLDemo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B8140187FF743B0A4F88DF49 /* Pods_DLDemo.framework */; };
 		A045222E1DB9A6D7006FC360 /* UIView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A045222D1DB9A6D7006FC360 /* UIView+Extension.swift */; };
+		A059E2191E2654110030DDA0 /* FilterSongSheetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A059E2181E2654110030DDA0 /* FilterSongSheetViewController.swift */; };
+		A059E21B1E26541F0030DDA0 /* UICollectionViewGridLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = A059E21A1E26541F0030DDA0 /* UICollectionViewGridLayout.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -61,6 +63,8 @@
 		37D59C781DBB34EE005033F7 /* DLTableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DLTableView.swift; path = Views/DLTableView.swift; sourceTree = "<group>"; };
 		37D59C7A1DBB350F005033F7 /* CycleTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CycleTableViewController.swift; path = ViewControllers/CycleTableViewController.swift; sourceTree = "<group>"; };
 		A045222D1DB9A6D7006FC360 /* UIView+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "UIView+Extension.swift"; path = "Extension/UIKit/UIView+Extension.swift"; sourceTree = "<group>"; };
+		A059E2181E2654110030DDA0 /* FilterSongSheetViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FilterSongSheetViewController.swift; path = ViewControllers/FilterSongSheetViewController.swift; sourceTree = "<group>"; };
+		A059E21A1E26541F0030DDA0 /* UICollectionViewGridLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UICollectionViewGridLayout.swift; path = Views/UICollectionViewGridLayout.swift; sourceTree = "<group>"; };
 		B8140187FF743B0A4F88DF49 /* Pods_DLDemo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DLDemo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D16DFFD9958FE0023A8B1198 /* Pods-DLDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DLDemo.debug.xcconfig"; path = "Pods/Target Support Files/Pods-DLDemo/Pods-DLDemo.debug.xcconfig"; sourceTree = "<group>"; };
 		F8056B55E3AC3C61C660D39D /* Pods-DLDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DLDemo.release.xcconfig"; path = "Pods/Target Support Files/Pods-DLDemo/Pods-DLDemo.release.xcconfig"; sourceTree = "<group>"; };
@@ -118,6 +122,7 @@
 		3710190F1DB31E270046B359 /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
+				A059E2181E2654110030DDA0 /* FilterSongSheetViewController.swift */,
 				3710190D1DB31E210046B359 /* FirstViewController.swift */,
 				3772EC271DB8A58A009C5222 /* InfiniteScrollViewController.swift */,
 				37D59C7A1DBB350F005033F7 /* CycleTableViewController.swift */,
@@ -132,6 +137,7 @@
 		371019121DB3246D0046B359 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				A059E21A1E26541F0030DDA0 /* UICollectionViewGridLayout.swift */,
 				371019101DB324690046B359 /* ImageSliderView.swift */,
 				3772EC291DB8A5C7009C5222 /* InfiniteScrollView.swift */,
 				37D59C781DBB34EE005033F7 /* DLTableView.swift */,
@@ -335,6 +341,7 @@
 				37D59C7B1DBB350F005033F7 /* CycleTableViewController.swift in Sources */,
 				37D59C771DBB339D005033F7 /* DLPickerView.swift in Sources */,
 				3710190E1DB31E210046B359 /* FirstViewController.swift in Sources */,
+				A059E2191E2654110030DDA0 /* FilterSongSheetViewController.swift in Sources */,
 				37C4A5881DC0DB9200CFDB46 /* ContextMaker.m in Sources */,
 				A045222E1DB9A6D7006FC360 /* UIView+Extension.swift in Sources */,
 				371019141DB32F990046B359 /* Array+Extension.swift in Sources */,
@@ -345,6 +352,7 @@
 				371019181DB34EE50046B359 /* UIImage+Extension.swift in Sources */,
 				37D59C751DBB3368005033F7 /* CyclePickerViewController.swift in Sources */,
 				3710190C1DB3161E0046B359 /* HomeTableViewController.swift in Sources */,
+				A059E21B1E26541F0030DDA0 /* UICollectionViewGridLayout.swift in Sources */,
 				37D59C791DBB34EE005033F7 /* DLTableView.swift in Sources */,
 				371018FA1DB314E30046B359 /* AppDelegate.swift in Sources */,
 			);

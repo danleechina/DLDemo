@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import React
+//import React
 
 class ReactNativeDemoViewController: UIViewController {
     
@@ -48,27 +48,23 @@ class ReactNativeDemoViewController: UIViewController {
     }
     
     func gotoReactNativePage(sender: UIButton) {
-        //let vc = UIViewController()
-        //vc.view = rootView
-        //self.present(vc, animated: true, completion: nil)
-        
-        if rnView == nil {
-            let rootView = RCTRootView.init(bridge: (UIApplication.shared.delegate as! AppDelegate).bridge, moduleName: "Clock", initialProperties: [:])
-            rootView?.frame = self.view.bounds
-            rnView = rootView
-        }
-        
-        UIApplication.shared.statusBarStyle = .lightContent
-        self.navigationController?.setNavigationBarHidden(true, animated: false)
-        self.view.addSubview(rnView!)
-        self.view.addSubview(backToNativeButton)
+//        if rnView == nil {
+//            let rootView = RCTRootView.init(bridge: (UIApplication.shared.delegate as! AppDelegate).bridge, moduleName: "Clock", initialProperties: [:])
+//            rootView?.frame = self.view.bounds
+//            rnView = rootView
+//        }
+//        
+//        UIApplication.shared.statusBarStyle = .lightContent
+//        self.navigationController?.setNavigationBarHidden(true, animated: false)
+//        self.view.addSubview(rnView!)
+//        self.view.addSubview(backToNativeButton)
     }
     
     func returnBackToNative() {
-        UIApplication.shared.statusBarStyle = .default
-        self.navigationController?.setNavigationBarHidden(false, animated: false)
-        rnView!.removeFromSuperview()
-        backToNativeButton.removeFromSuperview()
+//        UIApplication.shared.statusBarStyle = .default
+//        self.navigationController?.setNavigationBarHidden(false, animated: false)
+//        rnView!.removeFromSuperview()
+//        backToNativeButton.removeFromSuperview()
     }
 
 }

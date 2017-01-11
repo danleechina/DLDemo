@@ -16,8 +16,10 @@ class HomeTableViewController: UITableViewController {
                                          "配置方向、无限循环滚动 PickerView",
                                          "React Native Demo",
                                          "使用自定义cell PickerView",
-                                         "Generator，可控制函数执行，优化异步回调",]
+                                         "Generator，可控制函数执行，优化异步回调",
+                                         "Grid CollectionView layout,"]
     private let detailTexts: Array<String> = ["无",
+                                              "无",
                                               "无",
                                               "无",
                                               "无",
@@ -30,7 +32,8 @@ class HomeTableViewController: UITableViewController {
                                                    "CyclePickerViewController",
                                                    "ReactNativeDemoViewController",
                                                    "CyclePicker1ViewController",
-                                                   "ThunkAndGeneratorViewController",]
+                                                   "ThunkAndGeneratorViewController",
+                                                   "FilterSongSheetViewController",]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -103,6 +106,8 @@ class HomeTableViewController: UITableViewController {
             
             // TODO: many things not right.
             vc = ThunkAndGeneratorViewController()
+        } else if indexPath.row == 7 {
+            vc = FilterSongSheetViewController()
         }
         
         self.navigationController?.pushViewController(vc, animated: true)
