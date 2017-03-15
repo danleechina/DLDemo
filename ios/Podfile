@@ -5,7 +5,8 @@ target 'DLDemo' do
   # Comment the next line if you're not using Swift and don't want to use dynamic frameworks
   use_frameworks!
 
-  # Pods for DLDemo
+# Pods for DLDemo
+    pod 'SnapKit', '~> 3.2.0'
 	pod 'React', :path => '../node_modules/react-native', :subspecs => [
     'Core',
     'RCTText',

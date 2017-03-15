@@ -6,12 +6,14 @@ PODS:
     - React/Core
   - React/RCTWebSocket (0.36.0):
     - React/Core
+  - SnapKit (3.2.0)
 
 DEPENDENCIES:
   - React/Core (from `../node_modules/react-native`)
   - React/RCTNetwork (from `../node_modules/react-native`)
   - React/RCTText (from `../node_modules/react-native`)
   - React/RCTWebSocket (from `../node_modules/react-native`)
+  - SnapKit (~> 3.2.0)
 
 EXTERNAL SOURCES:
   React:
@@ -19,7 +21,8 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   React: 01dc10a6bec41af17a89c66298357f6621e58d5f
+  SnapKit: 1ca44df72cfa543218d177cb8aab029d10d86ea7
 
-PODFILE CHECKSUM: 1fdc07f78f4c02aaaefb9ab58071fc425a36a2ec
+PODFILE CHECKSUM: 40d3ae63010d0c4632c81a0408817fe6e69c0dd5
 
-COCOAPODS: 1.1.1
+COCOAPODS: 1.2.1

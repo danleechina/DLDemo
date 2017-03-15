@@ -17,8 +17,12 @@ class HomeTableViewController: UITableViewController {
                                          "React Native Demo",
                                          "使用自定义cell PickerView",
                                          "Generator，可控制函数执行，优化异步回调",
-                                         "Grid CollectionView layout,"]
+                                         "Grid CollectionView layout,",
+                                         "SliderViewController,",
+                                         "可配置滚动 view(区别于图片)", ]
     private let detailTexts: Array<String> = ["无",
+                                              "无",
+                                              "无",
                                               "无",
                                               "无",
                                               "无",
@@ -33,7 +37,9 @@ class HomeTableViewController: UITableViewController {
                                                    "ReactNativeDemoViewController",
                                                    "CyclePicker1ViewController",
                                                    "ThunkAndGeneratorViewController",
-                                                   "FilterSongSheetViewController",]
+                                                   "FilterSongSheetViewController",
+                                                   "SliderViewController",
+                                                   "SecondViewController",]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -108,6 +114,23 @@ class HomeTableViewController: UITableViewController {
             vc = ThunkAndGeneratorViewController()
         } else if indexPath.row == 7 {
             vc = FilterSongSheetViewController()
+        } else if indexPath.row == 8 {
+            let sliderVC = SliderViewController()
+            let subVC1 = EmptyViewController()
+            let subVC2 = EmptyViewController()
+            let subVC3 = EmptyViewController()
+            let subVC4 = EmptyViewController()
+            subVC1.view.backgroundColor = UIColor.red
+            subVC2.view.backgroundColor = UIColor.blue
+            subVC3.view.backgroundColor = UIColor.purple
+            subVC4.view.backgroundColor = UIColor.brown
+            sliderVC.contentViewControllers = [subVC1, subVC2, subVC3, subVC4]
+            sliderVC.titleTexts = ["1111", "2222", "3333", "4444"]
+            sliderVC.currentIndex = 3
+            
+            vc = sliderVC
+        } else if indexPath.row == 9 {
+            vc = SecondViewController()
         }
         
         self.navigationController?.pushViewController(vc, animated: true)

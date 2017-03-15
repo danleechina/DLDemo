@@ -7,6 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		37029CB51F47FC12001BC530 /* SliderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37029CB41F47FC12001BC530 /* SliderView.swift */; };
+		37029CB81F47FC84001BC530 /* SecondViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37029CB61F47FC84001BC530 /* SecondViewController.swift */; };
+		37029CB91F47FC84001BC530 /* SecondViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 37029CB71F47FC84001BC530 /* SecondViewController.xib */; };
+		37029CBB1F47FD89001BC530 /* SecondDemoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37029CBA1F47FD89001BC530 /* SecondDemoView.swift */; };
+		37029CBD1F47FD99001BC530 /* SecondDemoView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 37029CBC1F47FD99001BC530 /* SecondDemoView.xib */; };
+		37029CBF1F47FEF8001BC530 /* XibBaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37029CBE1F47FEF8001BC530 /* XibBaseView.swift */; };
+		37029CC11F481667001BC530 /* SecondDemoTwoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37029CC01F481667001BC530 /* SecondDemoTwoView.swift */; };
+		37029CC31F481673001BC530 /* SecondDemoTwoView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 37029CC21F481673001BC530 /* SecondDemoTwoView.xib */; };
 		371018FA1DB314E30046B359 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 371018F91DB314E30046B359 /* AppDelegate.swift */; };
 		371018FF1DB314E30046B359 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 371018FD1DB314E30046B359 /* Main.storyboard */; };
 		371019011DB314E30046B359 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 371019001DB314E30046B359 /* Assets.xcassets */; };
@@ -21,6 +29,8 @@
 		3772EC2A1DB8A5C7009C5222 /* InfiniteScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3772EC291DB8A5C7009C5222 /* InfiniteScrollView.swift */; };
 		3776FF571DC3538F00909BF6 /* clockwork.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3776FF561DC3538F00909BF6 /* clockwork.wav */; };
 		377879151DBDBCF10089967E /* UIColor+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 377879141DBDBCF10089967E /* UIColor+Extension.swift */; };
+		3785FED61E79546F00E6D6A3 /* SliderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3785FED51E79546F00E6D6A3 /* SliderViewController.swift */; };
+		3785FED81E79558400E6D6A3 /* EmptyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3785FED71E79558400E6D6A3 /* EmptyViewController.swift */; };
 		379179CC1DC760DF00276C6F /* ReactNativeDemoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379179CB1DC760DF00276C6F /* ReactNativeDemoViewController.swift */; };
 		37A4A7771DDC045600F7D29D /* ThunkAndGeneratorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37A4A7761DDC045600F7D29D /* ThunkAndGeneratorViewController.swift */; };
 		37A4A7791DDC04D100F7D29D /* Generator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37A4A7781DDC04D100F7D29D /* Generator.swift */; };
@@ -36,6 +46,14 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		37029CB41F47FC12001BC530 /* SliderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SliderView.swift; path = Views/SliderView.swift; sourceTree = "<group>"; };
+		37029CB61F47FC84001BC530 /* SecondViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SecondViewController.swift; path = ViewControllers/SecondViewController.swift; sourceTree = "<group>"; };
+		37029CB71F47FC84001BC530 /* SecondViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = SecondViewController.xib; path = ViewControllers/SecondViewController.xib; sourceTree = "<group>"; };
+		37029CBA1F47FD89001BC530 /* SecondDemoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SecondDemoView.swift; path = ViewControllers/SecondDemoView.swift; sourceTree = "<group>"; };
+		37029CBC1F47FD99001BC530 /* SecondDemoView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SecondDemoView.xib; sourceTree = "<group>"; };
+		37029CBE1F47FEF8001BC530 /* XibBaseView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = XibBaseView.swift; path = ViewControllers/XibBaseView.swift; sourceTree = "<group>"; };
+		37029CC01F481667001BC530 /* SecondDemoTwoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SecondDemoTwoView.swift; path = ViewControllers/SecondDemoTwoView.swift; sourceTree = "<group>"; };
+		37029CC21F481673001BC530 /* SecondDemoTwoView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SecondDemoTwoView.xib; sourceTree = "<group>"; };
 		371018F61DB314E30046B359 /* DLDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DLDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		371018F91DB314E30046B359 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		371018FE1DB314E30046B359 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -52,6 +70,8 @@
 		3772EC291DB8A5C7009C5222 /* InfiniteScrollView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = InfiniteScrollView.swift; path = Views/InfiniteScrollView.swift; sourceTree = "<group>"; };
 		3776FF561DC3538F00909BF6 /* clockwork.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = clockwork.wav; sourceTree = "<group>"; };
 		377879141DBDBCF10089967E /* UIColor+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "UIColor+Extension.swift"; path = "Extension/UIKit/UIColor+Extension.swift"; sourceTree = "<group>"; };
+		3785FED51E79546F00E6D6A3 /* SliderViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SliderViewController.swift; path = Views/SliderViewController.swift; sourceTree = "<group>"; };
+		3785FED71E79558400E6D6A3 /* EmptyViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = EmptyViewController.swift; path = ViewControllers/EmptyViewController.swift; sourceTree = "<group>"; };
 		379179CB1DC760DF00276C6F /* ReactNativeDemoViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ReactNativeDemoViewController.swift; path = ViewControllers/ReactNativeDemoViewController.swift; sourceTree = "<group>"; };
 		37A4A7761DDC045600F7D29D /* ThunkAndGeneratorViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ThunkAndGeneratorViewController.swift; path = ViewControllers/ThunkAndGeneratorViewController.swift; sourceTree = "<group>"; };
 		37A4A7781DDC04D100F7D29D /* Generator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Generator.swift; path = UsefulType/Generator.swift; sourceTree = "<group>"; };
@@ -110,7 +130,7 @@
 				371019051DB314E30046B359 /* Info.plist */,
 				3710190B1DB3161E0046B359 /* HomeTableViewController.swift */,
 				3710190F1DB31E270046B359 /* ViewControllers */,
-				371019121DB3246D0046B359 /* Views */,
+				371019121DB3246D0046B359 /* UIKitComponent */,
 				371019151DB32FC10046B359 /* Extension */,
 				37C4A5891DC0DB9800CFDB46 /* OC */,
 				37A4A77A1DDC04D700F7D29D /* UsefulType */,
@@ -122,21 +142,31 @@
 		3710190F1DB31E270046B359 /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
-				A059E2181E2654110030DDA0 /* FilterSongSheetViewController.swift */,
 				3710190D1DB31E210046B359 /* FirstViewController.swift */,
+				37029CB61F47FC84001BC530 /* SecondViewController.swift */,
+				37029CB71F47FC84001BC530 /* SecondViewController.xib */,
+				A059E2181E2654110030DDA0 /* FilterSongSheetViewController.swift */,
 				3772EC271DB8A58A009C5222 /* InfiniteScrollViewController.swift */,
 				37D59C7A1DBB350F005033F7 /* CycleTableViewController.swift */,
 				37D59C741DBB3368005033F7 /* CyclePickerViewController.swift */,
 				379179CB1DC760DF00276C6F /* ReactNativeDemoViewController.swift */,
 				374CF34B1DD5A92E008EE712 /* CyclePicker1ViewController.swift */,
 				37A4A7761DDC045600F7D29D /* ThunkAndGeneratorViewController.swift */,
+				3785FED71E79558400E6D6A3 /* EmptyViewController.swift */,
+				37029CBA1F47FD89001BC530 /* SecondDemoView.swift */,
+				37029CBC1F47FD99001BC530 /* SecondDemoView.xib */,
+				37029CBE1F47FEF8001BC530 /* XibBaseView.swift */,
+				37029CC01F481667001BC530 /* SecondDemoTwoView.swift */,
+				37029CC21F481673001BC530 /* SecondDemoTwoView.xib */,
 			);
 			name = ViewControllers;
 			sourceTree = "<group>";
 		};
-		371019121DB3246D0046B359 /* Views */ = {
+		371019121DB3246D0046B359 /* UIKitComponent */ = {
 			isa = PBXGroup;
 			children = (
+				37029CB41F47FC12001BC530 /* SliderView.swift */,
+				3785FED51E79546F00E6D6A3 /* SliderViewController.swift */,
 				A059E21A1E26541F0030DDA0 /* UICollectionViewGridLayout.swift */,
 				371019101DB324690046B359 /* ImageSliderView.swift */,
 				3772EC291DB8A5C7009C5222 /* InfiniteScrollView.swift */,
@@ -144,7 +174,7 @@
 				37D59C761DBB339D005033F7 /* DLPickerView.swift */,
 				3776FF561DC3538F00909BF6 /* clockwork.wav */,
 			);
-			name = Views;
+			name = UIKitComponent;
 			sourceTree = "<group>";
 		};
 		371019151DB32FC10046B359 /* Extension */ = {
@@ -243,7 +273,7 @@
 				TargetAttributes = {
 					371018F51DB314E30046B359 = {
 						CreatedOnToolsVersion = 8.0;
-						DevelopmentTeam = VCJVQ6T6G2;
+						DevelopmentTeam = U2TKX82CQZ;
 						LastSwiftMigration = 0800;
 						ProvisioningStyle = Automatic;
 					};
@@ -273,9 +303,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				371019041DB314E30046B359 /* LaunchScreen.storyboard in Resources */,
+				37029CC31F481673001BC530 /* SecondDemoTwoView.xib in Resources */,
+				37029CBD1F47FD99001BC530 /* SecondDemoView.xib in Resources */,
 				3776FF571DC3538F00909BF6 /* clockwork.wav in Resources */,
 				371019011DB314E30046B359 /* Assets.xcassets in Resources */,
 				371018FF1DB314E30046B359 /* Main.storyboard in Resources */,
+				37029CB91F47FC84001BC530 /* SecondViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -309,7 +342,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 		D923656D9E38771C28A4B4F9 /* [CP] Copy Pods Resources */ = {
@@ -337,11 +370,16 @@
 				374CF34C1DD5A92F008EE712 /* CyclePicker1ViewController.swift in Sources */,
 				3772EC2A1DB8A5C7009C5222 /* InfiniteScrollView.swift in Sources */,
 				3772EC281DB8A58A009C5222 /* InfiniteScrollViewController.swift in Sources */,
+				37029CB81F47FC84001BC530 /* SecondViewController.swift in Sources */,
 				37A4A7771DDC045600F7D29D /* ThunkAndGeneratorViewController.swift in Sources */,
+				37029CBB1F47FD89001BC530 /* SecondDemoView.swift in Sources */,
 				37D59C7B1DBB350F005033F7 /* CycleTableViewController.swift in Sources */,
 				37D59C771DBB339D005033F7 /* DLPickerView.swift in Sources */,
 				3710190E1DB31E210046B359 /* FirstViewController.swift in Sources */,
+				37029CBF1F47FEF8001BC530 /* XibBaseView.swift in Sources */,
+				3785FED61E79546F00E6D6A3 /* SliderViewController.swift in Sources */,
 				A059E2191E2654110030DDA0 /* FilterSongSheetViewController.swift in Sources */,
+				37029CB51F47FC12001BC530 /* SliderView.swift in Sources */,
 				37C4A5881DC0DB9200CFDB46 /* ContextMaker.m in Sources */,
 				A045222E1DB9A6D7006FC360 /* UIView+Extension.swift in Sources */,
 				371019141DB32F990046B359 /* Array+Extension.swift in Sources */,
@@ -353,7 +391,9 @@
 				37D59C751DBB3368005033F7 /* CyclePickerViewController.swift in Sources */,
 				3710190C1DB3161E0046B359 /* HomeTableViewController.swift in Sources */,
 				A059E21B1E26541F0030DDA0 /* UICollectionViewGridLayout.swift in Sources */,
+				37029CC11F481667001BC530 /* SecondDemoTwoView.swift in Sources */,
 				37D59C791DBB34EE005033F7 /* DLTableView.swift in Sources */,
+				3785FED81E79558400E6D6A3 /* EmptyViewController.swift in Sources */,
 				371018FA1DB314E30046B359 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -480,7 +520,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEVELOPMENT_TEAM = VCJVQ6T6G2;
+				DEVELOPMENT_TEAM = U2TKX82CQZ;
 				INFOPLIST_FILE = DLDemo/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.danlee.DLDemo;
@@ -498,7 +538,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEVELOPMENT_TEAM = VCJVQ6T6G2;
+				DEVELOPMENT_TEAM = U2TKX82CQZ;
 				INFOPLIST_FILE = DLDemo/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.danlee.DLDemo;
