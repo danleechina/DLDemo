@@ -21,6 +21,8 @@
 		3772EC2A1DB8A5C7009C5222 /* InfiniteScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3772EC291DB8A5C7009C5222 /* InfiniteScrollView.swift */; };
 		3776FF571DC3538F00909BF6 /* clockwork.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3776FF561DC3538F00909BF6 /* clockwork.wav */; };
 		377879151DBDBCF10089967E /* UIColor+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 377879141DBDBCF10089967E /* UIColor+Extension.swift */; };
+		3785FED61E79546F00E6D6A3 /* SliderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3785FED51E79546F00E6D6A3 /* SliderViewController.swift */; };
+		3785FED81E79558400E6D6A3 /* EmptyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3785FED71E79558400E6D6A3 /* EmptyViewController.swift */; };
 		379179CC1DC760DF00276C6F /* ReactNativeDemoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379179CB1DC760DF00276C6F /* ReactNativeDemoViewController.swift */; };
 		37A4A7771DDC045600F7D29D /* ThunkAndGeneratorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37A4A7761DDC045600F7D29D /* ThunkAndGeneratorViewController.swift */; };
 		37A4A7791DDC04D100F7D29D /* Generator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37A4A7781DDC04D100F7D29D /* Generator.swift */; };
@@ -52,6 +54,8 @@
 		3772EC291DB8A5C7009C5222 /* InfiniteScrollView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = InfiniteScrollView.swift; path = Views/InfiniteScrollView.swift; sourceTree = "<group>"; };
 		3776FF561DC3538F00909BF6 /* clockwork.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = clockwork.wav; sourceTree = "<group>"; };
 		377879141DBDBCF10089967E /* UIColor+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "UIColor+Extension.swift"; path = "Extension/UIKit/UIColor+Extension.swift"; sourceTree = "<group>"; };
+		3785FED51E79546F00E6D6A3 /* SliderViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SliderViewController.swift; path = Views/SliderViewController.swift; sourceTree = "<group>"; };
+		3785FED71E79558400E6D6A3 /* EmptyViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = EmptyViewController.swift; path = ViewControllers/EmptyViewController.swift; sourceTree = "<group>"; };
 		379179CB1DC760DF00276C6F /* ReactNativeDemoViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ReactNativeDemoViewController.swift; path = ViewControllers/ReactNativeDemoViewController.swift; sourceTree = "<group>"; };
 		37A4A7761DDC045600F7D29D /* ThunkAndGeneratorViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ThunkAndGeneratorViewController.swift; path = ViewControllers/ThunkAndGeneratorViewController.swift; sourceTree = "<group>"; };
 		37A4A7781DDC04D100F7D29D /* Generator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Generator.swift; path = UsefulType/Generator.swift; sourceTree = "<group>"; };
@@ -110,7 +114,7 @@
 				371019051DB314E30046B359 /* Info.plist */,
 				3710190B1DB3161E0046B359 /* HomeTableViewController.swift */,
 				3710190F1DB31E270046B359 /* ViewControllers */,
-				371019121DB3246D0046B359 /* Views */,
+				371019121DB3246D0046B359 /* UIKitComponent */,
 				371019151DB32FC10046B359 /* Extension */,
 				37C4A5891DC0DB9800CFDB46 /* OC */,
 				37A4A77A1DDC04D700F7D29D /* UsefulType */,
@@ -130,13 +134,15 @@
 				379179CB1DC760DF00276C6F /* ReactNativeDemoViewController.swift */,
 				374CF34B1DD5A92E008EE712 /* CyclePicker1ViewController.swift */,
 				37A4A7761DDC045600F7D29D /* ThunkAndGeneratorViewController.swift */,
+				3785FED71E79558400E6D6A3 /* EmptyViewController.swift */,
 			);
 			name = ViewControllers;
 			sourceTree = "<group>";
 		};
-		371019121DB3246D0046B359 /* Views */ = {
+		371019121DB3246D0046B359 /* UIKitComponent */ = {
 			isa = PBXGroup;
 			children = (
+				3785FED51E79546F00E6D6A3 /* SliderViewController.swift */,
 				A059E21A1E26541F0030DDA0 /* UICollectionViewGridLayout.swift */,
 				371019101DB324690046B359 /* ImageSliderView.swift */,
 				3772EC291DB8A5C7009C5222 /* InfiniteScrollView.swift */,
@@ -144,7 +150,7 @@
 				37D59C761DBB339D005033F7 /* DLPickerView.swift */,
 				3776FF561DC3538F00909BF6 /* clockwork.wav */,
 			);
-			name = Views;
+			name = UIKitComponent;
 			sourceTree = "<group>";
 		};
 		371019151DB32FC10046B359 /* Extension */ = {
@@ -341,6 +347,7 @@
 				37D59C7B1DBB350F005033F7 /* CycleTableViewController.swift in Sources */,
 				37D59C771DBB339D005033F7 /* DLPickerView.swift in Sources */,
 				3710190E1DB31E210046B359 /* FirstViewController.swift in Sources */,
+				3785FED61E79546F00E6D6A3 /* SliderViewController.swift in Sources */,
 				A059E2191E2654110030DDA0 /* FilterSongSheetViewController.swift in Sources */,
 				37C4A5881DC0DB9200CFDB46 /* ContextMaker.m in Sources */,
 				A045222E1DB9A6D7006FC360 /* UIView+Extension.swift in Sources */,
@@ -354,6 +361,7 @@
 				3710190C1DB3161E0046B359 /* HomeTableViewController.swift in Sources */,
 				A059E21B1E26541F0030DDA0 /* UICollectionViewGridLayout.swift in Sources */,
 				37D59C791DBB34EE005033F7 /* DLTableView.swift in Sources */,
+				3785FED81E79558400E6D6A3 /* EmptyViewController.swift in Sources */,
 				371018FA1DB314E30046B359 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
