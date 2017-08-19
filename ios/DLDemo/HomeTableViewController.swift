@@ -18,8 +18,8 @@ class HomeTableViewController: UITableViewController {
                                          "使用自定义cell PickerView",
                                          "Generator，可控制函数执行，优化异步回调",
                                          "Grid CollectionView layout,",
-                                         "SliderViewController,",
-                                         "可配置滚动 view(区别于图片)", ]
+                                         "SliderViewController",
+                                         "可配置滚动 view(区别于图片)",]
     private let detailTexts: Array<String> = ["无",
                                               "无",
                                               "无",
@@ -39,7 +39,8 @@ class HomeTableViewController: UITableViewController {
                                                    "ThunkAndGeneratorViewController",
                                                    "FilterSongSheetViewController",
                                                    "SliderViewController",
-                                                   "SecondViewController",]
+                                                   "SecondViewController",
+                                                   "SliderViewController",]
     
     override func viewDidLoad() {
         super.viewDidLoad()
